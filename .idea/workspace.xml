@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="224459dd-dab2-4666-9281-dee54f6f3a0f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/eval/eval_VOT2018.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/eval_VOT2018.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -13,7 +14,7 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/pyCFTrackers$processing.coverage" NAME="processing Coverage Results" MODIFIED="1553945849218" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dataset/OTB100" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$get_vot_result.coverage" NAME="get_vot_result Coverage Results" MODIFIED="1554009991061" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
-    <SUITE FILE_PATH="coverage/pyCFTrackers$eval_VOT2018__1_.coverage" NAME="eval_VOT2018 (1) Coverage Results" MODIFIED="1554012777341" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
+    <SUITE FILE_PATH="coverage/pyCFTrackers$eval_VOT2018__1_.coverage" NAME="eval_VOT2018 (1) Coverage Results" MODIFIED="1554019418828" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$eval.coverage" NAME="eval Coverage Results" MODIFIED="1553962394286" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$ope_otb.coverage" NAME="ope_otb Coverage Results" MODIFIED="1554010675435" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$cf_demo.coverage" NAME="cf_demo Coverage Results" MODIFIED="1554002578882" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
@@ -56,7 +57,7 @@
           <entry key="mat" value="4" />
           <entry key="md" value="1" />
           <entry key="png" value="18" />
-          <entry key="py" value="320" />
+          <entry key="py" value="321" />
           <entry key="pyx" value="1" />
           <entry key="sh" value="4" />
           <entry key="txt" value="67" />
@@ -70,7 +71,7 @@
           <entry key="JSON" value="8" />
           <entry key="Markdown" value="2" />
           <entry key="PLAIN_TEXT" value="76" />
-          <entry key="Python" value="320" />
+          <entry key="Python" value="321" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
@@ -78,17 +79,17 @@
           <entry key="MD" value="66" />
           <entry key="dummy" value="40" />
           <entry key="gitignore" value="42" />
-          <entry key="md" value="616" />
-          <entry key="py" value="9130" />
+          <entry key="md" value="654" />
+          <entry key="py" value="9147" />
           <entry key="sh" value="202" />
           <entry key="txt" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Markdown" value="682" />
+          <entry key="Markdown" value="720" />
           <entry key="PLAIN_TEXT" value="287" />
-          <entry key="Python" value="9130" />
+          <entry key="Python" value="9147" />
         </counts>
       </usages-collector>
     </session>
@@ -99,8 +100,8 @@
         <entry file="file://$PROJECT_DIR$/readme.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="173">
-                <caret line="50" column="29" lean-forward="true" selection-start-line="50" selection-start-column="29" selection-end-line="50" selection-end-column="29" />
+              <first_editor relative-caret-position="396">
+                <caret line="83" column="37" lean-forward="true" selection-start-line="83" selection-start-column="37" selection-end-line="83" selection-end-column="37" />
               </first_editor>
               <second_editor />
             </state>
@@ -112,17 +113,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="198">
               <caret line="11" column="6" selection-start-line="11" selection-start-column="6" selection-end-line="11" selection-end-column="6" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/examples/vis/draw_plot.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <folding>
-                <element signature="e#0#11#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -171,6 +161,18 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/eval/eval_VOT2018.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="198">
+              <caret line="24" column="80" selection-start-line="24" selection-start-column="80" selection-end-line="24" selection-end-column="80" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/examples/pytracker.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="288">
@@ -213,7 +215,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/lib/pysot/datasets/vot.py" />
         <option value="$PROJECT_DIR$/tools/test.py" />
         <option value="$PROJECT_DIR$/lib/pysot/datasets/video.py" />
         <option value="$PROJECT_DIR$/lib/load_helper.py" />
@@ -263,6 +264,7 @@
         <option value="$PROJECT_DIR$/make.sh" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/requirements.txt" />
+        <option value="$PROJECT_DIR$/eval/eval_VOT2018.py" />
         <option value="$PROJECT_DIR$/readme.md" />
       </list>
     </option>
@@ -292,6 +294,11 @@
             <path>
               <item name="pyCFTrackers" type="b2602c69:ProjectViewProjectNode" />
               <item name="pyCFTrackers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pyCFTrackers" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pyCFTrackers" type="462c0819:PsiDirectoryNode" />
+              <item name="eval" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="pyCFTrackers" type="b2602c69:ProjectViewProjectNode" />
@@ -334,7 +341,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.eval_VOT2016">
+  <component name="RunManager" selected="Python.eval_VOT2018 (1)">
     <configuration name="eval_OTB" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pyCFTrackers" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -454,8 +461,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.eval_VOT2016" />
         <item itemvalue="Python.eval_VOT2018 (1)" />
+        <item itemvalue="Python.eval_VOT2016" />
         <item itemvalue="Python.ope_otb" />
         <item itemvalue="Python.eval_OTB" />
         <item itemvalue="Python.get_vot_result" />
@@ -479,12 +486,12 @@
     <frame x="-1" y="24" width="1922" height="1033" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15528281" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.12593383" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49839914" weight="0.32964602" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.8388474" weight="0.42477876" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.8388474" visible="true" weight="0.42477876" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39933628" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -493,7 +500,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.16115262" side_tool="true" weight="0.42477876" />
-      <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.5987193" visible="true" weight="0.48561946" />
+      <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.5987193" weight="0.48561946" />
       <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.49893278" weight="0.32964602" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -682,16 +689,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/eval/eval_VOT2018.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="24" column="25" selection-start-line="24" selection-start-column="25" selection-end-line="24" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/make.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -765,11 +762,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/eval/eval_VOT2018.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="24" column="80" selection-start-line="24" selection-start-column="80" selection-end-line="24" selection-end-column="80" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/readme.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="173">
-            <caret line="50" column="29" lean-forward="true" selection-start-line="50" selection-start-column="29" selection-end-line="50" selection-end-column="29" />
+          <first_editor relative-caret-position="396">
+            <caret line="83" column="37" lean-forward="true" selection-start-line="83" selection-start-column="37" selection-end-line="83" selection-end-column="37" />
           </first_editor>
           <second_editor />
         </state>
