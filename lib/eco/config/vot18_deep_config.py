@@ -1,4 +1,4 @@
-class OTBDeepConfig:
+class VOT18DeepConfig:
     fhog_params = {'fname': 'fhog',
                    'num_orients': 9,
                    'cell_size': 4,
@@ -6,21 +6,21 @@ class OTBDeepConfig:
                    # 'nDim': 9 * 3 + 5 -1
                    }
 
-    #cn_params = {"fname": 'cn',
-    #              "table_name": "CNnorm",
-    #              "use_for_color": True,
-    #              "cell_size": 4,
-    #              "compressed_dim": 3,
-    #              # "nDim": 10
-    #              }
+    cn_params = {"fname": 'cn',
+                  "table_name": "CNnorm",
+                  "use_for_color": True,
+                  "cell_size": 4,
+                  "compressed_dim": 3,
+                  # "nDim": 10
+                }
 
-    # ic_params = {'fname': 'ic',
-    #              "table_name": "intensityChannelNorm6",
-    #              "use_for_color": False,
-    #              "cell_size": 4,
-    #              "compressed_dim": 3,
-    #              # "nDim": 10
-    #              }
+    ic_params = {'fname': 'ic',
+                  "table_name": "intensityChannelNorm6",
+                 "use_for_color": False,
+                  "cell_size": 4,
+                  "compressed_dim": 3,
+                 # "nDim": 10
+                  }
 
     cnn_params = {'fname': "cnn-resnet50",
                   'compressed_dim': [16, 64]
@@ -28,7 +28,7 @@ class OTBDeepConfig:
     # cnn_params = {'fname': "cnn-vgg16",
     #               'compressed_dim': [16, 64]
     #               }
-    features = [fhog_params, cnn_params]
+    features = [fhog_params,cnn_params]
 
     # feature parameters
     normalize_power = 2
@@ -96,5 +96,3 @@ class OTBDeepConfig:
     number_of_scales = 5
     scale_step = 1.02# 1.015
     use_scale_filter = False
-
-    vis=True

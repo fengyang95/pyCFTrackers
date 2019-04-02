@@ -14,7 +14,7 @@ if __name__ == '__main__':
     parser.add_argument('--result_dir', type=str, default='test/VOT2016',help='tracker result root')
     parser.add_argument('--tracker_prefix', type=str,default='test', help='tracker prefix')
     parser.add_argument('--show_video_level', action='store_true',default=True)
-    parser.add_argument('--num', type=int, help='number of processes to eval', default=1)
+    parser.add_argument('--num', type=int, help='number of processes to eval', default=10)
     parser.add_argument('--vis',type=bool,default=True)
     args = parser.parse_args()
 

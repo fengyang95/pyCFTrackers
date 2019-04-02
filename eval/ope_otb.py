@@ -1,12 +1,6 @@
-# --------------------------------------------------------
-# SiamMask
-# Licensed under The MIT License
-# Written by Qiang Wang (wangqiang2015 at ia.ac.cn)
-# --------------------------------------------------------
 from __future__ import division
 import argparse
 import logging
-import numpy as np
 import cv2
 from os import makedirs
 from os.path import join, isdir
@@ -24,7 +18,7 @@ from cftracker.cn import CN
 from cftracker.dat import DAT
 from cftracker.eco import ECO
 
-
+from lib.eco.config import otb_deep_config,otb_hc_config
 
 parser = argparse.ArgumentParser(description='Test')
 
@@ -60,9 +54,9 @@ def track_otb(tracker_type,dataset):
         elif tracker_type=='DAT':
             tracker=DAT()
         elif tracker_type=='ECO-HC':
-            tracker=ECO(feature_type='HC')
+            tracker=ECO(config=otb_hc_config.OTBHCConfig())
         elif tracker_type=='ECO':
-            tracker=ECO(feature_type='Deep')
+            tracker=ECO(config=otb_deep_config.OTBDeepConfig())
         else:
             raise NotImplementedError
 
@@ -115,7 +109,7 @@ def main():
 
     logger = logging.getLogger('global')
     logger.info(args)
-    trackers=['DCF','MOSSE','KCF','CSK','Staple','DSST','CN','DAT','ECO-HC','ECO']
+    trackers=['ECO']
     dataset = DatasetFactory.create_dataset(name='OTB100',
                                             dataset_root='../dataset/OTB100',
                                             load_img=True

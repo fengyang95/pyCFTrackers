@@ -1,8 +1,3 @@
-# --------------------------------------------------------
-# SiamMask
-# Licensed under The MIT License
-# Written by Qiang Wang (wangqiang2015 at ia.ac.cn)
-# --------------------------------------------------------
 from __future__ import division
 import argparse
 import logging
@@ -16,9 +11,7 @@ from lib.bbox_helper import get_axis_aligned_bbox, cxy_wh_2_rect
 from lib.benchmark_helper import load_dataset
 
 
-
-from lib.pyvotkit.region import vot_overlap, vot_float2str
-
+from lib.pysot.utils import region
 from cftracker.mosse import MOSSE
 from cftracker.staple import Staple
 from cftracker.dsst import DSST
@@ -27,13 +20,14 @@ from cftracker.csk import CSK
 from cftracker.cn import CN
 from cftracker.dat import DAT
 from cftracker.eco import ECO
+from lib.eco.config import vot18_deep_config,vot_hc_config
 
 
 parser = argparse.ArgumentParser(description='Test')
 
-parser.add_argument('--dataset', dest='dataset', default='VOT2016',
+parser.add_argument('--dataset', dest='dataset', default='VOT2018',
                     help='datasets')
-parser.add_argument('-l', '--log', default="log_test_vot2016.txt", type=str, help='log file')
+parser.add_argument('-l', '--log', default="log_test_vot2018.txt", type=str, help='log file')
 parser.add_argument('-v', '--visualization', dest='visualization', action='store_true',
                     help='whether visualize result',default=True)
 parser.add_argument('--gt', action='store_true', help='whether use gt rect for davis (Oracle)')
@@ -56,9 +50,9 @@ def create_tracker(tracker_type):
     elif tracker_type == 'DAT':
         tracker = DAT()
     elif tracker_type=='ECO-HC':
-        tracker=ECO(feature_type='HC')
+        tracker=ECO(config=vot_hc_config.VOTHCConfig())
     elif tracker_type=='ECO':
-        tracker=ECO(feature_type='Deep')
+        tracker=ECO(config=vot18_deep_config.VOT18DeepConfig())
     else:
         raise NotImplementedError
     return tracker
@@ -87,14 +81,7 @@ def track_vot(tracker_type, video):
             location = cxy_wh_2_rect((x+w/2,y+h/2),(w,h))
 
             if 'VOT' in args.dataset:
-                gt_polygon = ((gt[f][0], gt[f][1]), (gt[f][2], gt[f][3]),
-                              (gt[f][4], gt[f][5]), (gt[f][6], gt[f][7]))
-
-                pred_polygon = ((location[0], location[1]),
-                                    (location[0] + location[2], location[1]),
-                                    (location[0] + location[2], location[1] + location[3]),
-                                    (location[0], location[1] + location[3]))
-                b_overlap = vot_overlap(gt_polygon, pred_polygon, (im.shape[1], im.shape[0]))
+                b_overlap = region.vot_overlap(gt[f],location, (im.shape[1], im.shape[0]))
             else:
                 b_overlap = 1
 
@@ -141,7 +128,7 @@ def track_vot(tracker_type, video):
     with open(result_path, "w") as fin:
         for x in regions:
             fin.write("{:d}\n".format(x)) if isinstance(x, int) else \
-            fin.write(','.join([vot_float2str("%.4f", i) for i in x]) + '\n')
+            fin.write(','.join([region.vot_float2str("%.4f", i) for i in x]) + '\n')
 
     logger.info('({:d}) Video: {:12s} Time: {:02.1f}s Speed: {:3.1f}fps Lost: {:d} Tracker:{}'.format(
         v_id, video['name'], toc, f / toc, lost_times,tracker_type))
@@ -166,7 +153,7 @@ def main():
     total_lost = 0  # VOT
     speed_list = []
 
-    trackers = ['DSST','DAT','MOSSE','ECO-HC','CN','ECO','DCF','CSK','KCF','Staple']
+    trackers = ['ECO']
 
     for tracker_type in trackers:
 

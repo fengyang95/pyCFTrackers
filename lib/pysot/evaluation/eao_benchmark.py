@@ -21,9 +21,9 @@ class EAOBenchmark:
             self.high = 356
             self.peak =  160
         elif dataset.name == 'VOT2016':
-            self.low = 100 #TODO
-            self.high = 356
-            self.peak = 160
+            self.low = 108
+            self.high = 371
+            self.peak = 168
 
     def eval(self, eval_trackers=None):
         """

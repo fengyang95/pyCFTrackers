@@ -7,18 +7,21 @@ from lib.eco.features.features import FHogFeature,TableFeature
 def extract_hog_feature_pyECO(img, center, sz, cell_size=4):
     hog=FHogFeature(fname='fhog',cell_size=cell_size, compressed_dim=10, num_orients=9,clip=1.)
     #img=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)[:,:,np.newaxis]
-    fhog_feature=hog.get_features(img,(center[1],center[0]),sz,1.,normalization=True)[0][:,:,:,0]
+    fhog_feature=hog.get_features(img[:,:,::-1],(center[1],center[0]),sz,1.,normalization=True)[0][:,:,:,0]
     return fhog_feature
 
 # pyECO pos——>(y,x)
 def extract_cn_feature_pyECO(img, center, sz, cell_size=1):
+    patch = cv2.getRectSubPix(img,sz,center)
+    gray = cv2.cvtColor(patch, cv2.COLOR_BGR2GRAY).astype(np.float32) / 255 - 0.5
+    gray = gray[:, :, np.newaxis]
+    if np.all(patch[:,:,0]==patch[:,:,1]) and np.all(patch[:,:,0]==patch[:,:,2]):
+        return gray
     cn=TableFeature(fname='cn',cell_size=cell_size,compressed_dim=11,table_name="CNnorm",
                  use_for_color= True)
     sz=np.array([sz[0],sz[1]])
-    cn_feature=cn.get_features(img,(center[1],center[0]),sz,1,normalization=False)[0][:,:,:,0]
-    patch  = cn._sample_patch(img, (center[1],center[0]), sz, sz)
-    gray = cv2.cvtColor(patch, cv2.COLOR_BGR2GRAY).astype(np.float32) / 255 - 0.5
-    gray = gray[:, :, np.newaxis]
+    # pyECO using RGB format
+    cn_feature=cn.get_features(img[:,:,::-1],(center[1],center[0]),sz,1,normalization=True)[0][:,:,:,0]
     out = np.concatenate((gray,cn_feature), axis=2)
     return out
 
@@ -27,11 +30,16 @@ def extract_cn_feature(img, center, sz, w2c):
     gray = cv2.cvtColor(patch, cv2.COLOR_BGR2GRAY).astype(np.float32) / 255 - 0.5
     gray = gray[:, :, np.newaxis]
 
+    if np.all(patch[:,:,0]==patch[:,:,1]) and np.all(patch[:,:,0]==patch[:,:,2]):
+        return gray
+
     b, g, r = cv2.split(patch)
     index_im = ( r//8 + 32 * g//8 + 32 * 32 * b//8)
     h, w = patch.shape[:2]
     w2c=np.array(w2c)
-    out=w2c.T[index_im.flatten()].reshape((h,w,w2c.shape[0]))
+    print(w2c.shape)
+    print(index_im.shape)
+    out=w2c.T[index_im.flatten(order='F')].reshape((h,w,w2c.shape[0]))
     out=np.concatenate((gray,out),axis=2)
     return out
 

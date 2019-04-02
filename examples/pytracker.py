@@ -9,6 +9,9 @@ from cftracker.dsst import DSST
 from cftracker.staple import Staple
 from cftracker.dat import DAT
 from cftracker.eco import ECO
+from cftracker.bacf import BACF
+from lib.eco.config import otb_deep_config,otb_hc_config
+
 class PyTracker:
     def __init__(self,img_dir,tracker_type,dataset_config):
         self.img_dir=img_dir
@@ -53,9 +56,11 @@ class PyTracker:
         elif self.tracker_type=='DAT':
             self.tracker=DAT()
         elif self.tracker_type=='ECO-HC':
-            self.tracker=ECO(feature_type='HC')
+            self.tracker=ECO(config=otb_hc_config.OTBHCConfig())
         elif self.tracker_type=='ECO':
-            self.tracker=ECO(feature_type='Deep')
+            self.tracker=ECO(config=otb_deep_config.OTBDeepConfig())
+        elif self.tracker_type=='BACF':
+            self.tracker=BACF()
         else:
             raise NotImplementedError
 

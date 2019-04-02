@@ -1,11 +1,11 @@
 cupy
 matplotlib
-mxnet
+mxnet-cu90
 numba
 scipy
 h5py
 colorama
-opencv_contrib_python
+opencv_python
 Cython
 numpy
 tqdm

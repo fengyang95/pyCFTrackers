@@ -293,9 +293,9 @@ class TableFeature(Feature):
             patch = self._sample_patch(img, pos, sample_sz*scale, sample_sz)
             h, w, c = patch.shape
             if c == 3:
-                RR = patch[:, :, 2].astype(np.int32)
+                RR = patch[:, :, 0].astype(np.int32)
                 GG = patch[:, :, 1].astype(np.int32)
-                BB = patch[:, :, 0].astype(np.int32)
+                BB = patch[:, :, 2].astype(np.int32)
                 index = RR // self._den + (GG // self._den) * self._factor + (BB // self._den) * self._factor * self._factor
                 features = self._table[index.flatten()].reshape((h, w, self._table.shape[1]))
             else:
