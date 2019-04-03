@@ -10,7 +10,7 @@ I use [pysot-toolkit](https://github.com/StrangerZhang/pysot-toolkit) to eval th
 - [x] [DSST](http://www.cvl.isy.liu.se/research/objrec/visualtracking/scalvistrack/ScaleTracking_BMVC14.pdf)
 - [x] [Staple](https://arxiv.org/pdf/1512.01355v2.pdf)
 - [x] [BACF](http://openaccess.thecvf.com/content_ICCV_2017/papers/Galoogahi_Learning_Background-Aware_Correlation_ICCV_2017_paper.pdf)  
-- [x] [DAT](https://www.tugraz.at/institute/icg/research/team-bischof/lrs/downloads/dat/) **This tracker is not based on CF, I re-implement it just for understanding Staple better**
+- [x] [DAT](https://www.tugraz.at/institute/icg/research/team-bischof/lrs/downloads/dat/) **This tracker is not based on CF, I re-implement it just for understanding Staple better**  
 **From other repos**
 - [x] [ECO/ECO-HC](https://arxiv.org/pdf/1611.09224v1.pdf) from [pyECO](https://github.com/StrangerZhang/pyECO)
 
