@@ -1,3 +1,8 @@
+"""
+StrangerZhang's pyECO for comparing performance of different tracker.
+@link{https://github.com/StrangerZhang/pyECO}
+"""
+
 import numpy as np
 from .base import BaseCF
 from lib.eco.tracker import ECOTracker

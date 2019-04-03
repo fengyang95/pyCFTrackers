@@ -1,16 +1,28 @@
+"""
+Python re-implementation of "Adaptive Color Attributes for Real-Time Visual Tracking"
+@inproceedings{Danelljan2014Adaptive,
+  title={Adaptive Color Attributes for Real-Time Visual Tracking},
+  author={Danelljan, Martin and Khan, Fahad Shahbaz and Felsberg, Michael and Weijer, Joost Van De},
+  booktitle={IEEE Conference on Computer Vision & Pattern Recognition},
+  year={2014},
+}
+"""
 import numpy as np
 import h5py
 from .base import BaseCF
 from lib.utils import gaussian2d_labels,cos_window
 from lib.fft_tools import fft2,ifft2
 from cftracker.feature import extract_cn_feature,extract_cn_feature_pyECO
+from .config.cn_config import CNConfig
 class CN(BaseCF):
-    def __init__(self, interp_factor=0.075, sigma=0.2, lambda_=0.01,cn_type='pyECO'):
+    def __init__(self,config=CNConfig()):
         super(CN).__init__()
-        self.interp_factor = interp_factor
-        self.sigma = sigma
-        self.lambda_ = lambda_
-        self.cn_type=cn_type
+        self.interp_factor = config.interp_factor
+        self.sigma = config.sigma
+        self.lambda_ = config.lambda_
+        self.cn_type=config.cn_type
+        self.padding=config.padding
+        self.output_sigma_factor=config.output_sigma_factor
 
 
     def get_sub_window(self,im,pos,sz,cn_type):
@@ -30,10 +42,10 @@ class CN(BaseCF):
         x,y,w,h=tuple(bbox)
         self._center=(x+w/2,y+h/2)
         self.w,self.h=w,h
-        self._window=cos_window((2*w,2*h))
-        self.crop_size=(2*w,2*h)
-        s=np.sqrt(w*h)/16
-        self.y=gaussian2d_labels((2*w,2*h),s)
+        self._window=cos_window((int(w*(1+self.padding)),int(h*(1+self.padding))))
+        self.crop_size=(self._window.shape[1],self._window.shape[0])
+        s=np.sqrt(w*h)*self.output_sigma_factor
+        self.y=gaussian2d_labels(self.crop_size,s)
         self.yf=fft2(self.y)
         self._init_response_center=np.unravel_index(np.argmax(self.y,axis=None),self.y.shape)
         self.x=self.get_sub_window(first_frame, self._center, self.crop_size,cn_type=self.cn_type)

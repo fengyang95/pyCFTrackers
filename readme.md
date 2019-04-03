@@ -1,5 +1,7 @@
 # pyCFTrackers
-Python re-implementation of some correlation filter based tracker.
+Python re-implementation of some correlation filter based tracker, and all of these algorithms are implemented 
+based on the official Matlab code. All the code has been tested on Ubuntu 16.04, Python 3.5.
+I use [pysot-toolkit](https://github.com/StrangerZhang/pysot-toolkit) to eval the performance on OTB and VOT. 
 
 - [x] [MOSSE](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.294.4992&rep=rep1&type=pdf)
 - [x] [CSK](http://59.80.44.48/www.robots.ox.ac.uk/~joao/publications/henriques_eccv2012.pdf)
@@ -7,9 +9,8 @@ Python re-implementation of some correlation filter based tracker.
 - [x] [KCF/DCF](http://www.robots.ox.ac.uk/~joao/publications/henriques_tpami2015.pdf)
 - [x] [DSST](http://www.cvl.isy.liu.se/research/objrec/visualtracking/scalvistrack/ScaleTracking_BMVC14.pdf)
 - [x] [Staple](https://arxiv.org/pdf/1512.01355v2.pdf)
-- [x] [DAT](https://www.tugraz.at/institute/icg/research/team-bischof/lrs/downloads/dat/) **This tracker is not based on CF, I re-implement it to understand Staple better**
-- [ ]  [BACF](http://openaccess.thecvf.com/content_ICCV_2017/papers/Galoogahi_Learning_Background-Aware_Correlation_ICCV_2017_paper.pdf)  
-
+- [x] [BACF](http://openaccess.thecvf.com/content_ICCV_2017/papers/Galoogahi_Learning_Background-Aware_Correlation_ICCV_2017_paper.pdf)  
+- [x] [DAT](https://www.tugraz.at/institute/icg/research/team-bischof/lrs/downloads/dat/) **This tracker is not based on CF, I re-implement it just for understanding Staple better**
 **From other repos**
 - [x] [ECO/ECO-HC](https://arxiv.org/pdf/1611.09224v1.pdf) from [pyECO](https://github.com/StrangerZhang/pyECO)
 
@@ -73,6 +74,7 @@ VOT2018
 |   ECO-HC   |  0.519   |   0.613    |    131.0    | 0.175 |
 |    DAT     |  0.477   |   0.777    |    166.0    | 0.158 |
 |   Staple   |  0.487   |   0.876    |    187.0    | 0.136 |
+|    BACF    |  0.508   |   1.025    |    219.0    | 0.127 |
 |    KCF     |  0.470   |   1.278    |    273.0    | 0.102 |
 |    DSST    |  0.498   |   1.306    |    279.0    | 0.100 |
 |    DCF     |  0.473   |   1.288    |    275.0    | 0.098 |
@@ -81,7 +83,7 @@ VOT2018
 |   MOSSE    |  0.376   |   1.999    |    427.0    | 0.061 |
 ------------------------------------------------------------
 
-
+VOT2016
 ------------------------------------------------------------
 |Tracker Name| Accuracy | Robustness | Lost Number |  EAO  |
 ------------------------------------------------------------
@@ -89,6 +91,7 @@ VOT2018
 |   Staple   |  0.519   |   0.438    |    94.0     | 0.254 |
 |   ECO-HC   |  0.527   |   0.424    |    91.0     | 0.245 |
 |    DAT     |  0.474   |   0.503    |    108.0    | 0.232 |
+|    BACF    |  0.523   |   0.555    |    119.0    | 0.217 |
 |    KCF     |  0.474   |   0.736    |    158.0    | 0.168 |
 |    DSST    |  0.508   |   0.750    |    161.0    | 0.168 |
 |    DCF     |  0.477   |   0.741    |    159.0    | 0.163 |

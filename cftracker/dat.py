@@ -1,9 +1,19 @@
+"""
+Python re-implementation of "In Defense of Color-based Model-free Tracking"
+@inproceedings{Possegger2015In,
+  title={In Defense of Color-based Model-free Tracking},
+  author={Possegger, Horst and Mauthner, Thomas and Bischof, Horst},
+  booktitle={Computer Vision & Pattern Recognition},
+  year={2015},
+}
+"""
 import numpy as np
 import cv2
 from cftracker.base import BaseCF
 from lib.utils import cos_window
 import copy
 from cftracker.config.dat_config import DATConfig
+
 class DAT(BaseCF):
     def __init__(self):
         super(DAT).__init__()

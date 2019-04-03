@@ -20,6 +20,7 @@ from cftracker.csk import CSK
 from cftracker.cn import CN
 from cftracker.dat import DAT
 from cftracker.eco import ECO
+from cftracker.bacf import BACF
 from lib.eco.config import vot16_deep_config,vot_hc_config
 
 
@@ -53,6 +54,8 @@ def create_tracker(tracker_type):
         tracker=ECO(config=vot_hc_config.VOTHCConfig())
     elif tracker_type=='ECO':
         tracker=ECO(config=vot16_deep_config.VOT16DeepConfig())
+    elif tracker_type=='BACF':
+        tracker=BACF()
     else:
         raise NotImplementedError
     return tracker
@@ -153,7 +156,7 @@ def main():
     total_lost = 0  # VOT
     speed_list = []
 
-    trackers = ['CSK']
+    trackers = ['BACF']
 
     for tracker_type in trackers:
 

@@ -1,7 +1,16 @@
+"""
+Python re-implementation of "Staple: Complementary Learners for Real-Time Tracking"
+@inproceedings{Bertinetto2016Staple,
+  title={Staple: Complementary Learners for Real-Time Tracking},
+  author={Bertinetto, Luca and Valmadre, Jack and Golodetz, Stuart and Miksik, Ondrej and Torr, Philip},
+  booktitle={Computer Vision & Pattern Recognition},
+  year={2016},
+}
+"""
 import numpy as np
 import cv2
-from cftracker.base import BaseCF
-from cftracker.feature import extract_hog_feature
+from .base import BaseCF
+from .feature import extract_hog_feature
 from lib.utils import cos_window
 from lib.fft_tools import fft2,ifft2
 
@@ -9,7 +18,8 @@ def mod_one(a,b):
     y=np.mod(a-1,b)+1
     return y
 
-def gaussian2d_labels(sz,sigma):
+# max val at the bottom right loc
+def gaussian2d_rolled_labels_staple(sz, sigma):
     halfx,halfy=int(np.floor((sz[0]-1)/2)),int(np.floor((sz[1]-1)/2))
     x_range=np.arange(-halfx,halfx+1)
     y_range=np.arange(-halfy,halfy+1)
@@ -19,6 +29,7 @@ def gaussian2d_labels(sz,sigma):
     labels=np.zeros((sz[1],sz[0]))
     labels[i_mod_range-1,j_mod_range-1]=np.exp(-(i**2+j**2)/(2*sigma**2))
     return labels
+
 
 def crop_filter_response(response_cf,response_sz):
     h,w=response_cf.shape[:2]
@@ -112,7 +123,7 @@ class Staple(BaseCF):
         self.new_pwp_model=False
         self._window=cos_window(self.cf_response_size)
         output_sigma=np.sqrt(self.norm_target_sz[0]*self.norm_target_sz[1])*self.output_sigma_factor/self.hog_cell_size
-        self.y=gaussian2d_labels(self.cf_response_size,output_sigma)
+        self.y=gaussian2d_rolled_labels_staple(self.cf_response_size, output_sigma)
         self._init_response_center = np.unravel_index(np.argmax(self.y, axis=None), self.y.shape)
         self.yf=fft2(self.y)
 
@@ -331,17 +342,6 @@ class Staple(BaseCF):
         for i in range(bin_mapping.shape[0]):
             bin_mapping[i] = (np.floor(i / (256 / num_bins)))
         return bin_mapping.astype(np.uint8)
-
-
-
-if __name__=='__main__':
-    y=gaussian2d_labels((5,3),1)
-    print(y)
-    ys=crop_filter_response(y,(3,5))
-    print(ys)
-    like=get_center_likelihood(ys,(3,2))
-    print(like)
-
 
 
 

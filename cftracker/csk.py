@@ -1,3 +1,12 @@
+"""
+Python re-implementation of "Exploiting the Circulant Structure of
+Tracking-by-detection with Kernels"
+@book{Henriques2012Exploiting,
+  title={Exploiting the Circulant Structure of Tracking-by-Detection with Kernels},
+  author={Henriques, Jo?o F. and Rui, Caseiro and Martins, Pedro and Batista, Jorge},
+  year={2012},
+}
+"""
 import numpy as np
 import cv2
 from .base import BaseCF

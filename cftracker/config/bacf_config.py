@@ -10,12 +10,7 @@ class BACFConfig:
     newton_iterations=50
     number_of_scales=5
     scale_step=1.01
-    adaptive_gf=False
-
     admm_iterations=2
     admm_lambda=0.01
-
-
-
 
 

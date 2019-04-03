@@ -99,6 +99,18 @@ def gaussian2d_labels(sz,sigma):
     labels = np.exp(-0.5*dist)
     return labels
 
+"""
+max val at the top left loc
+"""
+def gaussian2d_rolled_labels(sz,sigma):
+    w,h=sz
+    xs, ys = np.meshgrid(np.arange(w)-w//2, np.arange(h)-h//2)
+    dist = (xs**2+ys**2) / (sigma**2)
+    labels = np.exp(-0.5*dist)
+    labels = np.roll(labels, -int(np.floor(sz[0] / 2)), axis=1)
+    labels=np.roll(labels,-int(np.floor(sz[1]/2)),axis=0)
+    return labels
+
 
 def plot_precision(gts,preds,save_path):
     # x,y,w,h

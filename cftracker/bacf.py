@@ -1,19 +1,19 @@
+"""
+Python re-implementation of "Learning Background-Aware Correlation Filters for Visual Tracking"
+@article{Galoogahi2017Learning,
+  title={Learning Background-Aware Correlation Filters for Visual Tracking},
+  author={Galoogahi, Hamed Kiani and Fagg, Ashton and Lucey, Simon},
+  year={2017},
+}
+"""
 import numpy as np
 import cv2
 from .base import BaseCF
-from lib.utils import cos_window
+from lib.utils import cos_window,gaussian2d_rolled_labels
 from lib.fft_tools import fft2,ifft2
 from .feature import extract_hog_feature
 from .config.bacf_config import BACFConfig
 
-def gaussian2d_labels(sz,sigma):
-    w,h=sz
-    xs, ys = np.meshgrid(np.arange(w)-w//2, np.arange(h)-h//2)
-    dist = (xs**2+ys**2) / (sigma**2)
-    labels = np.exp(-0.5*dist)
-    labels = np.roll(labels, -int(np.floor(sz[0] / 2)), axis=1)
-    labels=np.roll(labels,-int(np.floor(sz[1]/2)),axis=0)
-    return labels
 
 class BACF(BaseCF):
     def __init__(self, config=BACFConfig()):
@@ -29,10 +29,8 @@ class BACF(BaseCF):
         self.newton_iterations =config.newton_iterations
         self.number_of_scales =config.number_of_scales
         self.scale_step = config.scale_step
-
         self.admm_iterations = config.admm_iterations
         self.admm_lambda = config.admm_lambda
-        self.adaptive_gf=config.adaptive_gf
 
 
     def init(self,first_frame,bbox):
@@ -41,10 +39,8 @@ class BACF(BaseCF):
         self._center = (x + w / 2, y + h / 2)
         self.w, self.h = w, h
         self.feature_ratio=self.cell_size
-        self.target_sz = (self.w, self.h)
-        self.search_area=(self.w*self.search_area_scale)*\
-                         (self.h*self.search_area_scale)
-        print('self.search_area:',self.search_area)
+        self.search_area=(self.w/self.feature_ratio*self.search_area_scale)*\
+                         (self.h/self.feature_ratio*self.search_area_scale)
         if self.search_area<self.cell_selection_thresh*self.filter_max_area:
             self.cell_size=int(min(self.feature_ratio,max(1,int(np.ceil(np.sqrt(
                 self.w*self.search_area_scale/(self.cell_selection_thresh*self.filter_max_area)*\
@@ -58,8 +54,9 @@ class BACF(BaseCF):
             self.current_scale_factor=np.sqrt(self.search_area/self.filter_max_area)
         else:
             self.current_scale_factor=1.
-        self.current_scale_factor=1.
+
         self.base_target_sz=(self.w/self.current_scale_factor,self.h/self.current_scale_factor)
+        self.target_sz=self.base_target_sz
         if self.search_area_shape=='proportional':
             self.crop_size=(int(self.base_target_sz[0]*self.search_area_scale),int(self.base_target_sz[1]*self.search_area_scale))
         elif self.search_area_shape=='square':
@@ -72,10 +69,9 @@ class BACF(BaseCF):
         else:
             raise ValueError
         self.crop_size=(int(round(self.crop_size[0]/self.feature_ratio)*self.feature_ratio),int(round(self.crop_size[1]/self.feature_ratio)*self.feature_ratio))
-        print('self.crop_size',self.crop_size)
         self.feature_map_sz=(self.crop_size[0]//self.feature_ratio,self.crop_size[1]//self.feature_ratio)
         output_sigma=np.sqrt(np.floor(self.base_target_sz[0]/self.feature_ratio)*np.floor(self.base_target_sz[1]/self.feature_ratio))*self.output_sigma_factor
-        y=gaussian2d_labels(self.feature_map_sz,output_sigma)
+        y=gaussian2d_rolled_labels(self.feature_map_sz, output_sigma)
         self.yf=fft2(y)
         if self.interpolate_response==1:
             self.interp_sz=(self.feature_map_sz[0]*self.feature_ratio,self.feature_map_sz[1]*self.feature_ratio)
@@ -99,7 +95,8 @@ class BACF(BaseCF):
         pixels=self.get_sub_window(first_frame,self._center,model_sz=self.crop_size,
                                    scaled_sz=(int(np.round(self.crop_size[0]*self.current_scale_factor)),
                                               int(np.round(self.crop_size[1]*self.current_scale_factor))))
-        self.model_xf=fft2(self._window[:,:,None]*extract_hog_feature(pixels,cell_size=self.feature_ratio))
+        feature=extract_hog_feature(pixels,cell_size=self.feature_ratio)
+        self.model_xf=fft2(self._window[:,:,None]*feature)
 
         self.g_f=self.ADMM(self.model_xf)
 
@@ -135,13 +132,14 @@ class BACF(BaseCF):
                 self.score = np.roll(self.score, int(np.floor(self.score.shape[0] / 2)), axis=0)
                 self.score = np.roll(self.score, int(np.floor(self.score.shape[1] / 2)), axis=1)
         else:
-            row,col,sind,_=np.unravel_index(np.argmax(response,axis=None),response.shape)
+            row,col,sind=np.unravel_index(np.argmax(response,axis=None),response.shape)
+
             if vis is True:
                 self.score=response[:,:,sind]
                 self.score = np.roll(self.score, int(np.floor(self.score.shape[0] / 2)), axis=0)
                 self.score = np.roll(self.score, int(np.floor(self.score.shape[1] / 2)), axis=1)
             disp_row=(row-1+int(np.floor(self.interp_sz[1]-1)/2))%self.interp_sz[1]-int(np.floor((self.interp_sz[1]-1)/2))
-            disp_col = (row - 1 + int(np.floor(self.interp_sz[0] - 1) / 2)) % self.interp_sz[0] - int(
+            disp_col = (col - 1 + int(np.floor(self.interp_sz[0] - 1) / 2)) % self.interp_sz[0] - int(
                 np.floor((self.interp_sz[0] - 1) / 2))
 
         if self.interpolate_response==0  or self.interpolate_response==3 or self.interpolate_response==4:
@@ -161,9 +159,11 @@ class BACF(BaseCF):
         pixels=self.get_sub_window(current_frame,self._center,model_sz=self.crop_size,
                                    scaled_sz=(int(round(self.crop_size[0]*self.current_scale_factor)),
                                               int(round(self.crop_size[1]*self.current_scale_factor))))
-        xf=fft2(extract_hog_feature(pixels,cell_size=self.cell_size)*self._window[:,:,None])
-        self.g_f=self.ADMM(xf)
+        feature=extract_hog_feature(pixels,cell_size=self.cell_size)
+        #feature=cv2.resize(pixels,self.feature_map_sz)/255-0.5
+        xf=fft2(feature*self._window[:,:,None])
         self.model_xf=(1-self.interp_factor)*self.model_xf+self.interp_factor*xf
+        self.g_f = self.ADMM(self.model_xf)
 
         target_sz=(int(self.target_sz[0]*self.current_scale_factor),int(self.target_sz[1]*self.current_scale_factor))
         return [int(self._center[0]-target_sz[0]/2),int(self._center[1]-target_sz[1]/2),target_sz[0],target_sz[1]]
@@ -177,10 +177,10 @@ class BACF(BaseCF):
         xs[xs >= img.shape[1]] = img.shape[1] - 1
         ys[ys >= img.shape[0]] = img.shape[0] - 1
         out = img[ys, :][:, xs]
+        xs,ys=np.meshgrid(xs,ys)
         return xs,ys,out
 
     def ADMM(self,xf):
-
         g_f = np.zeros_like(xf)
         h_f = np.zeros_like(g_f)
         l_f = np.zeros_like(g_f)
@@ -194,19 +194,19 @@ class BACF(BaseCF):
             B = S_xx + (T * mu)
             S_lx = np.sum(np.conj(xf) * l_f, axis=2)
             S_hx = np.sum(np.conj(xf) * h_f, axis=2)
-            tmp0 = (1 / (T * mu) * (self.yf[:, :, None] * xf)) - ((1 / mu) * l_f + h_f)
+            tmp0 = (1 / (T * mu) * (self.yf[:, :, None] * xf)) - ((1 / mu) * l_f)+ h_f
             tmp1 = 1 / (T * mu) * (xf * ((S_xx * self.yf)[:, :, None]))
             tmp2 = 1 / mu * (xf * (S_lx[:, :, None]))
             tmp3 = xf * S_hx[:, :, None]
             # solve for g
             g_f = tmp0 - (tmp1 - tmp2 + tmp3) / B[:, :, None]
             # solve for h
-            h = (T / ((mu * T) + self.admm_lambda)) * ifft2((mu * g_f) + l_f)
+            h = (T / ((mu * T) + self.admm_lambda)) * ifft2(mu * g_f + l_f)
             xs, ys, h = self.get_subwindow_no_window(h,
                                                      (int(self.feature_map_sz[0] / 2), int(self.feature_map_sz[1] / 2)),
                                                      self.small_filter_sz)
             t = np.zeros((self.feature_map_sz[1], self.feature_map_sz[0], h.shape[2]),dtype=np.complex64)
-            t[ys,:][:,xs] = h
+            t[ys,xs,:] = h
             h_f = fft2(t)
             l_f = l_f + (mu * (g_f - h_f))
             mu = min(beta * mu, mumax)
@@ -253,7 +253,8 @@ class BACF(BaseCF):
         return img
 
     """
-    Just copy from 4kubo's implementation
+    I didn't know how to convert matlab function mtimesx to numpy
+    Just finetune from 4kubo's implementation
     https://github.com/4kubo/bacf_python/blob/master/special_operation/resp_newton.py
     """
     def resp_newton(self,response, responsef, iterations, ky, kx, use_sz):

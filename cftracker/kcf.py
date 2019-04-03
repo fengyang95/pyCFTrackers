@@ -1,19 +1,10 @@
 import numpy as np
 import cv2
-from lib.utils import cos_window
+from lib.utils import cos_window,gaussian2d_rolled_labels
 from lib.fft_tools import fft2,ifft2
 from .base import BaseCF
 from .feature import extract_hog_feature,extract_cn_feature,extract_cn_feature_pyECO,extract_hog_feature_pyECO
 import h5py
-
-def gaussian2d_labels(sz,sigma):
-    w,h=sz
-    xs, ys = np.meshgrid(np.arange(w)-w//2, np.arange(h)-h//2)
-    dist = (xs**2+ys**2) / (sigma**2)
-    labels = np.exp(-0.5*dist)
-    labels = np.roll(labels, -int(np.floor(sz[0] / 2)), axis=1)
-    labels=np.roll(labels,-int(np.floor(sz[1]/2)),axis=0)
-    return labels
 
 class KCF(BaseCF):
     def __init__(self, padding=1.5, features='gray', kernel='gaussian'):
@@ -56,7 +47,7 @@ class KCF(BaseCF):
         self._window = cos_window(self.window_size)
 
         s=np.sqrt(w*h)*self.output_sigma_factor/self.cell_size
-        self.yf = fft2(gaussian2d_labels(self.window_size, s))
+        self.yf = fft2(gaussian2d_rolled_labels(self.window_size, s))
 
         if self.features=='gray' or self.features=='color':
             first_frame = first_frame.astype(np.float32) / 255

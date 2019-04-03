@@ -1,7 +1,17 @@
+"""
+Python re-implementation of "Visual Object Tracking using Adaptive Correlation Filters"
+@inproceedings{Bolme2010Visual,
+  title={Visual object tracking using adaptive correlation filters},
+  author={Bolme, David S. and Beveridge, J. Ross and Draper, Bruce A. and Lui, Yui Man},
+  booktitle={Computer Vision & Pattern Recognition},
+  year={2010},
+}
+"""
 import numpy as np
 import cv2
 from lib.utils import gaussian2d_labels,cos_window
 from .base import BaseCF
+
 class MOSSE(BaseCF):
     def __init__(self,interp_factor=0.125,sigma=2.):
         super(MOSSE).__init__()
@@ -70,8 +80,6 @@ class MOSSE(BaseCF):
         tmp = np.sum(W[:, :2], axis=1).reshape((2, 1))
         W[:, 2:] = center_warp - center_warp * tmp
         warped = cv2.warpAffine(img, W, (w, h), cv2.BORDER_REFLECT)
-        #cv2.imshow('demo',(warped*255).astype(np.uint8))
-        #cv2.waitKey(0)
         return warped
 
 

@@ -1,9 +1,20 @@
+"""
+Python re-implementation of "Accurate Scale Estimation for Robust Visual Tracking"
+@inproceedings{DSST,
+  author = {Danelljan, Martin and H?ger, Gustav and Khan, Fahad and Felsberg, Michael},
+  title = {{Accurate Scale Estimation for Robust Visual Tracking}},
+  booktitle = {Proceedings of the British Machine Vision Conference 2014},
+  year = {2014},
+  publisher = {BMVA Press},
+}
+"""
 import numpy as np
 import cv2
 from .base import BaseCF
 from .feature import extract_hog_feature
 from lib.utils import gaussian2d_labels,cos_window
 from lib.fft_tools import fft2,ifft2
+
 class DSST(BaseCF):
     def __init__(self, interp_factor=0.025, sigma=0.2, lambda_=0.01,output_sigma_factor=1./16,
                  scale_sigma_factor=1./4,num_of_scales=33,scale_step=1.02,scale_model_max_area=512,

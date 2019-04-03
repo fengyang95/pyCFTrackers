@@ -25,6 +25,11 @@ def extract_cn_feature_pyECO(img, center, sz, cell_size=1):
     out = np.concatenate((gray,cn_feature), axis=2)
     return out
 
+def extrac_hc_feature(img,center,sz,cell_size=4):
+    cn_feature=extract_cn_feature_pyECO(img,center,sz,cell_size)
+    hog_feature=extract_hog_feature_pyECO(img,center,sz,cell_size)
+    return np.concatenate((hog_feature,cn_feature),axis=2)
+
 def extract_cn_feature(img, center, sz, w2c):
     patch=cv2.getRectSubPix(img,sz,center)
     gray = cv2.cvtColor(patch, cv2.COLOR_BGR2GRAY).astype(np.float32) / 255 - 0.5
