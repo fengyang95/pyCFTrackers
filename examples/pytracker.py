@@ -39,20 +39,16 @@ class PyTracker:
             self.tracker=DSST()
         elif self.tracker_type=='Staple':
             self.tracker=Staple()
-        elif self.tracker_type=='KCF_pyECO_HOG':
-            self.tracker=KCF(features='hog_pyECO',kernel='gaussian')
         elif self.tracker_type=='KCF_CN':
             self.tracker=KCF(features='cn',kernel='gaussian')
-        elif self.tracker_type=='KCF_pyECO_CN':
-            self.tracker=KCF(features='pyECO_cn',kernel='gaussian')
         elif self.tracker_type=='KCF_GRAY':
             self.tracker=KCF(features='gray',kernel='gaussian')
         elif self.tracker_type=='KCF_HOG':
-            self.tracker=KCF(features='hog_uoip',kernel='gaussian')
+            self.tracker=KCF(features='hog',kernel='gaussian')
         elif self.tracker_type=='DCF_GRAY':
             self.tracker=KCF(features='gray',kernel='linear')
         elif self.tracker_type=='DCF_HOG':
-            self.tracker=KCF(features='hog_uoip',kernel='linear')
+            self.tracker=KCF(features='hog',kernel='linear')
         elif self.tracker_type=='DAT':
             self.tracker=DAT()
         elif self.tracker_type=='ECO-HC':

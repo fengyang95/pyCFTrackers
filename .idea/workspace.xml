@@ -1,8 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/cftracker/feature.py" line="6" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="224459dd-dab2-4666-9281-dee54f6f3a0f" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/cftracker/config/staple_config.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/eco/config/vot18_hc_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cftracker/bacf.py" beforeDir="false" afterPath="$PROJECT_DIR$/cftracker/bacf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cftracker/cn.py" beforeDir="false" afterPath="$PROJECT_DIR$/cftracker/cn.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cftracker/dsst.py" beforeDir="false" afterPath="$PROJECT_DIR$/cftracker/dsst.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cftracker/eco.py" beforeDir="false" afterPath="$PROJECT_DIR$/cftracker/eco.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cftracker/feature.py" beforeDir="false" afterPath="$PROJECT_DIR$/cftracker/feature.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cftracker/kcf.py" beforeDir="false" afterPath="$PROJECT_DIR$/cftracker/kcf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cftracker/staple.py" beforeDir="false" afterPath="$PROJECT_DIR$/cftracker/staple.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval/eval_OTB.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/eval_OTB.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval/get_vot2016_result.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/get_vot2016_result.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval/get_vot2018_result.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/get_vot2018_result.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval/log_test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/eval/log_test.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval/log_test_vot2016.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval/log_test_vot2018.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval/ope_otb.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/ope_otb.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval/w2crs.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/pytracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/pytracker.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/w2crs.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/eco/config/gpu_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/eco/config/gpu_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/eco/config/vot16_deep_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/eco/config/vot16_deep_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/eco/config/vot18_deep_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/eco/config/vot18_deep_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/eco/config/vot_hc_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/eco/config/vot16_hc_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/eco/features/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/eco/features/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/eco/features/features.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/eco/features/features.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/eco/scale_filter.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/eco/scale_filter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/eco/tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/eco/tracker.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/pytracker_OPE_OTB100_precision.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/pytracker_OPE_OTB100_precision.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/pytracker_OPE_OTB100_success.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/pytracker_OPE_OTB100_success.png" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -13,28 +46,28 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/pyCFTrackers$processing.coverage" NAME="processing Coverage Results" MODIFIED="1553945849218" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dataset/OTB100" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$eval_VOT2018__1_.coverage" NAME="eval_VOT2018 (1) Coverage Results" MODIFIED="1554023578050" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
-    <SUITE FILE_PATH="coverage/pyCFTrackers$ope_otb.coverage" NAME="ope_otb Coverage Results" MODIFIED="1554275864815" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
+    <SUITE FILE_PATH="coverage/pyCFTrackers$ope_otb.coverage" NAME="ope_otb Coverage Results" MODIFIED="1554453775178" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$ope_otb__1_.coverage" NAME="ope_otb (1) Coverage Results" MODIFIED="1554076639688" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
-    <SUITE FILE_PATH="coverage/pyCFTrackers$eval_VOT2018.coverage" NAME="eval_VOT2018 Coverage Results" MODIFIED="1554279599436" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
+    <SUITE FILE_PATH="coverage/pyCFTrackers$eval_VOT2018.coverage" NAME="eval_VOT2018 Coverage Results" MODIFIED="1554470834972" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$get_vot_result_16.coverage" NAME="get_vot_result_16 Coverage Results" MODIFIED="1553963286266" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$get_lengths__1_.coverage" NAME="get_lengths (1) Coverage Results" MODIFIED="1554041970426" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dataset/VOT2018" />
-    <SUITE FILE_PATH="coverage/pyCFTrackers$get_vot2016_result.coverage" NAME="get_vot2016_result Coverage Results" MODIFIED="1554275837386" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
+    <SUITE FILE_PATH="coverage/pyCFTrackers$get_vot2016_result.coverage" NAME="get_vot2016_result Coverage Results" MODIFIED="1554470956560" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$eval_stdVOT2018.coverage" NAME="eval_stdVOT2018 Coverage Results" MODIFIED="1554008381342" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$vis_feature.coverage" NAME="vis_feature Coverage Results" MODIFIED="1553867952569" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/vis" />
-    <SUITE FILE_PATH="coverage/pyCFTrackers$get_vot2018_result.coverage" NAME="get_vot2018_result Coverage Results" MODIFIED="1554276053063" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
+    <SUITE FILE_PATH="coverage/pyCFTrackers$get_vot2018_result.coverage" NAME="get_vot2018_result Coverage Results" MODIFIED="1554470960374" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$vis_procedure.coverage" NAME="vis_procedure Coverage Results" MODIFIED="1553866137609" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/vis_tracking_procedure" />
-    <SUITE FILE_PATH="coverage/pyCFTrackers$eval_OTB.coverage" NAME="eval_OTB Coverage Results" MODIFIED="1554287125659" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
+    <SUITE FILE_PATH="coverage/pyCFTrackers$eval_OTB.coverage" NAME="eval_OTB Coverage Results" MODIFIED="1554470691044" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$add_a_cf_tracker.coverage" NAME="add_a_cf_tracker Coverage Results" MODIFIED="1553914879006" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$draw_plot.coverage" NAME="draw_plot Coverage Results" MODIFIED="1553868060156" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/vis" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$get_vot_result.coverage" NAME="get_vot_result Coverage Results" MODIFIED="1554133454770" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$eval.coverage" NAME="eval Coverage Results" MODIFIED="1553962394286" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
-    <SUITE FILE_PATH="coverage/pyCFTrackers$cf_demo.coverage" NAME="cf_demo Coverage Results" MODIFIED="1554282458714" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/pyCFTrackers$cf_demo.coverage" NAME="cf_demo Coverage Results" MODIFIED="1554441946399" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$eval_VOT.coverage" NAME="eval_VOT Coverage Results" MODIFIED="1553910569583" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$draw_plot_for_review.coverage" NAME="draw_plot_for_review Coverage Results" MODIFIED="1553780238955" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/vis" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$otb_hc_config.coverage" NAME="otb_hc_config Coverage Results" MODIFIED="1554129665899" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/lib/eco/config" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$draw_eao.coverage" NAME="draw_eao Coverage Results" MODIFIED="1553865411197" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/lib/pysot/visualization" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$vgg_feature2.coverage" NAME="vgg_feature2 Coverage Results" MODIFIED="1553867980007" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/vis" />
-    <SUITE FILE_PATH="coverage/pyCFTrackers$eval_VOT2016.coverage" NAME="eval_VOT2016 Coverage Results" MODIFIED="1554279490075" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
+    <SUITE FILE_PATH="coverage/pyCFTrackers$eval_VOT2016.coverage" NAME="eval_VOT2016 Coverage Results" MODIFIED="1554470859797" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/eval" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$get_lengths.coverage" NAME="get_lengths Coverage Results" MODIFIED="1554041744498" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dataset/VOT2016" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$test.coverage" NAME="test Coverage Results" MODIFIED="1554280901859" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cftracker" />
     <SUITE FILE_PATH="coverage/pyCFTrackers$replicate_files.coverage" NAME="replicate_files Coverage Results" MODIFIED="1554007285582" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools/test/VOT2018" />
@@ -71,46 +104,48 @@
           <entry key="LICENSE" value="1" />
           <entry key="MD" value="1" />
           <entry key="c" value="1" />
+          <entry key="cpp" value="9" />
           <entry key="gitignore" value="2" />
           <entry key="h" value="1" />
-          <entry key="jpg" value="21" />
+          <entry key="hpp" value="4" />
+          <entry key="jpg" value="22" />
           <entry key="json" value="9" />
-          <entry key="mat" value="7" />
-          <entry key="md" value="8" />
+          <entry key="mat" value="8" />
+          <entry key="md" value="9" />
           <entry key="png" value="22" />
-          <entry key="py" value="547" />
+          <entry key="py" value="752" />
           <entry key="pyx" value="3" />
           <entry key="sh" value="4" />
-          <entry key="txt" value="72" />
+          <entry key="txt" value="123" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="C++" value="2" />
+          <entry key="C++" value="15" />
           <entry key="Cython" value="3" />
-          <entry key="Image" value="43" />
+          <entry key="Image" value="44" />
           <entry key="JSON" value="9" />
-          <entry key="Markdown" value="9" />
-          <entry key="PLAIN_TEXT" value="86" />
-          <entry key="Python" value="547" />
+          <entry key="Markdown" value="10" />
+          <entry key="PLAIN_TEXT" value="138" />
+          <entry key="Python" value="752" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="MD" value="66" />
-          <entry key="dummy" value="51" />
+          <entry key="dummy" value="55" />
           <entry key="gitignore" value="164" />
-          <entry key="md" value="905" />
-          <entry key="py" value="15930" />
+          <entry key="md" value="920" />
+          <entry key="py" value="20105" />
           <entry key="sh" value="202" />
           <entry key="txt" value="9" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Markdown" value="971" />
-          <entry key="PLAIN_TEXT" value="426" />
-          <entry key="Python" value="15930" />
+          <entry key="Markdown" value="986" />
+          <entry key="PLAIN_TEXT" value="430" />
+          <entry key="Python" value="20105" />
         </counts>
       </usages-collector>
     </session>
@@ -118,92 +153,96 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/eval/get_vot2018_result.py">
+        <entry file="file://$PROJECT_DIR$/eval/get_vot2016_result.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="10" column="45" selection-start-line="10" selection-start-column="33" selection-end-line="10" selection-end-column="45" />
+            <state relative-caret-position="-2737">
+              <caret line="32" column="65" selection-start-line="32" selection-start-column="65" selection-end-line="32" selection-end-column="65" />
+              <folding>
+                <element signature="e#0#31#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/eval/get_vot2016_result.py">
+        <entry file="file://$PROJECT_DIR$/cftracker/eco.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3119">
-              <caret line="9" column="64" selection-start-line="9" selection-start-column="51" selection-end-line="9" selection-end-column="64" />
+            <state relative-caret-position="242">
+              <caret line="23" column="42" selection-start-line="23" selection-start-column="42" selection-end-line="23" selection-end-column="42" />
+              <folding>
+                <element signature="e#125#143#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/readme.md">
-          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-            <state split_layout="SPLIT">
-              <first_editor relative-caret-position="264">
-                <caret line="12" column="183" selection-start-line="12" selection-start-column="183" selection-end-line="12" selection-end-column="183" />
-              </first_editor>
-              <second_editor />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/results/pytracker_OPE_OTB100_precision.png">
-          <provider selected="true" editor-type-id="images" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/eval/eval_OTB.py">
+        <entry file="file://$PROJECT_DIR$/eval/get_vot2018_result.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="158">
-              <caret line="12" column="61" selection-start-line="12" selection-start-column="61" selection-end-line="12" selection-end-column="61" />
+            <state relative-caret-position="-2715">
+              <caret line="32" column="65" selection-start-line="32" selection-start-column="65" selection-end-line="32" selection-end-column="65" />
               <folding>
-                <element signature="e#0#15#0" expanded="true" />
+                <element signature="e#0#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/results/pytracker_OPE_OTB100_success.png">
-          <provider selected="true" editor-type-id="images" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/pysot/visualization/draw_success_precision.py">
+        <entry file="file://$PROJECT_DIR$/lib/eco/config/otb_hc_config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="158">
-              <caret line="31" column="25" selection-start-line="31" selection-start-column="22" selection-end-line="31" selection-end-column="27" />
+            <state relative-caret-position="348">
+              <caret line="104" column="14" selection-end-line="104" selection-end-column="14" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/testvirtual/env1/lib/python3.5/site-packages/matplotlib/pyplot.py">
+        <entry file="file://$PROJECT_DIR$/lib/eco/config/vot16_deep_config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-97">
-              <caret line="3345" column="4" selection-start-line="3345" selection-start-column="4" selection-end-line="3345" selection-end-column="4" />
+            <state relative-caret-position="286">
+              <caret line="34" column="25" selection-start-line="34" selection-start-column="25" selection-end-line="34" selection-end-column="25" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/pysot/visualization/draw_utils.py">
+        <entry file="file://$PROJECT_DIR$/lib/eco/config/vot18_deep_config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="80">
-              <caret line="12" column="8" selection-start-line="12" selection-start-column="8" selection-end-line="12" selection-end-column="8" />
+            <state relative-caret-position="308">
+              <caret line="32" column="24" selection-start-line="32" selection-start-column="24" selection-end-line="32" selection-end-column="24" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/eval/eval_VOT2016.py">
+        <entry file="file://$PROJECT_DIR$/lib/eco/config/otb_deep_config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="334">
-              <caret line="24" column="87" selection-start-line="24" selection-start-column="87" selection-end-line="24" selection-end-column="87" />
-              <folding>
-                <element signature="e#0#15#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="528">
+              <caret line="39" column="31" selection-start-line="39" selection-start-column="25" selection-end-line="39" selection-end-column="31" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/eco/config/otb_hc_srdcf_config.py">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/eco/config/vot18_hc_config.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="11" selection-start-column="11" selection-end-column="11" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/eco/config/vot16_hc_config.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="396">
+              <caret line="18" column="32" selection-start-line="18" selection-start-column="32" selection-end-line="18" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -225,6 +264,14 @@
       <find>kx</find>
       <find>use_sz</find>
       <find>print</find>
+      <find>CLI</find>
+      <find>clip</find>
+      <find>gpu_config</find>
+      <find>format</find>
+      <find>hog</find>
+      <find>hog_feature</find>
+      <find>get_Fefeaure</find>
+      <find>feature</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -233,12 +280,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/tools/eval_OTB.sh" />
-        <option value="$PROJECT_DIR$/tools/eval_VOT2018.sh" />
-        <option value="$PROJECT_DIR$/tools/eval.py" />
-        <option value="$PROJECT_DIR$/tools/ope_otb.py" />
-        <option value="$PROJECT_DIR$/tools/get_vot_result_16.py" />
-        <option value="$PROJECT_DIR$/tools/eval_stdVOT2018.py" />
         <option value="$PROJECT_DIR$/tools/eval_VOT2018.py" />
         <option value="$PROJECT_DIR$/tools/test/VOT2018/replicate_files.py" />
         <option value="$PROJECT_DIR$/cftracker/config/dat_config.py" />
@@ -248,42 +289,48 @@
         <option value="$PROJECT_DIR$/dataset/VOT2016/get_lengths.py" />
         <option value="$PROJECT_DIR$/dataset/VOT2018/get_lengths.py" />
         <option value="$PROJECT_DIR$/lib/pysot/evaluation/eao_benchmark.py" />
-        <option value="$PROJECT_DIR$/lib/eco/features/features.py" />
-        <option value="$PROJECT_DIR$/lib/eco/config/vot_hc_config.py" />
         <option value="$PROJECT_DIR$/lib/eco/config/otb_hc_config.py" />
         <option value="$PROJECT_DIR$/eval/get_vot_result.py" />
         <option value="$PROJECT_DIR$/lib/eco/config/vot_deep_config.py" />
-        <option value="$PROJECT_DIR$/lib/eco/config/gpu_config.py" />
-        <option value="$PROJECT_DIR$/lib/eco/config/vot16_deep_config.py" />
-        <option value="$PROJECT_DIR$/lib/eco/config/vot18_deep_config.py" />
         <option value="$PROJECT_DIR$/lib/eco/config/otb_deep_config.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
-        <option value="$PROJECT_DIR$/examples/pytracker.py" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/cftracker/config/bacf_config.py" />
-        <option value="$PROJECT_DIR$/eval/get_vot2016_result.py" />
-        <option value="$PROJECT_DIR$/eval/ope_otb.py" />
-        <option value="$PROJECT_DIR$/eval/get_vot2018_result.py" />
         <option value="$PROJECT_DIR$/cftracker/csk.py" />
-        <option value="$PROJECT_DIR$/eval/eval_VOT2016.py" />
         <option value="$PROJECT_DIR$/eval/eval_VOT2018.py" />
-        <option value="$PROJECT_DIR$/cftracker/eco.py" />
         <option value="$PROJECT_DIR$/cftracker/mosse.py" />
-        <option value="$PROJECT_DIR$/cftracker/bacf.py" />
         <option value="$PROJECT_DIR$/cftracker/dat.py" />
-        <option value="$PROJECT_DIR$/cftracker/dsst.py" />
-        <option value="$PROJECT_DIR$/cftracker/kcf.py" />
         <option value="$PROJECT_DIR$/cftracker/test.py" />
-        <option value="$PROJECT_DIR$/cftracker/staple.py" />
         <option value="$PROJECT_DIR$/lib/utils.py" />
-        <option value="$PROJECT_DIR$/cftracker/feature.py" />
-        <option value="$PROJECT_DIR$/cftracker/cn.py" />
-        <option value="$PROJECT_DIR$/examples/cf_demo.py" />
         <option value="$PROJECT_DIR$/cftracker/config/cn_config.py" />
         <option value="$PROJECT_DIR$/lib/log_helper.py" />
         <option value="$PROJECT_DIR$/lib/pysot/visualization/draw_utils.py" />
-        <option value="$PROJECT_DIR$/eval/eval_OTB.py" />
+        <option value="$PROJECT_DIR$/eval/eval_VOT2016.py" />
+        <option value="$PROJECT_DIR$/examples/pytracker.py" />
+        <option value="$PROJECT_DIR$/cftracker/kcf.py" />
+        <option value="$PROJECT_DIR$/lib/eco/scale_filter.py" />
         <option value="$PROJECT_DIR$/readme.md" />
+        <option value="$PROJECT_DIR$/cftracker/dsst.py" />
+        <option value="$PROJECT_DIR$/examples/cf_demo.py" />
+        <option value="$PROJECT_DIR$/cftracker/cn.py" />
+        <option value="$PROJECT_DIR$/cftracker/bacf.py" />
+        <option value="$PROJECT_DIR$/cftracker/feature.py" />
+        <option value="$PROJECT_DIR$/eval/ope_otb.py" />
+        <option value="$PROJECT_DIR$/lib/eco/config/gpu_config.py" />
+        <option value="$PROJECT_DIR$/cftracker/staple.py" />
+        <option value="$PROJECT_DIR$/cftracker/config/staple_config.py" />
+        <option value="$PROJECT_DIR$/lib/eco/config/vot_hc_config.py" />
+        <option value="$PROJECT_DIR$/lib/eco/features/__init__.py" />
+        <option value="$PROJECT_DIR$/lib/eco/tracker.py" />
+        <option value="$PROJECT_DIR$/eval/eval_OTB.py" />
+        <option value="$PROJECT_DIR$/lib/eco/config/vot18_deep_config.py" />
+        <option value="$PROJECT_DIR$/lib/eco/config/vot16_deep_config.py" />
+        <option value="$PROJECT_DIR$/eval/get_vot2016_result.py" />
+        <option value="$PROJECT_DIR$/lib/eco/features/features.py" />
+        <option value="$PROJECT_DIR$/lib/eco/config/vot16_hc_config.py" />
+        <option value="$PROJECT_DIR$/lib/eco/config/vot18_hc_config.py" />
+        <option value="$PROJECT_DIR$/eval/get_vot2018_result.py" />
+        <option value="$PROJECT_DIR$/cftracker/eco.py" />
       </list>
     </option>
   </component>
@@ -316,7 +363,23 @@
             <path>
               <item name="pyCFTrackers" type="b2602c69:ProjectViewProjectNode" />
               <item name="pyCFTrackers" type="462c0819:PsiDirectoryNode" />
+              <item name="cftracker" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pyCFTrackers" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pyCFTrackers" type="462c0819:PsiDirectoryNode" />
+              <item name="cftracker" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pyCFTrackers" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pyCFTrackers" type="462c0819:PsiDirectoryNode" />
               <item name="eval" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pyCFTrackers" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pyCFTrackers" type="462c0819:PsiDirectoryNode" />
+              <item name="examples" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="pyCFTrackers" type="b2602c69:ProjectViewProjectNode" />
@@ -326,7 +389,22 @@
             <path>
               <item name="pyCFTrackers" type="b2602c69:ProjectViewProjectNode" />
               <item name="pyCFTrackers" type="462c0819:PsiDirectoryNode" />
-              <item name="results" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+              <item name="eco" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pyCFTrackers" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pyCFTrackers" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+              <item name="eco" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pyCFTrackers" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pyCFTrackers" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+              <item name="eco" type="462c0819:PsiDirectoryNode" />
+              <item name="features" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -336,15 +414,15 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/results" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/results/pytracker_OPE_OTB100_success.png" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/dataset/test" />
       <recent name="$PROJECT_DIR$/lib/eco/config" />
+      <recent name="$PROJECT_DIR$/dataset/test" />
       <recent name="$PROJECT_DIR$/eval" />
       <recent name="$PROJECT_DIR$/dataset/VOT2018" />
       <recent name="$PROJECT_DIR$/tools/official/VOT2018/KCF/baseline/book" />
@@ -365,29 +443,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.eval_OTB">
-    <configuration name="cf_demo" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="pyCFTrackers" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/cf_demo.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.get_vot2018_result">
     <configuration name="eval_OTB" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pyCFTrackers" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -454,7 +510,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="get_vot2016_result" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pyCFTrackers" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -462,12 +518,34 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/cftracker" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/eval" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/cftracker/test.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/eval/get_vot2016_result.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="get_vot2018_result" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="pyCFTrackers" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/eval" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/eval/get_vot2018_result.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -477,19 +555,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.eval_VOT2016" />
+      <item itemvalue="Python.get_vot2018_result" />
       <item itemvalue="Python.eval_VOT2018" />
-      <item itemvalue="Python.cf_demo" />
-      <item itemvalue="Python.test" />
+      <item itemvalue="Python.eval_VOT2016" />
       <item itemvalue="Python.eval_OTB" />
+      <item itemvalue="Python.get_vot2016_result" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.eval_OTB" />
-        <item itemvalue="Python.cf_demo" />
-        <item itemvalue="Python.test" />
-        <item itemvalue="Python.eval_VOT2018" />
+        <item itemvalue="Python.get_vot2018_result" />
+        <item itemvalue="Python.get_vot2016_result" />
         <item itemvalue="Python.eval_VOT2016" />
+        <item itemvalue="Python.eval_VOT2018" />
+        <item itemvalue="Python.eval_OTB" />
       </list>
     </recent_temporary>
   </component>
@@ -508,14 +586,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="24" width="1922" height="1033" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.8442105" visible="true" weight="0.22358592" />
-      <window_info id="Structure" order="1" sideWeight="0.15578948" side_tool="true" visible="true" weight="0.22358592" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.87808895" visible="true" weight="0.19797225" />
+      <window_info id="Structure" order="1" sideWeight="0.12191104" side_tool="true" visible="true" weight="0.19797225" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49626467" weight="0.32964602" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.82657415" weight="0.38053098" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49359658" weight="0.32964602" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.8233725" visible="true" weight="0.32853982" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49893278" weight="0.39933628" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -523,13 +600,13 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.40234792" side_tool="true" visible="true" weight="0.47455752" />
-      <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.5976521" visible="true" weight="0.47455752" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.17662753" side_tool="true" visible="true" weight="0.32853982" />
+      <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.5976521" weight="0.2931416" />
       <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.49893278" weight="0.32964602" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="SciView" order="3" visible="true" weight="0.30149412" />
+      <window_info anchor="right" id="SciView" order="3" visible="true" weight="0.21664888" />
       <window_info anchor="right" id="Database" order="4" weight="0.32977587" />
     </layout>
     <layout-to-restore>
@@ -563,286 +640,108 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/lib/eco/config/vot16_deep_config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="10" column="36" lean-forward="true" selection-start-line="10" selection-start-column="36" selection-end-line="10" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/eco/config/otb_deep_config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
-          <caret line="27" column="27" selection-start-line="27" selection-start-column="27" selection-end-line="27" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lib/pysot/evaluation/eao_benchmark.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="366">
-          <caret line="149" column="51" selection-start-line="149" selection-start-column="32" selection-end-line="149" selection-end-column="58" />
+        <state relative-caret-position="-1986">
+          <caret line="53" column="70" selection-start-line="53" selection-start-column="64" selection-end-line="53" selection-end-column="70" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/pysot/utils/statistics.py">
+    <entry file="file://$PROJECT_DIR$/lib/pysot/evaluation/f1_benchmark.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="162" column="51" selection-start-line="162" selection-start-column="51" selection-end-line="162" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/pyvotkit/region.pyx" />
-    <entry file="file://$PROJECT_DIR$/examples/vis/OTB100_info.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/pysot/utils/region.pyx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3354">
-          <caret line="191" column="44" selection-start-line="191" selection-start-column="38" selection-end-line="191" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/LICENSE">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/eco/config/vot18_deep_config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="384">
-          <caret line="95" column="24" selection-start-line="95" selection-start-column="24" selection-end-line="95" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/testvirtual/env1/lib/python3.5/site-packages/numpy/lib/nanfunctions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="490" selection-start-line="490" selection-end-line="490" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/testvirtual/env1/lib/python3.5/site-packages/numpy/core/einsumfunc.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="23408">
-          <caret line="1068" selection-start-line="1068" selection-end-line="1068" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/pytracker.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1540">
-          <caret line="82" selection-start-line="82" selection-end-line="82" />
+        <state relative-caret-position="-2902">
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/eval/ope_otb.py">
+    <entry file="file://$PROJECT_DIR$/lib/pysot/evaluation/ope_benchmark.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="114" column="19" selection-start-line="114" selection-start-column="19" selection-end-line="114" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/eval/log_test_vot2018.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-13415" />
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/testvirtual/env1/lib/python3.5/weakref.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="658">
-          <caret line="116" selection-start-line="116" selection-end-line="116" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/eval/eval_VOT2018.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="36" column="36" selection-start-line="36" selection-start-column="36" selection-end-line="36" selection-end-column="36" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/fhog.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
+        <state relative-caret-position="-3944">
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cftracker/dat.py">
+    <entry file="file://$PROJECT_DIR$/lib/pysot/evaluation/ar_benchmark.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="15" selection-start-line="15" selection-end-line="15" />
-          <folding>
-            <element signature="e#312#330#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="176">
+          <caret line="106" column="82" selection-start-line="106" selection-start-column="24" selection-end-line="106" selection-end-column="86" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cftracker/test.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cftracker/staple.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-70">
-          <caret line="20" column="30" selection-start-line="20" selection-start-column="30" selection-end-line="20" selection-end-column="30" />
-          <folding>
-            <element signature="e#369#387#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="101" column="3" lean-forward="true" selection-start-line="101" selection-start-column="3" selection-end-line="101" selection-end-column="3" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cftracker/eco.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="5" selection-start-line="5" selection-end-line="5" />
-          <folding>
-            <element signature="e#125#143#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cftracker/dsst.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2970">
-          <caret line="16" selection-start-line="16" selection-end-line="16" />
-          <folding>
-            <element signature="e#390#408#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cftracker/feature.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="520">
-          <caret line="31" selection-start-line="31" selection-end-line="31" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-            <marker date="1554282348881" expanded="true" signature="1248:1441" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cftracker/bacf.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="15" selection-start-line="15" selection-end-line="15" />
-          <folding>
-            <element signature="e#299#317#0" expanded="true" />
-          </folding>
+    <entry file="file://$PROJECT_DIR$/readme.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="286">
+            <caret line="16" column="64" selection-start-line="16" selection-start-column="64" selection-end-line="16" selection-end-column="64" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cftracker/base.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/cftracker/config/bacf_config.py">
+    <entry file="file://$PROJECT_DIR$/eval/eval_VOT2016.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="7" column="18" selection-end-line="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cftracker/config/dat_config.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cftracker/config/cn_config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
+        <state relative-caret-position="198">
+          <caret line="24" column="86" selection-start-line="24" selection-start-column="4" selection-end-line="24" selection-end-column="89" />
           <folding>
-            <marker date="1554282458685" expanded="true" signature="15:142" ph="..." />
+            <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cftracker/cn.py">
+    <entry file="file://$PROJECT_DIR$/eval/log_test_vot2016.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1034">
-          <caret line="47" column="47" selection-start-line="47" selection-start-column="47" selection-end-line="47" selection-end-column="47" />
+        <state relative-caret-position="330">
+          <caret line="84" column="43" lean-forward="true" selection-start-line="84" selection-start-column="43" selection-end-line="84" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cftracker/dat.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
           <folding>
-            <element signature="e#389#407#0" expanded="true" />
+            <element signature="e#312#330#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cftracker/csk.py">
+    <entry file="file://$PROJECT_DIR$/cftracker/dsst.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="418">
-          <caret line="55" column="17" selection-start-line="55" selection-start-column="17" selection-end-line="55" selection-end-column="17" />
-          <folding>
-            <element signature="e#329#347#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="286">
+          <caret line="13" column="27" selection-start-line="13" selection-start-column="21" selection-end-line="13" selection-end-column="40" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cftracker/kcf.py">
+    <entry file="file://$PROJECT_DIR$/examples/pytracker.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3669">
-          <caret line="6" column="11" selection-start-line="6" selection-start-column="7" selection-end-line="6" selection-end-column="11" />
+        <state relative-caret-position="364">
+          <caret line="86" column="10" selection-start-line="86" selection-start-column="10" selection-end-line="86" selection-end-column="10" />
           <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cftracker/mosse.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="17" column="40" selection-start-line="17" selection-start-column="40" selection-end-line="17" selection-end-column="40" />
-          <folding>
-            <element signature="e#356#374#0" expanded="true" />
+            <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/bbox_helper.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-484">
-          <caret line="5" selection-start-line="5" selection-end-line="5" />
+        <state>
           <folding>
             <element signature="e#214#232#0" expanded="true" />
           </folding>
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/eco/config/demo_config.py">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/cf_demo.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -854,97 +753,296 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/log_helper.py">
+    <entry file="file://$USER_HOME$/.PyCharm2018.2/system/python_stubs/1719315745/cv2/cv2/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="155">
+          <caret line="6672" column="4" selection-start-line="6672" selection-start-column="4" selection-end-line="6672" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cftracker/csk.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
-          <caret column="58" selection-start-column="58" selection-end-column="58" />
           <folding>
-            <element signature="e#214#245#0" expanded="true" />
+            <element signature="e#329#347#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/fft_tools.py">
+    <entry file="file://$PROJECT_DIR$/lib/eco/cuda_tools.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/benchmark_helper.py">
+    <entry file="file://$PROJECT_DIR$/lib/fhog.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-655">
-          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+        <state>
           <folding>
-            <element signature="e#214#272#0" expanded="true" />
+            <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/eval/get_vot2018_result.py">
+    <entry file="file://$PROJECT_DIR$/lib/log_helper.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="10" column="45" selection-start-line="10" selection-start-column="33" selection-end-line="10" selection-end-column="45" />
+        <state relative-caret-position="-471">
+          <caret line="4" selection-start-line="4" selection-end-line="4" />
+          <folding>
+            <element signature="e#203#234#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/eval/get_vot2016_result.py">
+    <entry file="file://$PROJECT_DIR$/lib/eco/features/gradient.hpp">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/eco/features/setup.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3119">
-          <caret line="9" column="64" selection-start-line="9" selection-start-column="51" selection-end-line="9" selection-end-column="64" />
+        <state relative-caret-position="22">
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
+          <folding>
+            <element signature="e#42#85#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/testvirtual/env1/lib/python3.5/site-packages/matplotlib/pyplot.py">
+    <entry file="file://$PROJECT_DIR$/lib/eco/features/sse.hpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-97">
-          <caret line="3345" column="4" selection-start-line="3345" selection-start-column="4" selection-end-line="3345" selection-end-column="4" />
+        <state relative-caret-position="-952" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/eco/features/wrappers.hpp">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/eval/log_test_vot2018.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1120">
+          <caret line="588" column="127" selection-start-line="588" selection-start-column="127" selection-end-line="588" selection-end-column="127" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/pysot/visualization/draw_success_precision.py">
+    <entry file="file://$PROJECT_DIR$/lib/eco/features/gradient.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="31" column="25" selection-start-line="31" selection-start-column="22" selection-end-line="31" selection-end-column="27" />
+        <state relative-caret-position="242">
+          <caret line="11" selection-start-line="11" selection-end-line="11" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/pysot/visualization/draw_utils.py">
+    <entry file="file://$PROJECT_DIR$/lib/eco/features/_gradient.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="12" column="8" selection-start-line="12" selection-start-column="8" selection-end-line="12" selection-end-column="8" />
+        <state relative-caret-position="-3109">
+          <caret line="13" column="30" selection-start-line="13" selection-start-column="30" selection-end-line="13" selection-end-column="30" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/results/pytracker_OPE_OTB100_success.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/results/pytracker_OPE_OTB100_precision.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/eval/eval_VOT2016.py">
+    <entry file="file://$PROJECT_DIR$/cftracker/kcf.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="24" column="87" selection-start-line="24" selection-start-column="87" selection-end-line="24" selection-end-column="87" />
+        <state relative-caret-position="-2475">
+          <caret line="8" column="8" selection-start-line="8" selection-start-column="8" selection-end-line="8" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cftracker/mosse.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1518">
+          <folding>
+            <element signature="e#356#374#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cftracker/cn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="173">
+          <caret line="27" column="76" selection-start-line="27" selection-start-column="76" selection-end-line="27" selection-end-column="76" />
+          <folding>
+            <element signature="e#389#407#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cftracker/bacf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="88">
+          <caret line="13" column="32" selection-start-line="13" selection-start-column="21" selection-end-line="13" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cftracker/feature.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="21" column="22" selection-start-line="21" selection-start-column="22" selection-end-line="21" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+            <marker date="1554448169869" expanded="true" signature="852:1685" ph="..." />
+            <marker date="1554448169869" expanded="true" signature="1724:2513" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/eco/config/gpu_config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="88">
+          <caret line="4" column="22" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/eval/eval_VOT2018.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-330">
           <folding>
             <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cftracker/staple.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="83" column="35" selection-start-line="83" selection-start-column="35" selection-end-line="83" selection-end-column="35" />
+          <folding>
+            <element signature="e#369#387#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/eco/features/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="34" selection-start-column="34" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/eco/tracker.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="470">
+          <caret line="188" selection-start-line="188" selection-end-line="188" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/eval/eval_OTB.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="12" column="61" selection-start-line="12" selection-start-column="61" selection-end-line="12" selection-end-column="61" />
+        <state relative-caret-position="198">
+          <caret line="12" column="62" selection-start-line="12" selection-start-column="62" selection-end-line="12" selection-end-column="62" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/readme.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="264">
-            <caret line="12" column="183" selection-start-line="12" selection-start-column="183" selection-end-line="12" selection-end-column="183" />
-          </first_editor>
-          <second_editor />
+    <entry file="file://$PROJECT_DIR$/cftracker/config/staple_config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="376">
+          <caret line="43" selection-start-line="43" selection-end-line="43" />
+          <folding>
+            <marker date="1554462674970" expanded="true" signature="19:20" ph="..." />
+            <marker date="1554462674970" expanded="true" signature="538:1035" ph="..." />
+            <marker date="1554462674970" expanded="true" signature="1034:1035" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/eval/ope_otb.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="115" column="33" selection-start-line="115" selection-start-column="33" selection-end-line="115" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/eco/config/vot16_hc_config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1254" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/eco/features/features.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="230" column="35" selection-start-line="230" selection-start-column="35" selection-end-line="230" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/eco/config/otb_hc_config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="348">
+          <caret line="104" column="14" selection-end-line="104" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/eco/config/otb_deep_config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="39" column="31" selection-start-line="39" selection-start-column="25" selection-end-line="39" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/eco/config/otb_hc_srdcf_config.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/eco/config/vot16_deep_config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="34" column="25" selection-start-line="34" selection-start-column="25" selection-end-line="34" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cftracker/eco.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="242">
+          <caret line="23" column="42" selection-start-line="23" selection-start-column="42" selection-end-line="23" selection-end-column="42" />
+          <folding>
+            <element signature="e#125#143#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/eco/config/vot18_deep_config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="32" column="24" selection-start-line="32" selection-start-column="24" selection-end-line="32" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/eco/config/vot16_hc_config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="18" column="32" selection-start-line="18" selection-start-column="32" selection-end-line="18" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/eco/config/vot18_hc_config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="11" selection-start-column="11" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/eval/get_vot2016_result.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2737">
+          <caret line="32" column="65" selection-start-line="32" selection-start-column="65" selection-end-line="32" selection-end-column="65" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/eval/get_vot2018_result.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2715">
+          <caret line="32" column="65" selection-start-line="32" selection-start-column="65" selection-end-line="32" selection-end-column="65" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

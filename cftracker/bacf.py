@@ -95,7 +95,7 @@ class BACF(BaseCF):
         pixels=self.get_sub_window(first_frame,self._center,model_sz=self.crop_size,
                                    scaled_sz=(int(np.round(self.crop_size[0]*self.current_scale_factor)),
                                               int(np.round(self.crop_size[1]*self.current_scale_factor))))
-        feature=extract_hog_feature(pixels,cell_size=self.feature_ratio)
+        feature=extract_hog_feature(pixels, cell_size=self.feature_ratio)
         self.model_xf=fft2(self._window[:,:,None]*feature)
 
         self.g_f=self.ADMM(self.model_xf)
@@ -109,7 +109,7 @@ class BACF(BaseCF):
             sub_window=self.get_sub_window(current_frame,self._center,model_sz=self.crop_size,
                                         scaled_sz=(int(round(self.crop_size[0]*current_scale)),
                                     int(round(self.crop_size[1]*current_scale))))
-            feature=extract_hog_feature(sub_window,self.cell_size)[:,:,:,np.newaxis]
+            feature= extract_hog_feature(sub_window, self.cell_size)[:, :, :, np.newaxis]
             if x is None:
                 x=feature
             else:
@@ -159,7 +159,7 @@ class BACF(BaseCF):
         pixels=self.get_sub_window(current_frame,self._center,model_sz=self.crop_size,
                                    scaled_sz=(int(round(self.crop_size[0]*self.current_scale_factor)),
                                               int(round(self.crop_size[1]*self.current_scale_factor))))
-        feature=extract_hog_feature(pixels,cell_size=self.cell_size)
+        feature=extract_hog_feature(pixels, cell_size=self.cell_size)
         #feature=cv2.resize(pixels,self.feature_map_sz)/255-0.5
         xf=fft2(feature*self._window[:,:,None])
         self.model_xf=(1-self.interp_factor)*self.model_xf+self.interp_factor*xf

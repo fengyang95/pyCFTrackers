@@ -11,24 +11,24 @@ class VOT18DeepConfig:
                   "use_for_color": True,
                   "cell_size": 4,
                   "compressed_dim": 3,
-                  # "nDim": 10
+                 # "nDim": 10
                 }
 
     ic_params = {'fname': 'ic',
                   "table_name": "intensityChannelNorm6",
-                 "use_for_color": False,
-                  "cell_size": 4,
-                  "compressed_dim": 3,
+                "use_for_color": False,
+              "cell_size": 4,
+                 "compressed_dim": 3,
                  # "nDim": 10
-                  }
+                 }
 
     cnn_params = {'fname': "cnn-resnet50",
                   'compressed_dim': [16, 64]
                   }
-    # cnn_params = {'fname': "cnn-vgg16",
+    #cnn_params = {'fname': "cnn-vgg16",
     #               'compressed_dim': [16, 64]
     #               }
-    features = [fhog_params,cnn_params]
+    features = [fhog_params,cn_params,ic_params,cnn_params]
 
     # feature parameters
     normalize_power = 2
@@ -48,8 +48,8 @@ class VOT18DeepConfig:
     clamp_position = False              # clamp the target position to be inside the image
 
     # learning parameters
-    output_sigma_factor = 1 / 8.     # label function sigma
-    learning_rate = 0.010
+    output_sigma_factor = 1 / 12.     # label function sigma
+    learning_rate = 0.011
     num_samples = 50
     sample_replace_startegy = 'lowest_prior'
     lt_size = 0
@@ -61,7 +61,7 @@ class VOT18DeepConfig:
     use_projection_matrix = True
     update_projection_matrix = True
     proj_init_method = 'pca'
-    projection_reg = 5e-8
+    projection_reg = 2e-7
 
     # generative sample space model parameters
     use_sample_merge = True
@@ -70,21 +70,21 @@ class VOT18DeepConfig:
 
     # CG paramters
     CG_iter = 5
-    init_CG_iter = 15 * 15
-    init_GN_iter = 15
+    init_CG_iter = 10 * 20
+    init_GN_iter = 10
     CG_use_FR = False
     CG_standard_alpha = True
-    CG_forgetting_rate = 75
+    CG_forgetting_rate = 50
     precond_data_param = 0.3
-    precond_reg_param= 0.015
-    precond_proj_param = 35
+    precond_reg_param= 0.05
+    precond_proj_param = 70
 
     # regularization window paramters
     use_reg_window = True
     reg_window_min = 1e-4
     reg_window_edge = 10e-3
     reg_window_power = 2
-    reg_sparsity_threshold = 0.05
+    reg_sparsity_threshold = 0.15
 
     # interpolation parameters
     interp_method = 'bicubic'
@@ -93,6 +93,7 @@ class VOT18DeepConfig:
     interp_windowing = False
 
     # scale parameters
-    number_of_scales = 5
-    scale_step = 1.02# 1.015
+    number_of_scales = 7
+    scale_step = 1.01
     use_scale_filter = False
+    vis=False

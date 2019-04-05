@@ -49,9 +49,9 @@ def track_otb(tracker_type,dataset):
         elif tracker_type=='Staple':
             tracker=Staple()
         elif tracker_type=='KCF':
-            tracker=KCF(features='hog_uoip',kernel='gaussian')
+            tracker=KCF(features='hog',kernel='gaussian')
         elif tracker_type=='DCF':
-            tracker=KCF(features='hog_uoip',kernel='linear')
+            tracker=KCF(features='hog',kernel='linear')
         elif tracker_type=='DAT':
             tracker=DAT()
         elif tracker_type=='ECO-HC':
@@ -62,7 +62,6 @@ def track_otb(tracker_type,dataset):
             tracker=BACF()
         else:
             raise NotImplementedError
-
         for idx, (img, gt_bbox) in enumerate(video):
             if idx == 0:
             # init your tracker here
@@ -99,10 +98,6 @@ def track_otb(tracker_type,dataset):
                 fin.write(','.join([str(i) for i in x]) + '\n')
 
 
-
-
-
-
 def main():
     global args, logger, v_id
     args = parser.parse_args()
@@ -112,13 +107,14 @@ def main():
 
     logger = logging.getLogger('global')
     logger.info(args)
-    trackers=['BACF']
+    trackers = ['BACF','DCF','KCF','Staple','DSST']
     dataset = DatasetFactory.create_dataset(name='OTB100',
                                             dataset_root='../dataset/OTB100',
                                             load_img=True
                                             )
 
     for tracker_type in trackers:
+        print(tracker_type)
         track_otb(tracker_type,dataset)
 
 if __name__ == '__main__':

@@ -8,11 +8,11 @@ Python re-implementation of "Adaptive Color Attributes for Real-Time Visual Trac
 }
 """
 import numpy as np
-import h5py
+import cv2
 from .base import BaseCF
 from lib.utils import gaussian2d_labels,cos_window
 from lib.fft_tools import fft2,ifft2
-from cftracker.feature import extract_cn_feature,extract_cn_feature_pyECO
+from cftracker.feature import extract_cn_feature
 from .config.cn_config import CNConfig
 class CN(BaseCF):
     def __init__(self,config=CNConfig()):
@@ -20,24 +20,17 @@ class CN(BaseCF):
         self.interp_factor = config.interp_factor
         self.sigma = config.sigma
         self.lambda_ = config.lambda_
-        self.cn_type=config.cn_type
         self.padding=config.padding
         self.output_sigma_factor=config.output_sigma_factor
 
 
-    def get_sub_window(self,im,pos,sz,cn_type):
-        if cn_type=='matlab':
-            feature=extract_cn_feature(im,pos,sz,self.w2c)
-        elif cn_type=='pyECO':
-            feature=extract_cn_feature_pyECO(im,pos,sz)
-        else:
-            raise NotImplementedError
+    def get_sub_window(self,im,pos,sz):
+        patch=cv2.getRectSubPix(im,patchSize=sz,center=pos).astype(np.uint8)
+        feature=extract_cn_feature(patch,cell_size=1)
         return feature
 
 
     def init(self,first_frame,bbox):
-        mat = h5py.File('w2crs.mat')
-        self.w2c = mat['w2crs']
         bbox=np.array(bbox).astype(np.int64)
         x,y,w,h=tuple(bbox)
         self._center=(x+w/2,y+h/2)
@@ -48,7 +41,7 @@ class CN(BaseCF):
         self.y=gaussian2d_labels(self.crop_size,s)
         self.yf=fft2(self.y)
         self._init_response_center=np.unravel_index(np.argmax(self.y,axis=None),self.y.shape)
-        self.x=self.get_sub_window(first_frame, self._center, self.crop_size,cn_type=self.cn_type)
+        self.x=self.get_sub_window(first_frame, self._center, self.crop_size)
         self.x=self._window[:,:,None]*self.x
 
         kf=fft2(self._dgk(self.x,self.x))
@@ -57,7 +50,7 @@ class CN(BaseCF):
 
 
     def update(self,current_frame,vis=False):
-        z=self.get_sub_window(current_frame,self._center,self.crop_size,cn_type=self.cn_type)
+        z=self.get_sub_window(current_frame,self._center,self.crop_size)
         z=self._window[:,:,None]*z
         kf=fft2(self._dgk(self.x,z))
         responses=np.real(ifft2(self.alphaf_num*kf.conj()/(self.alphaf_den)))
@@ -70,7 +63,7 @@ class CN(BaseCF):
         x_c -= dx
         y_c -= dy
         self._center = (x_c, y_c)
-        new_x=self.get_sub_window(current_frame,self._center,self.crop_size,cn_type=self.cn_type)
+        new_x=self.get_sub_window(current_frame,self._center,self.crop_size)
         new_x=new_x*self._window[:,:,None]
 
         kf = fft2(self._dgk(new_x,new_x))

@@ -148,7 +148,7 @@ class DSST(BaseCF):
             else:
                 interpolation = cv2.INTER_AREA
             im_patch_resized=cv2.resize(im_patch,self.scale_model_sz,interpolation=interpolation).astype(np.uint8)
-            tmp=extract_hog_feature(im_patch_resized,cell_size=4)
+            tmp=extract_hog_feature(im_patch_resized, cell_size=4)
             if out is None:
                 out=tmp.flatten()*self.scale_window[s]
             else:
@@ -157,7 +157,7 @@ class DSST(BaseCF):
 
     def get_feature_map(self,im_patch):
         gray=(cv2.cvtColor(im_patch,cv2.COLOR_BGR2GRAY))[:,:,np.newaxis]/255-0.5
-        hog_feature=extract_hog_feature(im_patch/255,cell_size=1)[:,:,:27]
+        hog_feature= extract_hog_feature(im_patch, cell_size=1)[:, :, :27]
         return np.concatenate((gray,hog_feature),axis=2)
 
     def _get_windowed(self,img,cos_window):

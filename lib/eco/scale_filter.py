@@ -4,10 +4,8 @@ import cv2
 from numpy.fft import fft, ifft
 # from pyfftw.interfaces.numpy_fft import fft, ifft
 from scipy import signal
-from .config import gpu_config
 from .fourier_tools import resize_dft
 from .features import fhog
-from .config import otb_deep_config,otb_hc_config
 
 class ScaleFilter:
     def __init__(self, target_sz,config):

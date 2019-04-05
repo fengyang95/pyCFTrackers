@@ -6,7 +6,7 @@ from tqdm import tqdm
 from multiprocessing import Pool
 from lib.pysot.datasets import VOTDataset,OTBDataset
 from lib.pysot.evaluation import AccuracyRobustnessBenchmark, EAOBenchmark,OPEBenchmark
-from lib.pysot.visualization import draw_success_precision, draw_eao, draw_f1
+from lib.pysot.visualization import draw_success_precision
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='VOT Evaluation')

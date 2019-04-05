@@ -59,17 +59,17 @@ class Feature:
         if left != 0 or right != 0 or top != 0 or down != 0:
             im_patch = cv2.copyMakeBorder(im_patch, top, down, left, right, cv2.BORDER_REPLICATE)
         # im_patch = cv2.resize(im_patch, (int(output_sz[0]), int(output_sz[1])))
-        im_patch = cv2.resize(im_patch, (int(output_sz[0]), int(output_sz[1])), cv2.INTER_CUBIC)
+        im_patch = cv2.resize(im_patch, (int(output_sz[1]), int(output_sz[0])), cv2.INTER_CUBIC)
         if len(im_patch.shape) == 2:
             im_patch = im_patch[:, :, np.newaxis]
         return im_patch
 
     def _feature_normalization(self, x):
-        if hasattr(gpu_config, 'normalize_power') and gpu_config.normalize_power > 0:
-            if gpu_config.normalize_power == 2:
-                x = x * np.sqrt((x.shape[0]*x.shape[1]) ** gpu_config.normalize_size * (x.shape[2] ** gpu_config.normalize_dim) / (x ** 2).sum(axis=(0, 1, 2)))
+        if hasattr(self.config, 'normalize_power') and self.config.normalize_power > 0:
+            if self.config.normalize_power == 2:
+                x = x * np.sqrt((x.shape[0]*x.shape[1]) ** self.config.normalize_size * (x.shape[2] ** self.config.normalize_dim) / (x ** 2).sum(axis=(0, 1, 2)))
             else:
-                x = x * ((x.shape[0]*x.shape[1]) ** gpu_config.normalize_size) * (x.shape[2] ** gpu_config.normalize_dim) / ((np.abs(x) ** (1. / gpu_config.normalize_power)).sum(axis=(0, 1, 2)))
+                x = x * ((x.shape[0]*x.shape[1]) ** self.config.normalize_size) * (x.shape[2] ** self.config.normalize_dim) / ((np.abs(x) ** (1. / self.config.normalize_power)).sum(axis=(0, 1, 2)))
 
         if self.config.square_root_normalization:
             x = np.sign(x) * np.sqrt(np.abs(x))
@@ -212,6 +212,32 @@ def fhog(I, bin_size=8, num_orients=9, clip=0.2, crop=False):
     M, O = _gradient.gradMag(I.astype(np.float32), 0, True)
     H = _gradient.fhog(M, O, bin_size, num_orients, soft_bin, clip)
     return H
+
+class GrayFeature(Feature):
+    def __init__(self, fname, cell_size=1, config=otb_hc_config.OTBHCConfig()):
+        super(GrayFeature,self).__init__(config)
+        self.fname = fname
+        self._cell_size = cell_size
+        self.min_cell_size = self._cell_size
+        self._compressed_dim = [1]
+        self.num_dim = [1]
+
+    def get_features(self, img, pos, sample_sz, scales,normalization=True):
+        feat = []
+        if not isinstance(scales, list) and not isinstance(scales, np.ndarray):
+            scales = [scales]
+        for scale in scales:
+            patch = self._sample_patch(img, pos, sample_sz*scale, sample_sz)
+            # h, w, c = patch.shape
+            if patch.shape[2]==3:
+                gray=cv2.cvtColor(patch,cv2.COLOR_RGB2GRAY)[:,:,np.newaxis]
+            else:
+                gray=patch
+            feat.append(gray)
+        feat=np.stack(feat,axis=3)
+        if normalization is True:
+            feat = self._feature_normalization(feat)
+        return [feat]
 
 class FHogFeature(Feature):
     def __init__(self, fname, cell_size=6, compressed_dim=10, num_orients=9, clip=.2,config=otb_hc_config.OTBHCConfig()):

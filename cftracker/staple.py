@@ -13,6 +13,7 @@ from .base import BaseCF
 from .feature import extract_hog_feature
 from lib.utils import cos_window
 from lib.fft_tools import fft2,ifft2
+from .config.staple_config import StapleConfig
 
 def mod_one(a,b):
     y=np.mod(a-1,b)+1
@@ -59,28 +60,28 @@ def get_center_likelihood(likelihood_map,m):
     return center_likelihood.T
 
 class Staple(BaseCF):
-    def __init__(self,hog_cell_size=4,):
+    def __init__(self,config=StapleConfig()):
         super(Staple).__init__()
-        self.hog_cell_size=hog_cell_size
-        self.fixed_area=150**2
-        self.n_bins=2**5
-        self.interp_factor_pwp=0.04
-        self.inner_padding=0.2
-        self.output_sigma_factor=1./16
-        self.lambda_=1e-3
-        self.interp_factor_cf=0.01
-        self.merge_factor=0.3
-        self.den_per_channel=False
+        self.hog_cell_size=config.hog_cell_size
+        self.fixed_area=config.fixed_area
+        self.n_bins=config.n_bins
+        self.interp_factor_pwp=config.interp_factor_pwp
+        self.inner_padding=config.inner_padding
+        self.output_sigma_factor=config.output_sigma_factor
+        self.lambda_=config.lambda_
+        self.interp_factor_cf=config.interp_factor_cf
+        self.merge_factor=config.merge_factor
+        self.den_per_channel=config.den_per_channel
 
-        self.scale_adaptation=True
-        self.hog_scale_cell_size=4
-        self.interp_factor_scale=0.025
-        self.scale_sigma_factor=1./4
-        self.num_scales=33
-        self.scale_model_factor=1.
-        self.scale_step=1.02
-        self.scale_model_max_area=32*16
-        self.padding=1
+        self.scale_adaptation=config.scale_adaptation
+        self.hog_scale_cell_size=config.hog_scale_cell_size
+        self.interp_factor_scale=config.interp_factor_scale
+        self.scale_sigma_factor=config.scale_sigma_factor
+        self.num_scales=config.num_scales
+        self.scale_model_factor=config.scale_model_factor
+        self.scale_step=config.scale_step
+        self.scale_model_max_area=config.scale_model_max_area
+        self.padding=config.padding
 
     def init(self,first_frame,bbox):
         first_frame=first_frame.astype(np.float32)
@@ -274,8 +275,11 @@ class Staple(BaseCF):
         return out
 
     def get_feature_map(self,im_patch,hog_cell_sz):
-        hog_feature=extract_hog_feature(im_patch/255,cell_size=hog_cell_sz)
-        return hog_feature
+        hog_feature= extract_hog_feature(im_patch, cell_size=hog_cell_sz)[:, :, :27]
+        if hog_cell_sz>1:
+            im_patch=self.mex_resize(im_patch,(self._window.shape[1],self._window.shape[0]))
+        gray=cv2.cvtColor(im_patch,cv2.COLOR_BGR2GRAY)[:,:,np.newaxis]/255-0.5
+        return np.concatenate((gray,hog_feature),axis=2)
 
     def update_hist_model(self,new_model,patch,bg_area,fg_area,target_sz,norm_area,
                           n_bins):

@@ -21,8 +21,8 @@ from cftracker.cn import CN
 from cftracker.dat import DAT
 from cftracker.eco import ECO
 from cftracker.bacf import BACF
-from lib.eco.config import vot16_deep_config,vot_hc_config
-
+from lib.eco.config import vot16_deep_config,vot16_hc_config
+from cftracker.config import staple_config
 
 parser = argparse.ArgumentParser(description='Test')
 
@@ -30,7 +30,7 @@ parser.add_argument('--dataset', dest='dataset', default='VOT2016',
                     help='datasets')
 parser.add_argument('-l', '--log', default="log_test_vot2016.txt", type=str, help='log file')
 parser.add_argument('-v', '--visualization', dest='visualization', action='store_true',
-                    help='whether visualize result',default=True)
+                    help='whether visualize result',default=False)
 parser.add_argument('--gt', action='store_true', help='whether use gt rect for davis (Oracle)')
 
 def create_tracker(tracker_type):
@@ -43,15 +43,15 @@ def create_tracker(tracker_type):
     elif tracker_type == 'DSST':
         tracker = DSST()
     elif tracker_type == 'Staple':
-        tracker = Staple()
+        tracker = Staple(config=staple_config.StapleVOTConfig())
     elif tracker_type == 'KCF':
-        tracker = KCF(features='hog_uoip', kernel='gaussian')
+        tracker = KCF(features='hog', kernel='gaussian')
     elif tracker_type == 'DCF':
-        tracker = KCF(features='hog_uoip', kernel='linear')
+        tracker = KCF(features='hog', kernel='linear')
     elif tracker_type == 'DAT':
         tracker = DAT()
     elif tracker_type=='ECO-HC':
-        tracker=ECO(config=vot_hc_config.VOTHCConfig())
+        tracker=ECO(config=vot16_hc_config.VOT16HCConfig())
     elif tracker_type=='ECO':
         tracker=ECO(config=vot16_deep_config.VOT16DeepConfig())
     elif tracker_type=='BACF':
@@ -156,7 +156,8 @@ def main():
     total_lost = 0  # VOT
     speed_list = []
 
-    trackers = ['BACF']
+    # tracker names
+    trackers = ['ECO-HC']
 
     for tracker_type in trackers:
 

@@ -11,19 +11,25 @@ import cv2
 class ECO(BaseCF):
     def __init__(self,config):
         super(ECO).__init__()
-        self.tracker=ECOTracker(is_color=True,config=config)
+        self.config=config
 
 
     def init(self,first_frame,bbox):
-
-        first_frame=cv2.cvtColor(first_frame,cv2.COLOR_BGR2RGB)
-        xmin, ymin, xmax, ymax = bbox[0],bbox[1], bbox[0]+bbox[2],bbox[1]+bbox[3]
-        new_bbox = (xmin, ymin, xmax - xmin + 1, ymax - ymin + 1)
-        self.tracker.init(first_frame,new_bbox)
+        if np.all(first_frame[:,:,0]==first_frame[:,:,1]):
+            self.tracker = ECOTracker(is_color=False, config=self.config)
+            first_frame=first_frame[:,:,:1]
+        else:
+            self.tracker=ECOTracker(is_color=True,config=self.config)
+            first_frame=cv2.cvtColor(first_frame,cv2.COLOR_BGR2RGB)
+        self.tracker.init(first_frame,bbox)
 
 
     def update(self,current_frame,vis=False):
-        current_frame=cv2.cvtColor(current_frame,cv2.COLOR_BGR2RGB)
+        if self.tracker._is_color is True:
+            current_frame=cv2.cvtColor(current_frame,cv2.COLOR_BGR2RGB)
+        else:
+            current_frame=current_frame[:,:,:1]
+
         bbox=self.tracker.update(current_frame,train=True,vis=vis)
         if vis is True:
             self.score=self.tracker.score

@@ -3,8 +3,7 @@ import cv2
 from lib.utils import cos_window,gaussian2d_rolled_labels
 from lib.fft_tools import fft2,ifft2
 from .base import BaseCF
-from .feature import extract_hog_feature,extract_cn_feature,extract_cn_feature_pyECO,extract_hog_feature_pyECO
-import h5py
+from .feature import extract_hog_feature,extract_cn_feature
 
 class KCF(BaseCF):
     def __init__(self, padding=1.5, features='gray', kernel='gaussian'):
@@ -13,7 +12,7 @@ class KCF(BaseCF):
         self.lambda_ = 1e-4
         self.features = features
         self.w2c=None
-        if self.features=='hog_uoip' or self.features=='hog_pyECO':
+        if self.features=='hog':
             self.interp_factor = 0.02
             self.sigma = 0.5
             self.cell_size=4
@@ -23,7 +22,7 @@ class KCF(BaseCF):
             self.sigma=0.2
             self.cell_size=1
             self.output_sigma_factor=0.1
-        elif self.features=='cn' or self.features=='pyECO_cn':
+        elif self.features=='cn':
             self.interp_factor=0.075
             self.sigma=0.2
             self.cell_size=1
@@ -53,22 +52,13 @@ class KCF(BaseCF):
             first_frame = first_frame.astype(np.float32) / 255
             x=self._crop(first_frame,self._center,(w,h))
             x=x-np.mean(x)
-
-        elif self.features=='hog_pyECO':
-            x = self._crop(first_frame, self._center, (w, h))
-            x=extract_hog_feature_pyECO(x, (x.shape[1] / 2, x.shape[0] / 2), np.array([self.window_size[0] * self.cell_size,
-                                                                                       self.window_size[1] * self.cell_size]),
-                                        cell_size=self.cell_size)
-        elif self.features=='hog_uoip':
+        elif self.features=='hog':
             x=self._crop(first_frame,self._center,(w,h))
             x=cv2.resize(x,(self.window_size[0]*self.cell_size,self.window_size[1]*self.cell_size))
             x=extract_hog_feature(x, cell_size=self.cell_size)
         elif self.features=='cn':
-            mat = h5py.File('w2crs.mat')
-            self.w2c = mat['w2crs']
-            x=extract_cn_feature(first_frame, self._center, self.window_size, self.w2c)
-        elif self.features=='pyECO_cn':
-            x=extract_cn_feature_pyECO(first_frame, self._center, self.window_size, self.cell_size)
+            x = cv2.resize(first_frame, (self.window_size[0] * self.cell_size, self.window_size[1] * self.cell_size))
+            x=extract_cn_feature(x,self.cell_size)
         else:
             raise NotImplementedError
 
@@ -86,20 +76,14 @@ class KCF(BaseCF):
             z = self._crop(current_frame, self._center, (self.w, self.h))
             z=z-np.mean(z)
 
-        elif self.features=='hog_uoip':
+        elif self.features=='hog':
             z = self._crop(current_frame, self._center, (self.w, self.h))
             z = cv2.resize(z, (self.window_size[0] * self.cell_size, self.window_size[1] * self.cell_size))
             z = extract_hog_feature(z, cell_size=self.cell_size)
-        elif self.features=='hog_pyECO':
-            z = self._crop(current_frame, self._center, (self.w,self.h))
-            z = extract_hog_feature_pyECO(z, (z.shape[1] / 2, z.shape[0] / 2), np.array([self.window_size[0] * self.cell_size,
-                                                                                         self.window_size[
-                                                                                       1] * self.cell_size]),
-                                          cell_size=self.cell_size)
         elif self.features=='cn':
-            z = extract_cn_feature(current_frame, self._center, self.window_size, self.w2c)
-        elif self.features=='pyECO_cn':
-            z=extract_cn_feature_pyECO(current_frame, self._center, self.window_size, self.cell_size)
+            z = self._crop(current_frame, self._center, (self.w, self.h))
+            z = cv2.resize(z, (self.window_size[0] * self.cell_size, self.window_size[1] * self.cell_size))
+            z = extract_cn_feature(z, cell_size=self.cell_size)
         else:
             raise NotImplementedError
 
@@ -128,17 +112,14 @@ class KCF(BaseCF):
 
         if self.features=='color' or self.features=='gray':
             new_x = self._crop(current_frame, self._center, (self.w, self.h))
-        elif self.features=='hog_pyECO':
-            new_x=self._crop(current_frame,self._center,(self.w,self.h))
-            new_x=extract_hog_feature_pyECO(new_x, (new_x.shape[1] / 2, new_x.shape[0] / 2), np.array([self.window_size[0] * self.cell_size, self.window_size[1] * self.cell_size]), cell_size=self.cell_size)
-        elif self.features=='hog_uoip':
+        elif self.features=='hog':
             new_x = self._crop(current_frame, self._center, (self.w, self.h))
             new_x = cv2.resize(new_x, (self.window_size[0] * self.cell_size, self.window_size[1] * self.cell_size))
             new_x= extract_hog_feature(new_x, cell_size=self.cell_size)
         elif self.features=='cn':
-            new_x = extract_cn_feature(current_frame, self._center, self.window_size, self.w2c)
-        elif self.features=='pyECO_cn':
-            new_x=extract_cn_feature_pyECO(current_frame, self._center, self.window_size, self.cell_size)
+            new_x = self._crop(current_frame, self._center, (self.w, self.h))
+            new_x = cv2.resize(new_x, (self.window_size[0] * self.cell_size, self.window_size[1] * self.cell_size))
+            new_x = extract_cn_feature(new_x,cell_size=self.cell_size)
         else:
             raise NotImplementedError
         new_xf = fft2(self._get_windowed(new_x, self._window))

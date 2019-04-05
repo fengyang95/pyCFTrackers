@@ -8,14 +8,13 @@ from scipy import signal
 # from numpy.fft import fftshift
 
 from .config import gpu_config
-from .features import FHogFeature, TableFeature, mround, ResNet50Feature, VGG16Feature
+from .features import GrayFeature,FHogFeature, TableFeature, mround, ResNet50Feature, VGG16Feature
 from .fourier_tools import cfft2, interpolate_dft, shift_sample, full_fourier_coeff,\
         cubic_spline_fourier, compact_fourier_coeff, ifft2, fft2, sample_fs
 from .optimize_score import optimize_score
 from .sample_space_model import GMM
 from .train import train_joint, train_filter
 from .scale_filter import ScaleFilter
-from .config import otb_deep_config,otb_hc_config
 if gpu_config.use_gpu:
     import cupy as cp
 
@@ -176,6 +175,8 @@ class ECOTracker:
                 self._features.append(TableFeature(**feature))
             elif feature['fname'] == 'fhog':
                 self._features.append(FHogFeature(**feature))
+            elif feature['fname']=='gray':
+                self._features.append(GrayFeature(**feature))
             elif feature['fname'].startswith('cnn'):
                 cnn_feature_idx = idx
                 netname = feature['fname'].split('-')[1]
