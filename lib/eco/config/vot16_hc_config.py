@@ -39,8 +39,8 @@ class VOT16HCConfig:
     clamp_position = False              # clamp the target position to be inside the image
 
     # learning parameters
-    output_sigma_factor = 1 / 14.       # label function sigma
-    learning_rate = 0.009               # learning rate
+    output_sigma_factor = 1 / 16.       # label function sigma
+    learning_rate = 0.01               # learning rate
     num_samples = 30                    # maximum number of stored training samples
     sample_replace_startegy = 'lowest_prior' # which sample to replace when the memory is full
     lt_size = 0                         # the size of the long-term memory (where all samples have equal weight)
@@ -52,7 +52,7 @@ class VOT16HCConfig:
     use_projection_matrix = True        # use projection matrix, i.e. use the factorized convolution formulation
     update_projection_matrix = True     # whether the projection matrix should be optimized or not
     proj_init_method = 'pca'            # method for initializing the projection matrix
-    projection_reg = 1e-7               # regularization parameter of the projection matrix
+    projection_reg = 5e-7               # regularization parameter of the projection matrix
 
     # generative sample space model parameters
     use_sample_merge = True             # use the generative sample space model to merge samples
@@ -61,21 +61,21 @@ class VOT16HCConfig:
 
     # CG paramters
     CG_iter = 5                         # the number of Conjugate Gradient iterations in each update after the first time
-    init_CG_iter = 5 * 15              # the total number of Conjugate Gradient iterations used in the first time
-    init_GN_iter = 5                   # the number of Gauss-Netwon iterations used in the first frame (only if the projection matrix is updated)
+    init_CG_iter = 10 * 20             # the total number of Conjugate Gradient iterations used in the first time
+    init_GN_iter = 10                  # the number of Gauss-Netwon iterations used in the first frame (only if the projection matrix is updated)
     CG_use_FR = False                   # use the Fletcher-Reeves or Polak-Ribiere formula in the Conjugate Gradient
     CG_standard_alpha = True            # use the standard formula for computing the step length in Conjugate Gradient
-    CG_forgetting_rate = 50             # forgetting rate of the last conjugate direction
+    CG_forgetting_rate = 60             # forgetting rate of the last conjugate direction
     precond_data_param = 0.75           # weight of the data term in the preconditioner
-    precond_reg_param = 0.25            # weight of the regularization term in the preconditioner
+    precond_reg_param = 0.20            # weight of the regularization term in the preconditioner
     precond_proj_param = 40             # weight of the projection matrix part in the preconditioner
 
     # regularization window paramters
     use_reg_window = True               # use spatial regularizaiton or not
     reg_window_min = 1e-4               # the minimum value of the regularization window
-    reg_window_edge = 10e-3             # the impace of the spatial regularization
+    reg_window_edge = 4e-3             # the impace of the spatial regularization
     reg_window_power = 2                # the degree of the polynomial to use (e.g. 2 is q quadratic window)
-    reg_sparsity_threshold = 0.05       # a relative threshold of which DFT coefficients of the kernel
+    reg_sparsity_threshold = 0.15       # a relative threshold of which DFT coefficients of the kernel
 
     # interpolation parameters
     interp_method = 'bicubic'           # the kind of interpolation kernel

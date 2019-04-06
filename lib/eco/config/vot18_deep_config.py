@@ -28,7 +28,7 @@ class VOT18DeepConfig:
     #cnn_params = {'fname': "cnn-vgg16",
     #               'compressed_dim': [16, 64]
     #               }
-    features = [fhog_params,cn_params,ic_params,cnn_params]
+    features =[fhog_params,cn_params,ic_params,cnn_params]
 
     # feature parameters
     normalize_power = 2
@@ -38,7 +38,7 @@ class VOT18DeepConfig:
 
     # image sample parameters
     search_area_shape = 'square'
-    search_area_scale = 4.5
+    search_area_scale = 4.
     min_image_sample_size = 200 ** 2
     max_image_sample_size = 250 ** 2
 
