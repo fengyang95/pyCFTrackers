@@ -51,7 +51,8 @@ python cf_demo.py
 ## Eval on OTB and VOT
 ``` bash
 cd eval
-python get_vot_result.py
+python get_vot2016_result.py
+python get_vot2018_result.py
 python ope_otb.py
 python eval_VOT2016.py
 python  eval_VOT2018.py

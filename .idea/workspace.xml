@@ -5,25 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="224459dd-dab2-4666-9281-dee54f6f3a0f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/get_vot2016_result.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/get_vot2016_result.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/get_vot2018_result.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/get_vot2018_result.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/log_test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/eval/log_test.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/log_test_vot2016.txt" beforeDir="false" afterPath="$PROJECT_DIR$/eval/log_test_vot2016.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/log_test_vot2018.txt" beforeDir="false" afterPath="$PROJECT_DIR$/eval/log_test_vot2018.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/ope_otb.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/ope_otb.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/eco/config/gpu_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/eco/config/gpu_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/eco/config/vot16_deep_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/eco/config/vot16_deep_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/eco/config/vot16_hc_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/eco/config/vot16_hc_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/eco/config/vot18_deep_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/eco/config/vot18_deep_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/eco/config/vot18_hc_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/eco/config/vot18_hc_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval/log_test.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval/log_test_vot2016.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval/log_test_vot2018.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/pytracker_OPE_OTB100_precision.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/pytracker_OPE_OTB100_precision.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/pytracker_OPE_OTB100_success.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/pytracker_OPE_OTB100_success.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/pytracker_OPE_OTB2013_precision.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/pytracker_OPE_OTB2013_precision.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/pytracker_OPE_OTB2013_success.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/pytracker_OPE_OTB2013_success.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/pytracker_OPE_OTB50_precision.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/pytracker_OPE_OTB50_precision.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/pytracker_OPE_OTB50_success.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/pytracker_OPE_OTB50_success.png" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -123,7 +108,7 @@
           <entry key="MD" value="66" />
           <entry key="dummy" value="55" />
           <entry key="gitignore" value="164" />
-          <entry key="md" value="922" />
+          <entry key="md" value="930" />
           <entry key="py" value="20330" />
           <entry key="sh" value="202" />
           <entry key="txt" value="9" />
@@ -131,7 +116,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Markdown" value="988" />
+          <entry key="Markdown" value="996" />
           <entry key="PLAIN_TEXT" value="430" />
           <entry key="Python" value="20330" />
         </counts>
@@ -163,8 +148,8 @@
         <entry file="file://$PROJECT_DIR$/readme.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="396">
-                <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
+              <first_editor relative-caret-position="524">
+                <caret line="108" lean-forward="true" selection-start-line="108" selection-end-line="108" />
               </first_editor>
               <second_editor />
             </state>
@@ -594,12 +579,12 @@
     <frame x="-1" y="24" width="1922" height="1033" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.86346865" visible="true" weight="0.15048026" />
-      <window_info id="Structure" order="1" sideWeight="0.13653137" side_tool="true" visible="true" weight="0.15048026" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.8785901" visible="true" weight="0.15048026" />
+      <window_info id="Structure" order="1" sideWeight="0.12140992" side_tool="true" visible="true" weight="0.15048026" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49359658" weight="0.32964602" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.82283884" visible="true" weight="0.40044248" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49306297" weight="0.32964602" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.82283884" weight="0.40044248" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49893278" weight="0.39933628" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -607,8 +592,8 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.17716116" side_tool="true" visible="true" weight="0.40044248" />
-      <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.59711844" weight="0.38827434" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.506937" side_tool="true" visible="true" weight="0.15265487" />
+      <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.59658486" weight="0.15265487" />
       <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.49893278" weight="0.32964602" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -1041,8 +1026,8 @@
     <entry file="file://$PROJECT_DIR$/readme.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="396">
-            <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
+          <first_editor relative-caret-position="524">
+            <caret line="108" lean-forward="true" selection-start-line="108" selection-end-line="108" />
           </first_editor>
           <second_editor />
         </state>
