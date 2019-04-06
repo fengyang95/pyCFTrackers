@@ -1,4 +1,9 @@
 class VOT16HCConfig:
+    gray_params = {
+        'fname': 'gray',
+        'cell_size': 1,
+    }
+
     fhog_params = {'fname': 'fhog',
                    'num_orients': 9,
                    'cell_size': 6,
@@ -19,7 +24,7 @@ class VOT16HCConfig:
                  "compressed_dim": 3,
                  }
 
-    features = [fhog_params, cn_params, ic_params]
+    features = [gray_params,fhog_params, cn_params, ic_params]
 
     # feature parameters
     normalize_power = 2                 # Lp normalization with this p

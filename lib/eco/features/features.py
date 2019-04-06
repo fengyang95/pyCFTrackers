@@ -233,11 +233,32 @@ class GrayFeature(Feature):
                 gray=cv2.cvtColor(patch,cv2.COLOR_RGB2GRAY)[:,:,np.newaxis]
             else:
                 gray=patch
-            feat.append(gray)
+            if self._cell_size > 1:
+                gray = self.average_feature_region(gray.astype(np.uint8), self._cell_size)
+            feat.append(gray/255-0.5)
         feat=np.stack(feat,axis=3)
         if normalization is True:
             feat = self._feature_normalization(feat)
         return [feat]
+
+    def integralVecImage(self, img):
+        w, h, c = img.shape
+        intImage = np.zeros((w+1, h+1, c), dtype=img.dtype)
+        intImage[1:, 1:, :] = np.cumsum(np.cumsum(img, 0), 1)
+        return intImage
+
+    def average_feature_region(self, features, region_size):
+        region_area = region_size ** 2
+        if features.dtype == np.float32:
+            maxval = 1.
+        else:
+            maxval = 255
+        intImage = self.integralVecImage(features)
+        i1 = np.arange(region_size, features.shape[0]+1, region_size).reshape(-1, 1)
+        i2 = np.arange(region_size, features.shape[1]+1, region_size).reshape(1, -1)
+        region_image = (intImage[i1, i2, :] - intImage[i1, i2-region_size,:] - intImage[i1-region_size, i2, :] + intImage[i1-region_size, i2-region_size, :])  / (region_area * maxval)
+        return region_image
+
 
 class FHogFeature(Feature):
     def __init__(self, fname, cell_size=6, compressed_dim=10, num_orients=9, clip=.2,config=otb_hc_config.OTBHCConfig()):

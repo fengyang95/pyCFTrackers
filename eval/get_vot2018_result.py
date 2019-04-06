@@ -156,7 +156,7 @@ def main():
     total_lost = 0  # VOT
     speed_list = []
 
-    trackers = ['ECO']
+    trackers = ['ECO-HC']
 
     for tracker_type in trackers:
 

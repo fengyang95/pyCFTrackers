@@ -157,7 +157,7 @@ def main():
     speed_list = []
 
     # tracker names
-    trackers = ['ECO']
+    trackers = ['ECO-HC']
 
     for tracker_type in trackers:
 
