@@ -8,10 +8,9 @@ Python re-implementation of "Discriminative Correlation Filter with Channel and 
 }
 """
 import numpy as np
-import numpy.matlib as matlib
 import cv2
 from .base import BaseCF
-from lib.utils import gaussian2d_labels,cos_window
+from lib.utils import cos_window
 from lib.fft_tools import fft2,ifft2
 from lib.utils import gaussian2d_rolled_labels
 from .feature import extract_hog_feature,extract_cn_feature
@@ -30,8 +29,6 @@ class CSRDCF(BaseCF):
         self.nbins=config.nbins
         self.segcolor_space=config.seg_colorspace
         self.use_segmentation=config.use_segmentation
-        self.mask_diletation_type=config.mask_diletation_type
-        self.mask_diletation_sz=config.mask_diletation_sz
 
         self.current_scale_factor=config.current_scale_factor
         self.n_scales=config.n_scales
@@ -41,8 +38,11 @@ class CSRDCF(BaseCF):
         self.scale_model_max_area = config.scale_model_max_area
         self.scale_lr = config.scale_lr
 
-        self.hist_foreground=Histogram(3,self.nbins)
-        self.hist_background=Histogram(3,self.nbins)
+        #self.hist_foreground=Histogram(3,self.nbins)
+        #self.hist_background=Histogram(3,self.nbins)
+
+        self.hist_fg_p_bins=None
+        self.hist_bg_p_bins=None
         self.p_b=0
 
 
@@ -124,9 +124,15 @@ class CSRDCF(BaseCF):
                 seg_img = seg_img.astype(np.uint8)
             else:
                 raise ValueError
+            hist_fg=Histogram(3,self.nbins)
+            hist_bg=Histogram(3,self.nbins)
+            self.extract_histograms(seg_img,bbox,hist_fg,hist_bg)
 
-            self.extract_histograms(seg_img,bbox,self.hist_foreground,self.hist_background)
-            mask=self.segment_region(seg_img,self._center,self.template_size,self.base_target_sz,self.current_scale_factor)
+            mask=self.segment_region(seg_img,self._center,self.template_size,self.base_target_sz,self.current_scale_factor,
+                                     hist_fg,hist_bg)
+            self.hist_bg_p_bins=hist_bg.p_bins
+            self.hist_fg_p_bins=hist_fg.p_bins
+
             init_mask_padded=np.zeros_like(mask)
             pm_x0=int(np.floor(mask.shape[1]/2-bbox[2]/2))
             pm_y0=int(np.floor(mask.shape[0]/2-bbox[3]/2))
@@ -235,13 +241,17 @@ class CSRDCF(BaseCF):
                 seg_img = seg_img.astype(np.uint8)
             else:
                 raise ValueError
-            old_hist_fg = self.hist_foreground.p_bins
-            old_hist_bg = self.hist_background.p_bins
-            self.extract_histograms(seg_img,region,self.hist_foreground,self.hist_background)
-            self.hist_foreground.p_bins=(1-self.hist_lr)*old_hist_fg+self.hist_lr*self.hist_foreground.p_bins
-            self.hist_background.p_bins=(1-self.hist_lr)*old_hist_bg+self.hist_lr*self.hist_background.p_bins
 
-            mask=self.segment_region(seg_img,self._center,self.template_size,self.base_target_sz,self.current_scale_factor)
+            hist_fg=Histogram(3,self.nbins)
+            hist_bg=Histogram(3,self.nbins)
+            self.extract_histograms(seg_img,region,hist_fg,hist_bg)
+            self.hist_fg_p_bins=(1-self.hist_lr)*self.hist_fg_p_bins+self.hist_lr*hist_fg.p_bins
+            self.hist_bg_p_bins=(1-self.hist_lr)*self.hist_bg_p_bins+self.hist_lr*hist_bg.p_bins
+
+            hist_fg.p_bins=self.hist_fg_p_bins
+            hist_bg.p_bins=self.hist_bg_p_bins
+            mask=self.segment_region(seg_img,self._center,self.template_size,self.base_target_sz,self.current_scale_factor,
+                                     hist_fg,hist_bg)
             init_mask_padded=np.zeros_like(mask)
             pm_x0=int(np.floor(mask.shape[1]/2-region[2]/2))
             pm_y0=int(np.floor(mask.shape[0]/2-region[3]/2))
@@ -466,12 +476,12 @@ class CSRDCF(BaseCF):
         hb.extract_background_histogram(img,(x1,y1),(x2,y2),(outer_x1,outer_y1),(outer_x2,outer_y2))
 
 
-    def segment_region(self,img,center,template_size,target_size,scale_factor):
+    def segment_region(self,img,center,template_size,target_size,scale_factor,hist_fg,hist_bg):
         valid_pixels_mask,patch=self.get_patch(img,center,scale_factor,template_size)
         scaled_target_sz=(target_size[0]*scale_factor,target_size[1]*scale_factor)
         fg_prior=self.get_location_prior((0,0,patch.shape[1],patch.shape[0]),scaled_target_sz,(patch.shape[1],patch.shape[0]))
 
-        probs=Segment.compute_posteriors(patch, fg_prior, 1 - fg_prior, self.hist_foreground, self.hist_background, tl=(0, 0),
+        probs=Segment.compute_posteriors(patch, fg_prior, 1 - fg_prior,hist_fg,hist_bg, tl=(0, 0),
                                          br=(patch.shape[1],patch.shape[0]), p_b=self.p_b)
 
         mask=valid_pixels_mask*probs[0]

@@ -11,8 +11,6 @@ class CSRDCFConfig:
     nbins=16
     seg_colorspace='hsv' # 'bgr' or 'hsv'
     use_segmentation=True
-    mask_diletation_type='disk' # for function strel (square, disk , ...)
-    mask_diletation_sz=0
 
     # scale adaptation parameters
     current_scale_factor=1.

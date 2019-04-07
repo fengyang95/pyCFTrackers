@@ -60,10 +60,17 @@ python eval_OTB.py
 ```
 
 ## OTB result
+### OTB-100
+|     OTB100 Success Plot   	    | OTB100 Precision Plot	    |
+| --------------------------------- | ----------------------------- |
+|![](results/pytracker_OPE_OTB100_success.png)  	    |![](results/pytracker_OPE_OTB100_precision.png)  	    |
 
-![Success Plots of OPE on OTB100](results/pytracker_OPE_OTB100_success.png) 
 
-![Precision Plots of OPE on OTB100](results/pytracker_OPE_OTB100_precision.png)
+### OTB-2013
+|     OTB2013 Success Plot   	    | OTB2013 Precision Plot	    |
+| --------------------------------- | ----------------------------- |
+|![](results/pytracker_OPE_OTB2013_success.png)  	    |![](results/pytracker_OPE_OTB2013_precision.png)  	    |
+
 
 ## VOT result
 
