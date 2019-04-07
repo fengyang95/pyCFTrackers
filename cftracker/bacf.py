@@ -139,7 +139,7 @@ class BACF(BaseCF):
                 self.score = np.roll(self.score, int(np.floor(self.score.shape[0] / 2)), axis=0)
                 self.score = np.roll(self.score, int(np.floor(self.score.shape[1] / 2)), axis=1)
             disp_row=(row-1+int(np.floor(self.interp_sz[1]-1)/2))%self.interp_sz[1]-int(np.floor((self.interp_sz[1]-1)/2))
-            disp_col = (col - 1 + int(np.floor(self.interp_sz[0] - 1) / 2)) % self.interp_sz[0] - int(
+            disp_col = (col-1 + int(np.floor(self.interp_sz[0] - 1) / 2)) % self.interp_sz[0] - int(
                 np.floor((self.interp_sz[0] - 1) / 2))
 
         if self.interpolate_response==0  or self.interpolate_response==3 or self.interpolate_response==4:

@@ -96,11 +96,11 @@ class KCF(BaseCF):
 
         curr =np.unravel_index(np.argmax(responses, axis=None),responses.shape)
 
-        if curr[0]>self.window_size[1]/2:
+        if curr[0]+1>self.window_size[1]/2:
             dy=curr[0]-self.window_size[1]
         else:
             dy=curr[0]
-        if curr[1]>self.window_size[0]/2:
+        if curr[1]+1>self.window_size[0]/2:
             dx=curr[1]-self.window_size[0]
         else:
             dx=curr[1]

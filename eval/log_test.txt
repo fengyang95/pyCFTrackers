@@ -1,0 +1,1 @@
+[2019-04-07 20:20:22,309-rk0-ope_otb.py#112] Namespace(dataset='OTB100', gt=False, log='log_test.txt', visualization=True)

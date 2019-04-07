@@ -21,6 +21,7 @@ from cftracker.cn import CN
 from cftracker.dat import DAT
 from cftracker.eco import ECO
 from cftracker.bacf import BACF
+from cftracker.csrdcf import CSRDCF
 from lib.eco.config import vot16_deep_config,vot16_hc_config
 from cftracker.config import staple_config
 
@@ -30,7 +31,7 @@ parser.add_argument('--dataset', dest='dataset', default='VOT2016',
                     help='datasets')
 parser.add_argument('-l', '--log', default="log_test_vot2016.txt", type=str, help='log file')
 parser.add_argument('-v', '--visualization', dest='visualization', action='store_true',
-                    help='whether visualize result',default=False)
+                    help='whether visualize result',default=True)
 parser.add_argument('--gt', action='store_true', help='whether use gt rect for davis (Oracle)')
 
 def create_tracker(tracker_type):
@@ -56,6 +57,8 @@ def create_tracker(tracker_type):
         tracker=ECO(config=vot16_deep_config.VOT16DeepConfig())
     elif tracker_type=='BACF':
         tracker=BACF()
+    elif tracker_type=='CSRDCF':
+        tracker=CSRDCF()
     else:
         raise NotImplementedError
     return tracker
@@ -157,7 +160,7 @@ def main():
     speed_list = []
 
     # tracker names
-    trackers = ['ECO-HC']
+    trackers = ['CSRDCF']
 
     for tracker_type in trackers:
 

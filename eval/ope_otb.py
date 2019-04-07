@@ -18,6 +18,7 @@ from cftracker.cn import CN
 from cftracker.dat import DAT
 from cftracker.eco import ECO
 from cftracker.bacf import BACF
+from cftracker.csrdcf import CSRDCF
 
 from lib.eco.config import otb_deep_config,otb_hc_config
 
@@ -60,6 +61,8 @@ def track_otb(tracker_type,dataset):
             tracker=ECO(config=otb_deep_config.OTBDeepConfig())
         elif tracker_type=='BACF':
             tracker=BACF()
+        elif tracker_type=='CSRDCF':
+            tracker=CSRDCF()
         else:
             raise NotImplementedError
         for idx, (img, gt_bbox) in enumerate(video):
@@ -107,7 +110,7 @@ def main():
 
     logger = logging.getLogger('global')
     logger.info(args)
-    trackers = ['ECO']
+    trackers = ['CSRDCF']
     dataset = DatasetFactory.create_dataset(name='OTB100',
                                             dataset_root='../dataset/OTB100',
                                             load_img=True

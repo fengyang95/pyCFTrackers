@@ -10,6 +10,7 @@ from cftracker.staple import Staple
 from cftracker.dat import DAT
 from cftracker.eco import ECO
 from cftracker.bacf import BACF
+from cftracker.csrdcf import CSRDCF
 from lib.eco.config import otb_deep_config,otb_hc_config
 
 class PyTracker:
@@ -57,6 +58,8 @@ class PyTracker:
             self.tracker=ECO(config=otb_deep_config.OTBDeepConfig())
         elif self.tracker_type=='BACF':
             self.tracker=BACF()
+        elif self.tracker_type=='CSRDCF':
+            self.tracker=CSRDCF()
         else:
             raise NotImplementedError
 
