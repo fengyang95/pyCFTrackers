@@ -15,6 +15,13 @@ from lib.fft_tools import fft2,ifft2
 from lib.utils import gaussian2d_rolled_labels
 from .feature import extract_hog_feature,extract_cn_feature
 from .config import csrdcf_config
+
+
+def kernel_profile_epanechnikov(x):
+    res = np.zeros_like(x)
+    res[np.where(x <= 1)] = 2 / 3.14 * (1 - x[x <= 1])
+    return res
+
 class CSRDCF(BaseCF):
     def __init__(self,config=csrdcf_config.CSRDCFConfig()):
         super(CSRDCF).__init__()
@@ -37,9 +44,6 @@ class CSRDCF(BaseCF):
         self.scale_step = config.scale_step
         self.scale_model_max_area = config.scale_model_max_area
         self.scale_lr = config.scale_lr
-
-        #self.hist_foreground=Histogram(3,self.nbins)
-        #self.hist_background=Histogram(3,self.nbins)
 
         self.hist_fg_p_bins=None
         self.hist_bg_p_bins=None
@@ -257,9 +261,6 @@ class CSRDCF(BaseCF):
             pm_y0=int(np.floor(mask.shape[0]/2-region[3]/2))
             init_mask_padded[pm_y0:pm_y0+region[3],pm_x0:pm_x0+region[2]]=1
             mask=mask*init_mask_padded
-
-
-
             mask=cv2.resize(mask,(self.yf.shape[1],self.yf.shape[0]))
             if self.mask_normal(mask,self.target_dummy_area) is True:
                 kernel=cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(3,3),anchor=(1,1))
@@ -270,8 +271,8 @@ class CSRDCF(BaseCF):
         else:
             mask=self.target_dummy_mask
 
-        cv2.imshow('Mask', (mask * 255).astype(np.uint8))
-        cv2.waitKey(1)
+        #cv2.imshow('Mask', (mask * 255).astype(np.uint8))
+        #cv2.waitKey(1)
 
         f = self.get_csr_features(current_frame, self._center, self.current_scale_factor,
                                   self.template_size, self.rescale_template_size, self.cell_size)
@@ -293,9 +294,6 @@ class CSRDCF(BaseCF):
         new_sf_den = np.sum(new_xsf * np.conj(new_xsf), axis=0)
         self.sf_den = (1 - self.scale_lr) * self.sf_den + self.scale_lr * new_sf_den
         self.sf_num = (1 - self.scale_lr) * self.sf_num + self.scale_lr * new_sf_num
-
-
-
         return region
 
 
@@ -305,12 +303,9 @@ class CSRDCF(BaseCF):
                                 center=center)
         patch=cv2.resize(patch,resize_sz).astype(np.uint8)
         hog_feature=extract_hog_feature(patch,cell_size)[:,:,:18]
+        # gray feature is included in the cn features
         cn_feature=extract_cn_feature(patch,cell_size)
-        gray_feature=cv2.cvtColor(patch,cv2.COLOR_BGR2GRAY)
-        if cell_size!=1:
-            gray_feature=cv2.resize(gray_feature,(hog_feature.shape[1],hog_feature.shape[0]))
-        gray_feature=gray_feature[:,:,np.newaxis]/255-0.5
-        features=np.concatenate((hog_feature,gray_feature,cn_feature),axis=2)
+        features=np.concatenate((hog_feature,cn_feature),axis=2)
         return features
 
     def get_patch(self,img,center,scale,template_size):
@@ -381,18 +376,11 @@ class CSRDCF(BaseCF):
 
     def get_location_prior(self,roi,target_sz,img_sz):
         """
-
         :param roi: top_left and bottom_right point
         :param target_sz:
         :param img_sz:
         :return:
         """
-        def kernel_epan(x):
-            if x>1:
-                return 0
-            else:
-                return 2/3.14*(1-x)
-
         w,h=img_sz
         x1=int(round(max(min(roi[0]-1,w-1),0)))
         y1=int(round(max(min(roi[1]-1,h-1),0)))
@@ -408,9 +396,10 @@ class CSRDCF(BaseCF):
         cy=y1+0.5*(y2-y1)
 
         kernel_weight=np.zeros((1+int(np.floor(y2-y1)),1+int(np.floor(-(x1-cx)+x2-cx))))
-        for y in range(y1,y2+1):
-            for x in range(x1,x2+1):
-                kernel_weight[y,x]=kernel_epan(((cx-x)*kernel_size_width)**2+((cy-y)*kernel_size_height)**2)
+        ys=np.arange(y1,y2+1)
+        xs=np.arange(x1,x2+1)
+        xs,ys=np.meshgrid(xs,ys)
+        kernel_weight[ys,xs]=kernel_profile_epanechnikov(((cx-xs)*kernel_size_width)**2+((cy-ys)*kernel_size_height)**2)
         max_val=np.max(kernel_weight)
         fg_prior=kernel_weight/max_val
         fg_prior=np.clip(fg_prior,a_min=0.5,a_max=0.9)
@@ -510,10 +499,11 @@ class Histogram:
             kernel_weight=np.zeros_like(img,dtype=np.float32)
             ys=np.arange(y1,y2+1)
             xs=np.arange(x1,x2+1)
-            ys,xs=np.meshgrid(ys,xs)
-            kernel_weight[ys,xs]=self._kernel_profile_epanechnikov(((cx-xs)*kernel_size_width)**2+((cy-ys)*kernel_size_height)**2)
+            xs,ys=np.meshgrid(xs,ys)
+            kernel_weight[ys,xs]=kernel_profile_epanechnikov(((cx-xs)*kernel_size_width)**2+((cy-ys)*kernel_size_height)**2)
             weights=kernel_weight
         range_perbin_inverse=self.num_bins_perdimension/256
+        """
         sum=0
         for y in range(y1,y2+1):
             for x in range(x1,x2+1):
@@ -522,18 +512,22 @@ class Histogram:
                     id+=self.p_dim_id_coef[dim]*int(np.floor(range_perbin_inverse*img_channels[y,x,dim]))
                 self.p_bins[id]+=weights[y,x]
                 sum+=weights[y,x]
+        """
+        ids=np.sum(self.p_dim_id_coef[None,None,:]*(np.floor(
+            range_perbin_inverse*img_channels[y1:y2+1,x1:x2+1]).astype(np.int64)),axis=2)
+        self.p_bins[ids]+=weights[y1:y2+1,x1:x2+1]
+        self.p_bins=self.p_bins/np.sum(self.p_bins)
 
-        sum=1/sum
-        self.p_bins=self.p_bins*sum
 
 
     def extract_background_histogram(self,img_channels,tl,br,outer_tl,outer_br):
         range_per_bin_inverse=self.num_bins_perdimension/256
-        sum=0
+        #sum=0
         x1,y1=tl
         x2,y2=br
         outer_x1,outer_y1=outer_tl
         outer_x2,outer_y2=outer_br
+        """
         for y in range(outer_y1,outer_y2):
             for x in range(outer_x1,outer_x2):
                 if x>=x1 and x<=x2 and y>=y1 and y<=y2:
@@ -544,34 +538,39 @@ class Histogram:
                 self.p_bins[id]+=1
                 sum+=1
         sum=1./sum
-        self.p_bins=self.p_bins*sum
+        """
+        mask=np.ones((outer_y2-outer_y1,outer_x2-outer_x1))
+        mask[y1-outer_y1:y2+1-outer_y1,x1-outer_x1:x2+1-outer_x1]=-1
+        ids = np.sum(self.p_dim_id_coef[None, None, :] * (np.floor(
+            range_per_bin_inverse *mask[:,:,None]*img_channels[outer_y1:outer_y2, outer_x1:outer_x2]).astype(np.int64)), axis=2)
+        # only statistic valid val
+        self.p_bins[ids[ids>=0]]+=1
+        self.p_bins=self.p_bins/np.sum(self.p_bins)
 
 
     def back_project(self,img_channels):
+        range_per_bin_inverse = self.num_bins_perdimension / 256
+        """
         img=img_channels[:,:,0]
         back_project=np.zeros_like(img,dtype=np.float32)
-        range_per_bin_inverse=self.num_bins_perdimension/256
         for y in range(img.shape[0]):
             for x in range(img.shape[1]):
                 id=0
                 for dim in range(self.num_dimensions):
                     id+=self.p_dim_id_coef[dim]*int(np.floor(range_per_bin_inverse*img_channels[y,x,dim]))
                 back_project[y,x]=self.p_bins[int(id)]
+        """
+        ids = np.sum(self.p_dim_id_coef[None, None, :] * (np.floor(
+            range_per_bin_inverse * img_channels).astype(np.int64)), axis=2)
+        back_project=self.p_bins[ids]
         return back_project
-
-
-    def _kernel_profile_epanechnikov(self,x):
-        res=np.zeros_like(x)
-        res[x<=1]=0
-        res[np.where(x<=1)]=2/np.pi*(1-x[x<=1])
-        return res
 
 
 
 class Segment:
 
     @staticmethod
-    def compute_posteriors(img_channels, fg_prior, bg_prior, hist_target, hist_backgroud, tl, br, p_b):
+    def compute_posteriors(img_channels, fg_prior, bg_prior, hist_target, hist_backgroud, tl, br,p_b):
 
         x1, y1 = tl
         x2, y2 = br
@@ -579,8 +578,9 @@ class Segment:
         y1 = int(min(max(y1, 0), img_channels.shape[0] - 1))
         x2 = int(max(min(x2, img_channels.shape[1] - 1), 0))
         y2 = int(max(min(y2, img_channels.shape[0] - 1), 0))
-        p_o = 1 - p_b
-
+        #p_b = 5. / 3.
+        #p_o = 1. / (p_b + 1)
+        p_o=1-p_b
         factor = min(1, np.sqrt(1000 / ((x2 - x1) * (y2 - y1))))
         new_size = (int((x2 - x1) * factor), int((y2 - y1) * factor))
         img_channels_roi_inner = np.zeros((new_size[1], new_size[0], img_channels.shape[2]), dtype=np.float32)
@@ -611,9 +611,11 @@ class Segment:
         lambda_size=2*hsize+1
         lambda_=np.zeros((lambda_size,lambda_size))
         std2=(hsize/3)**2
-        for y in range(-hsize,hsize+1):
-            for x in range(-hsize,hsize+1):
-                lambda_[y+hsize,x+hsize]=Segment._gaussian(x**2,y**2,std2)
+        ys=np.arange(-hsize,hsize+1)
+        xs=np.arange(-hsize,hsize+1)
+        xs,ys=np.meshgrid(xs,ys)
+        lambda_[ys+hsize,xs+hsize]=Segment._gaussian(xs**2,ys**2,std2)
+
         #lambda_=gaussian2d_labels((lambda_size,lambda_size),hsize/3)
         # set center of kernel to 0
         lambda_[hsize,hsize]=0

@@ -42,13 +42,6 @@ def extract_cn_feature(img,cell_size=1):
     out = np.concatenate((gray, cn_feature), axis=2)
     return out
 
-
-def extrac_hc_feature(img,cell_size=4):
-    cn_feature=extract_cn_feature(img,cell_size)
-    hog_feature=extract_hog_feature(img, cell_size)
-    return np.concatenate((hog_feature,cn_feature),axis=2)
-
-
 """
 def extract_cn_feature(img, center, sz, w2c):
     patch=cv2.getRectSubPix(img,sz,center)
