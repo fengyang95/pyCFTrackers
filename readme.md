@@ -10,6 +10,7 @@ I use [pysot-toolkit](https://github.com/StrangerZhang/pysot-toolkit) to eval th
 - [x] [DSST](http://www.cvl.isy.liu.se/research/objrec/visualtracking/scalvistrack/ScaleTracking_BMVC14.pdf)
 - [x] [Staple](https://arxiv.org/pdf/1512.01355v2.pdf)
 - [x] [BACF](http://openaccess.thecvf.com/content_ICCV_2017/papers/Galoogahi_Learning_Background-Aware_Correlation_ICCV_2017_paper.pdf)  
+- [x] [CSR-DCF](https://arxiv.org/pdf/1611.08461v1.pdf)   
 - [x] [DAT](https://www.tugraz.at/institute/icg/research/team-bischof/lrs/downloads/dat/)  This tracker is not based on CF, I re-implement it just for understanding Staple better  
 
 
@@ -81,7 +82,8 @@ VOT2018
 |Tracker Name| Accuracy | Robustness | Lost Number |  EAO  |
 ------------------------------------------------------------
 |    ECO     |  0.492   |   0.435    |    93.0     | 0.214 |
-|   ECO-HC   |  0.496   |   0.529    |    113.0    | 0.198 |
+|   CSRDCF   |  0.487   |   0.510    |    109.0    | 0.199 |
+|   ECO-HC   |  0.497   |   0.529    |    113.0    | 0.198 |
 |   Staple   |  0.523   |   0.702    |    150.0    | 0.165 |
 |    DAT     |  0.477   |   0.777    |    166.0    | 0.158 |
 |    BACF    |  0.508   |   1.063    |    227.0    | 0.116 |
@@ -100,6 +102,7 @@ VOT2016
 |    ECO     |  0.554   |   0.247    |    53.0     | 0.329 |
 |   ECO-HC   |  0.504   |   0.322    |    69.0     | 0.280 |
 |   Staple   |  0.551   |   0.382    |    82.0     | 0.277 |
+|   CSRDCF   |  0.525   |   0.364    |    78.0     | 0.268 |
 |    DAT     |  0.474   |   0.503    |    108.0    | 0.232 |
 |    BACF    |  0.532   |   0.536    |    115.0    | 0.213 |
 |     CN     |  0.468   |   0.653    |    140.0    | 0.178 |
