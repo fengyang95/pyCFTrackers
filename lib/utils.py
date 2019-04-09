@@ -77,7 +77,7 @@ def get_ground_truthes(img_path):
                 gt_pos = line.split(',')
             else:
                 gt_pos=line.split()
-            gt_pos_int=[int(float(element)) for element in gt_pos]
+            gt_pos_int=[(float(element)) for element in gt_pos]
             gts.append(gt_pos_int)
 
 def get_init_gt(img_path):

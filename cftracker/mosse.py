@@ -26,6 +26,7 @@ class MOSSE(BaseCF):
         x,y,w,h=tuple(bbox)
         self._center=(x+w/2,y+h/2)
         self.w,self.h=w,h
+        w,h=int(round(w)),int(round(h))
         self.cos_window=cos_window((w,h))
         self._fi=cv2.getRectSubPix(first_frame,(w,h),self._center)
         self._G=np.fft.fft2(gaussian2d_labels((w,h),self.sigma))
@@ -45,7 +46,7 @@ class MOSSE(BaseCF):
             current_frame=cv2.cvtColor(current_frame,cv2.COLOR_BGR2GRAY)
         current_frame=current_frame.astype(np.float32)/255
         Hi=self._Ai/self._Bi
-        fi=cv2.getRectSubPix(current_frame,(self.w,self.h),self._center)
+        fi=cv2.getRectSubPix(current_frame,(int(round(self.w)),int(round(self.h))),self._center)
         fi=self._preprocessing(fi,self.cos_window)
         Gi=Hi*np.fft.fft2(fi)
         gi=np.real(np.fft.ifft2(Gi))
@@ -57,12 +58,12 @@ class MOSSE(BaseCF):
         x_c+=dx
         y_c+=dy
         self._center=(x_c,y_c)
-        fi=cv2.getRectSubPix(current_frame,(self.w,self.h),self._center)
+        fi=cv2.getRectSubPix(current_frame,(int(round(self.w)),int(round(self.h))),self._center)
         fi=self._preprocessing(fi,self.cos_window)
         Fi=np.fft.fft2(fi)
         self._Ai=self.interp_factor*(self._G*np.conj(Fi))+(1-self.interp_factor)*self._Ai
         self._Bi=self.interp_factor*(Fi*np.conj(Fi))+(1-self.interp_factor)*self._Bi
-        return [int(self._center[0]-self.w/2),int(self._center[1]-self.h/2),self.w,self.h]
+        return [self._center[0]-self.w/2,self._center[1]-self.h/2,self.w,self.h]
 
     def _preprocessing(self,img,cos_window,eps=1e-5):
         img=np.log(img+1)

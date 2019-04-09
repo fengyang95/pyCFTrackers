@@ -28,12 +28,12 @@ class CSK(BaseCF):
         x,y,w,h=tuple(bbox)
         self._center=(x+w/2,y+h/2)
         self.w,self.h=w,h
-        self._window=cos_window((2*w,2*h))
-        self.crop_size=(2*w,2*h)
-        self.x=cv2.getRectSubPix(first_frame,(2*w,2*h),self._center)/255-0.5
+        self._window=cos_window((int(round(2*w)),int(round(2*h))))
+        self.crop_size=(int(round(2*w)),int(round(2*h)))
+        self.x=cv2.getRectSubPix(first_frame,(int(round(2*w)),int(round(2*h))),self._center)/255-0.5
         self.x=self.x*self._window
         s=np.sqrt(w*h)/16
-        self.y=gaussian2d_labels((2*w,2*h),s)
+        self.y=gaussian2d_labels((int(round(2*w)),int(round(2*h))),s)
         self._init_response_center=np.unravel_index(np.argmax(self.y,axis=None),self.y.shape)
         self.alphaf=self._training(self.x,self.y)
 
@@ -42,7 +42,7 @@ class CSK(BaseCF):
             assert current_frame.shape[2]==3
             current_frame=cv2.cvtColor(current_frame,cv2.COLOR_BGR2GRAY)
         current_frame=current_frame.astype(np.float32)
-        z=cv2.getRectSubPix(current_frame,(2*self.w,2*self.h),self._center)/255-0.5
+        z=cv2.getRectSubPix(current_frame,(int(round(2*self.w)),int(round(2*self.h))),self._center)/255-0.5
         z=z*self._window
         self.z=z
         responses=self._detection(self.alphaf,self.x,z)
@@ -59,7 +59,7 @@ class CSK(BaseCF):
         new_x=new_x*self._window
         self.alphaf=self.interp_factor*self._training(new_x,self.y)+(1-self.interp_factor)*self.alphaf
         self.x=self.interp_factor*new_x+(1-self.interp_factor)*self.x
-        return [int(self._center[0]-self.w/2),int(self._center[1]-self.h/2),self.w,self.h]
+        return [self._center[0]-self.w/2,self._center[1]-self.h/2,self.w,self.h]
 
 
     def _dgk(self, x1, x2):

@@ -125,7 +125,7 @@ class KCF(BaseCF):
         new_xf = fft2(self._get_windowed(new_x, self._window))
         self.alphaf = self.interp_factor * self._training(new_xf, self.yf, kernel=self.kernel) + (1 - self.interp_factor) * self.alphaf
         self.xf = self.interp_factor * new_xf + (1 - self.interp_factor) * self.xf
-        return [int((self._center[0] - self.w / 2)), int((self._center[1] - self.h / 2)), int(self.w), int(self.h)]
+        return [(self._center[0] - self.w / 2), (self._center[1] - self.h / 2), self.w, self.h]
 
     def _kernel_correlation(self, xf, yf, kernel='gaussian'):
         if kernel== 'gaussian':

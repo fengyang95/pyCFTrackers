@@ -59,7 +59,9 @@ class CSRDCF(BaseCF):
         self.w,self.h=w,h
         if np.all(first_frame[:,:,0]==first_frame[:,:,1]):
             self.use_segmentation=False
-        self.cell_size=int(min(4,max(1,w*h/400)))
+        # change 400 to 300
+        # for larger cell_size
+        self.cell_size=int(min(4,max(1,w*h/300)))
         self.base_target_sz=(w,h)
 
         template_size=(int(w+self.padding*np.sqrt(w*h)),int(h+self.padding*np.sqrt(w*h)))
@@ -68,11 +70,13 @@ class CSRDCF(BaseCF):
 
         self.rescale_ratio=np.sqrt((200**2)/(self.template_size[0]*self.template_size[1]))
         self.rescale_ratio=np.clip(self.rescale_ratio,a_min=None,a_max=1)
+
         self.rescale_template_size=(int(self.rescale_ratio*self.template_size[0]),
                                     int(self.rescale_ratio*self.template_size[1]))
         self.yf=fft2(gaussian2d_rolled_labels((int(self.rescale_template_size[0]/self.cell_size),
                                                int(self.rescale_template_size[1]/self.cell_size)),
                                               self.y_sigma))
+
         self._window=cos_window((self.yf.shape[1],self.yf.shape[0]))
         self.crop_size=self.rescale_template_size
 
@@ -234,8 +238,8 @@ class CSRDCF(BaseCF):
 
         self.target_sz = (self.current_scale_factor * self.base_target_sz[0],
                           self.current_scale_factor * self.base_target_sz[1])
-        region=[int(self._center[0] - self.target_sz[0] / 2), int(self._center[1] - self.target_sz[1] / 2),
-                        int(self.target_sz[0]), int(self.target_sz[1])]
+        region=[np.round(self._center[0] - self.target_sz[0] / 2),np.round( self._center[1] - self.target_sz[1] / 2),
+                        self.target_sz[0], self.target_sz[1]]
         if self.use_segmentation:
             if self.segcolor_space=='bgr':
                 seg_img=current_frame
@@ -259,7 +263,7 @@ class CSRDCF(BaseCF):
             init_mask_padded=np.zeros_like(mask)
             pm_x0=int(np.floor(mask.shape[1]/2-region[2]/2))
             pm_y0=int(np.floor(mask.shape[0]/2-region[3]/2))
-            init_mask_padded[pm_y0:pm_y0+region[3],pm_x0:pm_x0+region[2]]=1
+            init_mask_padded[pm_y0:pm_y0+int(np.round(region[3])),pm_x0:pm_x0+int(np.round(region[2]))]=1
             mask=mask*init_mask_padded
             mask=cv2.resize(mask,(self.yf.shape[1],self.yf.shape[0]))
             if self.mask_normal(mask,self.target_dummy_area) is True:

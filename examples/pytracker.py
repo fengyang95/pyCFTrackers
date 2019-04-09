@@ -67,7 +67,7 @@ class PyTracker:
         poses = []
         init_frame = cv2.imread(self.frame_list[0])
         print(init_frame.shape)
-        init_gt = np.array(self.init_gt).astype(np.int64)
+        init_gt = np.array(self.init_gt)
         x1, y1, w, h =init_gt
         init_gt=tuple(init_gt)
         self.tracker.init(init_frame,init_gt)

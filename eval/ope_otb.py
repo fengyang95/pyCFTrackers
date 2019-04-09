@@ -34,8 +34,6 @@ parser.add_argument('--gt', action='store_true', help='whether use gt rect for d
 from lib.pysot.datasets import DatasetFactory
 
 def track_otb(tracker_type,dataset):
-
-
     for video in dataset:
         regions = []
         print('video:',video.name)

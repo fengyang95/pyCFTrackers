@@ -72,7 +72,7 @@ class CN(BaseCF):
         self.alphaf_num=(1-self.interp_factor)*self.alphaf_num+self.interp_factor*new_alphaf_num
         self.alphaf_den=(1-self.interp_factor)*self.alphaf_den+self.interp_factor*new_alphaf_den
         self.x = (1 - self.interp_factor) * self.x + self.interp_factor * new_x
-        return [int(self._center[0]-self.w/2),int(self._center[1]-self.h/2),self.w,self.h]
+        return [self._center[0]-self.w/2,self._center[1]-self.h/2,self.w,self.h]
 
     def _dgk(self, x1, x2):
         xf = fft2(x1)

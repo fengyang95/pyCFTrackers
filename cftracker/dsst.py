@@ -118,10 +118,10 @@ class DSST(BaseCF):
         self.sf_den=(1-self.interp_factor)*self.sf_den+self.interp_factor*new_sf_den
         self.sf_num=(1-self.interp_factor)*self.sf_num+self.interp_factor*new_sf_num
 
-        self.target_sz=(int(self.base_target_size[0]*self.current_scale_factor),
-                        int(self.base_target_size[1]*self.current_scale_factor))
+        self.target_sz=(self.base_target_size[0]*self.current_scale_factor,
+                        self.base_target_size[1]*self.current_scale_factor)
 
-        return [int(self._center[0]-self.target_sz[0]/2),int(self._center[1]-self.target_sz[1]/2),
+        return [self._center[0]-self.target_sz[0]/2,self._center[1]-self.target_sz[1]/2,
                 self.target_sz[0],self.target_sz[1]]
 
     def get_translation_sample(self,im,center,model_sz,scale_factor,cos_window):

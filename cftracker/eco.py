@@ -13,7 +13,6 @@ class ECO(BaseCF):
         super(ECO).__init__()
         self.config=config
 
-
     def init(self,first_frame,bbox):
         if np.all(first_frame[:,:,0]==first_frame[:,:,1]):
             self.tracker = ECOTracker(is_color=False, config=self.config)
@@ -35,7 +34,7 @@ class ECO(BaseCF):
             self.score=self.tracker.score
             self.crop_size = tuple(self.tracker.crop_size.astype(np.int64))
         x1, y1, w, h = bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]
-        pos = [int(x1), int(y1), int(w), int(h)]
+        pos = [x1, y1, w, h]
         return pos
 
 

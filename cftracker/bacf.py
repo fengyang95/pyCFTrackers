@@ -165,8 +165,8 @@ class BACF(BaseCF):
         self.model_xf=(1-self.interp_factor)*self.model_xf+self.interp_factor*xf
         self.g_f = self.ADMM(self.model_xf)
 
-        target_sz=(int(self.target_sz[0]*self.current_scale_factor),int(self.target_sz[1]*self.current_scale_factor))
-        return [int(self._center[0]-target_sz[0]/2),int(self._center[1]-target_sz[1]/2),target_sz[0],target_sz[1]]
+        target_sz=(self.target_sz[0]*self.current_scale_factor,self.target_sz[1]*self.current_scale_factor)
+        return [self._center[0]-target_sz[0]/2,self._center[1]-target_sz[1]/2,target_sz[0],target_sz[1]]
 
     def get_subwindow_no_window(self,img,pos,sz):
         h,w=sz[1],sz[0]

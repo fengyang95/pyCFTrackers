@@ -251,7 +251,7 @@ class Staple(BaseCF):
             self.sf_den=(1-self.interp_factor_scale)*self.sf_den+self.interp_factor_scale*new_sf_den
             self.sf_num=(1-self.interp_factor_scale)*self.sf_num+self.interp_factor_scale*new_sf_num
 
-        return [int(self._center[0]-self.target_sz[0]/2),int(self._center[1]-self.target_sz[1]/2),
+        return [self._center[0]-self.target_sz[0]/2,self._center[1]-self.target_sz[1]/2,
                 self.target_sz[0],self.target_sz[1]]
 
     def floor_odd(self,x):

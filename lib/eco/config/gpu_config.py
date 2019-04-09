@@ -1,5 +1,5 @@
 class GPUConfig:
-    use_gpu=False
-    gpu_id=7
+    use_gpu=True
+    gpu_id=2
 
 gpu_config=GPUConfig()

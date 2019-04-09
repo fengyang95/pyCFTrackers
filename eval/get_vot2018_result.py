@@ -79,7 +79,7 @@ def track_vot(tracker_type, video):
             target_pos = np.array([cx, cy])
             target_sz = np.array([w, h])
             location=cxy_wh_2_rect(target_pos,target_sz)
-            tracker.init(im,(int(cx-w/2),int(cy-h/2),int(w),int(h)))
+            tracker.init(im,((cx-w/2),(cy-h/2),(w),(h)))
             regions.append(1 if 'VOT' in args.dataset else gt[f])
         elif f > start_frame:
             bbox=tracker.update(im)
@@ -159,7 +159,7 @@ def main():
     total_lost = 0  # VOT
     speed_list = []
 
-    trackers = ['CSRDCF']
+    trackers = [ 'CSRDCF']
 
     for tracker_type in trackers:
 
