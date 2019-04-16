@@ -19,6 +19,7 @@ from cftracker.dat import DAT
 from cftracker.eco import ECO
 from cftracker.bacf import BACF
 from cftracker.csrdcf import CSRDCF
+from cftracker.opencv_cftracker import OpenCVCFTracker
 
 from lib.eco.config import otb_deep_config,otb_hc_config
 
@@ -61,12 +62,18 @@ def track_otb(tracker_type,dataset):
             tracker=BACF()
         elif tracker_type=='CSRDCF':
             tracker=CSRDCF()
+        elif tracker_type == 'OPENCV_KCF':
+            tracker = OpenCVCFTracker(name='KCF')
+        elif tracker_type == 'OPENCV_MOSSE':
+            tracker = OpenCVCFTracker(name='MOSSE')
+        elif tracker_type == 'OPENCV-CSRDCF':
+            tracker = OpenCVCFTracker(name='CSRDCF')
         else:
             raise NotImplementedError
         for idx, (img, gt_bbox) in enumerate(video):
             if idx == 0:
             # init your tracker here
-                tracker.init(img,gt_bbox)
+                tracker.init(img,tuple(gt_bbox))
                 regions.append(gt_bbox)
                 location=gt_bbox
             else:
@@ -108,7 +115,7 @@ def main():
 
     logger = logging.getLogger('global')
     logger.info(args)
-    trackers = ['CSRDCF']
+    trackers = ['OPENCV-CSRDCF']
     dataset = DatasetFactory.create_dataset(name='OTB100',
                                             dataset_root='../dataset/OTB100',
                                             load_img=True

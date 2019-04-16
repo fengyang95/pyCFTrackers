@@ -22,6 +22,7 @@ from cftracker.dat import DAT
 from cftracker.eco import ECO
 from cftracker.bacf import BACF
 from cftracker.csrdcf import CSRDCF
+from cftracker.opencv_cftracker import OpenCVCFTracker
 from lib.eco.config import vot16_deep_config,vot16_hc_config
 from cftracker.config import staple_config
 
@@ -59,6 +60,12 @@ def create_tracker(tracker_type):
         tracker=BACF()
     elif tracker_type=='CSRDCF':
         tracker=CSRDCF()
+    elif tracker_type=='OPENCV_KCF':
+        tracker=OpenCVCFTracker(name='KCF')
+    elif tracker_type=='OPENCV_MOSSE':
+        tracker=OpenCVCFTracker(name='MOSSE')
+    elif tracker_type=='OPENCV-CSRDCF':
+        tracker=OpenCVCFTracker(name='CSRDCF')
     else:
         raise NotImplementedError
     return tracker
@@ -158,7 +165,7 @@ def main():
     speed_list = []
 
     # tracker names
-    trackers = ['CSRDCF']
+    trackers = ['OPENCV_MOSSE','OPENCV_KCF','OPENCV-CSRDCF']
 
     for tracker_type in trackers:
 
