@@ -20,6 +20,7 @@ from cftracker.eco import ECO
 from cftracker.bacf import BACF
 from cftracker.csrdcf import CSRDCF
 from cftracker.opencv_cftracker import OpenCVCFTracker
+from cftracker.config import staple_config
 
 from lib.eco.config import otb_deep_config,otb_hc_config
 
@@ -47,7 +48,9 @@ def track_otb(tracker_type,dataset):
         elif tracker_type=='DSST':
             tracker=DSST()
         elif tracker_type=='Staple':
-            tracker=Staple()
+            tracker=Staple(config=staple_config.StapleConfig())
+        elif tracker_type=='Staple-CA':
+            tracker=Staple(config=staple_config.StapleCAConfig())
         elif tracker_type=='KCF':
             tracker=KCF(features='hog',kernel='gaussian')
         elif tracker_type=='DCF':
@@ -115,7 +118,7 @@ def main():
 
     logger = logging.getLogger('global')
     logger.info(args)
-    trackers = ['OPENCV-CSRDCF']
+    trackers = ['Staple','Staple-CA']
     dataset = DatasetFactory.create_dataset(name='OTB100',
                                             dataset_root='../dataset/OTB100',
                                             load_img=True

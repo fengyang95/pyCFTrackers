@@ -46,6 +46,8 @@ def create_tracker(tracker_type):
         tracker = DSST()
     elif tracker_type == 'Staple':
         tracker = Staple(config=staple_config.StapleVOTConfig())
+    elif tracker_type=='Staple-CA':
+        tracker=Staple(config=staple_config.StapleCAConfig())
     elif tracker_type == 'KCF':
         tracker = KCF(features='hog', kernel='gaussian')
     elif tracker_type == 'DCF':
@@ -166,7 +168,7 @@ def main():
     total_lost = 0  # VOT
     speed_list = []
 
-    trackers = ['OPENCV_MOSSE','OPENCV_KCF','OPENCV-CSRDCF']
+    trackers = ['Staple-CA']
 
     for tracker_type in trackers:
 

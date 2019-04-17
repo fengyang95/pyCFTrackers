@@ -12,6 +12,7 @@ from cftracker.eco import ECO
 from cftracker.bacf import BACF
 from cftracker.csrdcf import CSRDCF
 from lib.eco.config import otb_deep_config,otb_hc_config
+from cftracker.config import staple_config
 
 class PyTracker:
     def __init__(self,img_dir,tracker_type,dataset_config):
@@ -39,7 +40,9 @@ class PyTracker:
         elif self.tracker_type=='DSST':
             self.tracker=DSST()
         elif self.tracker_type=='Staple':
-            self.tracker=Staple()
+            self.tracker=Staple(config=staple_config.StapleConfig())
+        elif self.tracker_type=='Staple-CA':
+            self.tracker=Staple(config=staple_config.StapleCAConfig())
         elif self.tracker_type=='KCF_CN':
             self.tracker=KCF(features='cn',kernel='gaussian')
         elif self.tracker_type=='KCF_GRAY':

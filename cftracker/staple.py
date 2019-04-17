@@ -13,7 +13,7 @@ from .base import BaseCF
 from .feature import extract_hog_feature
 from lib.utils import cos_window
 from lib.fft_tools import fft2,ifft2
-from .config.staple_config import StapleConfig
+from .config.staple_config import StapleConfig,StapleCAConfig
 
 def mod_one(a,b):
     y=np.mod(a-1,b)+1
@@ -60,7 +60,7 @@ def get_center_likelihood(likelihood_map,m):
     return center_likelihood.T
 
 class Staple(BaseCF):
-    def __init__(self,config=StapleConfig()):
+    def __init__(self,config):
         super(Staple).__init__()
         self.hog_cell_size=config.hog_cell_size
         self.fixed_area=config.fixed_area
@@ -82,6 +82,11 @@ class Staple(BaseCF):
         self.scale_step=config.scale_step
         self.scale_model_max_area=config.scale_model_max_area
         self.padding=config.padding
+        self.use_ca=config.use_ca
+        if self.use_ca is True:
+            self.lambda_2=config.lambda_2
+
+
 
     def init(self,first_frame,bbox):
         first_frame=first_frame.astype(np.float32)
@@ -91,6 +96,8 @@ class Staple(BaseCF):
         self.w,self.h=w,h
         self.crop_size = (int(w*(1+self.padding)), int(h*(1+self.padding)))
         self.target_sz=(self.w,self.h)
+
+
 
         self.bin_mapping=self.get_bin_mapping(self.n_bins)
         avg_dim=(w+h)/2
@@ -128,6 +135,12 @@ class Staple(BaseCF):
         self._init_response_center = np.unravel_index(np.argmax(self.y, axis=None), self.y.shape)
         self.yf=fft2(self.y)
 
+        if self.use_ca:
+            # w,h format
+            self.offset=[[0,-self.target_sz[1]],[-self.target_sz[0],0],
+                         [0,self.target_sz[1]],[self.target_sz[0],0]]
+
+
         if self.scale_adaptation is True:
             self.scale_factor=1
             self.base_target_sz=self.target_sz
@@ -158,12 +171,29 @@ class Staple(BaseCF):
             self.max_scale_factor = self.scale_step ** (
                 int(np.floor((np.log(min(first_frame.shape[1] / self.w, first_frame.shape[0] / self.h)) /
                               np.log(self.scale_step)))))
-        im_patch_bg=self.get_sub_window(first_frame,self._center,self.norm_bg_area,bg_area)
+        im_patch_bg=self.get_sub_window(first_frame,self._center,self.norm_bg_area,self.bg_area)
         xt=self.get_feature_map(im_patch_bg,self.hog_cell_size)
         xt=self._window[:,:,None]*xt
         xtf=fft2(xt)
-        self.hf_num=np.conj(self.yf)[:,:,None]*xtf/(self.cf_response_size[0]*self.cf_response_size[1])
-        self.hf_den=np.conj(xtf)*xtf/(self.cf_response_size[0]*self.cf_response_size[1])
+        if self.use_ca:
+            kfn=None
+            for j in range(len(self.offset)):
+                im_patch_bgn=self.get_sub_window(first_frame,(self._center[0]+self.offset[j][0],self._center[1]+self.offset[j][1]),
+                                                 self.norm_bg_area,self.bg_area)
+                xtn=self.get_feature_map(im_patch_bgn,self.hog_cell_size)
+                xtn=self._window[:,:,None]*xtn
+                xtfn=fft2(xtn)
+                if kfn is None:
+                    kfn=(np.conj(xtfn)*xtfn)[:,:,:,np.newaxis]
+                else:
+                    kfn=np.concatenate((kfn,(np.conj(xtfn)*xtfn)[:,:,:,np.newaxis]),axis=3)
+            self.hf_num = np.conj(self.yf)[:, :, None] * xtf
+            self.hf_den = np.conj(xtf) * xtf + self.lambda_ + self.lambda_2 * np.sum(kfn, axis=3)
+
+        else:
+            self.hf_num=np.conj(self.yf)[:,:,None]*xtf/(self.cf_response_size[0]*self.cf_response_size[1])
+            self.hf_den=np.conj(xtf)*xtf/(self.cf_response_size[0]*self.cf_response_size[1])
+
         if self.scale_adaptation is True:
             im_patch_scale=self.get_scale_subwindow(first_frame,self._center,
                                                     self.base_target_sz,self.scale_factor*self.scale_factors,
@@ -182,16 +212,23 @@ class Staple(BaseCF):
         xt=self.get_feature_map(im_patch_cf,self.hog_cell_size)
         xt_windowed=self._window[:,:,None]*xt
         xtf=fft2(xt_windowed)
-        if self.den_per_channel:
-            hf=self.hf_num/(self.hf_den+self.lambda_)
+        if self.use_ca is False:
+            if self.den_per_channel:
+                hf=self.hf_num/(self.hf_den+self.lambda_)
+            else:
+                hf=self.hf_num/(np.sum(self.hf_den,axis=2)+self.lambda_)[:,:,None]
         else:
-            hf=self.hf_num/(np.sum(self.hf_den,axis=2)+self.lambda_)[:,:,None]
+            if self.den_per_channel:
+                hf=self.hf_num/self.hf_den
+            else:
+                hf=self.hf_num/(np.sum(self.hf_den,axis=2)[:,:,None])
+
         response_cf=np.real(ifft2(np.sum(np.conj(hf)*xtf,axis=2)))
 
         response_sz=(self.floor_odd(self.norm_delta_area[0]/self.hog_cell_size),self.floor_odd(self.norm_delta_area[1]/self.hog_cell_size))
         response_cf=crop_filter_response(response_cf,response_sz)
         if self.hog_cell_size>1:
-            response_cf=cv2.resize(response_cf,self.norm_delta_area)
+            response_cf=self.mex_resize(response_cf,self.norm_delta_area)
         likelihood_map=self.get_colour_map(im_patch_pwp,self.bg_hist,self.fg_hist,self.bin_mapping)
 
         likelihood_map[np.isnan(likelihood_map)]=0.
@@ -235,8 +272,30 @@ class Staple(BaseCF):
         xt=self.get_feature_map(im_patch_bg,self.hog_cell_size)
         xt=self._window[:,:,None]*xt
         xtf=fft2(xt)
-        new_hf_num=np.conj(self.yf)[:,:,None]*xtf/(self.cf_response_size[0]*self.cf_response_size[1])
-        new_hf_den=(np.conj(xtf)*xtf)/(self.cf_response_size[0]*self.cf_response_size[1])
+
+        if self.use_ca:
+            kfn = None
+            for j in range(len(self.offset)):
+                im_patch_bgn = self.get_sub_window(current_frame, (
+                self._center[0] + self.offset[j][0], self._center[1] + self.offset[j][1]),
+                                                   self.norm_bg_area, self.bg_area)
+                xtn = self.get_feature_map(im_patch_bgn, self.hog_cell_size)
+                xtn = self._window[:, :, None] * xtn
+                xtfn = fft2(xtn)
+                if kfn is None:
+                    kfn = (np.conj(xtfn) * xtfn)[:, :, :, np.newaxis]
+                else:
+
+                    kfn = np.concatenate((kfn, (np.conj(xtfn) * xtfn)[:, :, :, np.newaxis]), axis=3)
+
+        if self.use_ca is False:
+            new_hf_num = np.conj(self.yf)[:, :, None] * xtf / (self.cf_response_size[0] * self.cf_response_size[1])
+            new_hf_den = (np.conj(xtf) * xtf) / (self.cf_response_size[0] * self.cf_response_size[1])
+        else:
+            new_hf_num = np.conj(self.yf)[:, :, None] * xtf
+            new_hf_den = np.conj(xtf) * xtf + self.lambda_ + self.lambda_2 * np.sum(kfn, axis=3)
+
+
         self.hf_den=(1-self.interp_factor_cf)*self.hf_den+self.interp_factor_cf*new_hf_den
         self.hf_num=(1-self.interp_factor_cf)*self.hf_num+self.interp_factor_cf*new_hf_num
         self.bg_hist,self.fg_hist=self.update_hist_model(self.new_pwp_model,
@@ -266,7 +325,7 @@ class Staple(BaseCF):
                         int(base_target_sz[1] *scale_factors[s]))
             patch_sz=(max(2,patch_sz[0]),max(2,patch_sz[1]))
             im_patch = cv2.getRectSubPix(im, patch_sz, center)
-            im_patch_resized=self.mex_resize(im_patch,scale_model_sz)
+            im_patch_resized=self.mex_resize(im_patch,scale_model_sz).astype(np.uint8)
             tmp = extract_hog_feature(im_patch_resized, cell_size=hog_scale_cell_sz)
             if out is None:
                 out = tmp.flatten() *scale_window[s]
@@ -277,7 +336,7 @@ class Staple(BaseCF):
     def get_feature_map(self,im_patch,hog_cell_sz):
         hog_feature= extract_hog_feature(im_patch, cell_size=hog_cell_sz)[:, :, :27]
         if hog_cell_sz>1:
-            im_patch=self.mex_resize(im_patch,(self._window.shape[1],self._window.shape[0]))
+            im_patch=self.mex_resize(im_patch,(self._window.shape[1],self._window.shape[0])).astype(np.uint8)
         gray=cv2.cvtColor(im_patch,cv2.COLOR_BGR2GRAY)[:,:,np.newaxis]/255-0.5
         return np.concatenate((gray,hog_feature),axis=2)
 
@@ -313,7 +372,7 @@ class Staple(BaseCF):
         sz=(max(int(sz[0]),2),max(int(sz[1]),2))
         im_patch=cv2.getRectSubPix(img,sz,center)
         if scaled_sz is not None:
-            im_patch = self.mex_resize(im_patch, model_sz)
+            im_patch = self.mex_resize(im_patch, model_sz).astype(np.uint8)
         return im_patch
 
     def mex_resize(self,img,sz):
@@ -323,7 +382,7 @@ class Staple(BaseCF):
             interpolation = cv2.INTER_LINEAR
         else:
             interpolation = cv2.INTER_AREA
-        img = cv2.resize(img, sz, interpolation=interpolation).astype(np.uint8)
+        img = cv2.resize(img, sz, interpolation=interpolation)
         return img
 
     def compute_histogram(self,patch,mask,n_bins):
