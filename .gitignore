@@ -1,0 +1,13 @@
+*.idea
+*~
+*__pycache__*
+*.pyc
+/dataset/
+/results/CF
+/results/tmp
+/eval/test
+.idea/deployment.xml
+.idea/
+.eval/log_test.txt
+.eval/log_test_vot2016.txt
+.eval/log_test_vot2018.txt
