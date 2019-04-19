@@ -53,7 +53,7 @@ class MOSSE(BaseCF):
         if vis is True:
             self.score=gi
         curr=np.unravel_index(np.argmax(gi, axis=None),gi.shape)
-        dy,dx=curr[0]-self.h/2,curr[1]-self.w/2
+        dy,dx=curr[0]-(self.h/2),curr[1]-(self.w/2)
         x_c,y_c=self._center
         x_c+=dx
         y_c+=dy
@@ -72,7 +72,7 @@ class MOSSE(BaseCF):
 
     def _rand_warp(self,img):
         h, w = img.shape[:2]
-        C = .2
+        C = .1
         ang = np.random.uniform(-C, C)
         c, s = np.cos(ang), np.sin(ang)
         W = np.array([[c + np.random.uniform(-C, C), -s + np.random.uniform(-C, C), 0],

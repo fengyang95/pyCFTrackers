@@ -47,7 +47,7 @@ def create_tracker(tracker_type):
     elif tracker_type == 'Staple':
         tracker = Staple(config=staple_config.StapleVOTConfig())
     elif tracker_type=='Staple-CA':
-        tracker=Staple(config=staple_config.StapleCAConfig())
+        tracker=Staple(config=staple_config.StapleCAVOTConfig())
     elif tracker_type == 'KCF':
         tracker = KCF(features='hog', kernel='gaussian')
     elif tracker_type == 'DCF':

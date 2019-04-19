@@ -31,7 +31,6 @@ def gaussian2d_rolled_labels_staple(sz, sigma):
     labels[i_mod_range-1,j_mod_range-1]=np.exp(-(i**2+j**2)/(2*sigma**2))
     return labels
 
-
 def crop_filter_response(response_cf,response_sz):
     h,w=response_cf.shape[:2]
     half_width=int(np.floor(response_sz[0]/2))
@@ -101,12 +100,12 @@ class Staple(BaseCF):
 
         self.bin_mapping=self.get_bin_mapping(self.n_bins)
         avg_dim=(w+h)/2
-        bg_area=(round(w+avg_dim),round(h+avg_dim))
-        fg_area=(int(round(w-avg_dim*self.inner_padding)),int(round(h-avg_dim*self.inner_padding)))
-        bg_area=(int(min(bg_area[0],first_frame.shape[1]-1)),int(min(bg_area[1],first_frame.shape[0]-1)))
+        self.bg_area=(round(w+avg_dim),round(h+avg_dim))
+        self.fg_area=(int(round(w-avg_dim*self.inner_padding)),int(round(h-avg_dim*self.inner_padding)))
+        self.bg_area=(int(min(self.bg_area[0],first_frame.shape[1]-1)),int(min(self.bg_area[1],first_frame.shape[0]-1)))
 
-        self.bg_area=(bg_area[0]-(bg_area[0]-self.target_sz[0])%2,bg_area[1]-(bg_area[1]-self.target_sz[1])%2)
-        self.fg_area=(fg_area[0]+(self.bg_area[0]-fg_area[0])%2,fg_area[1]+(self.bg_area[1]-fg_area[1])%2)
+        self.bg_area=(self.bg_area[0]-(self.bg_area[0]-self.target_sz[0])%2,self.bg_area[1]-(self.bg_area[1]-self.target_sz[1])%2)
+        self.fg_area=(self.fg_area[0]+(self.bg_area[0]-self.fg_area[0])%2,self.fg_area[1]+(self.bg_area[1]-self.fg_area[1])%2)
         self.area_resize_factor=np.sqrt(self.fixed_area/(self.bg_area[0]*self.bg_area[1]))
         self.norm_bg_area=(round(self.bg_area[0]*self.area_resize_factor),round(self.bg_area[1]*self.area_resize_factor))
 
@@ -187,7 +186,7 @@ class Staple(BaseCF):
                     kfn=(np.conj(xtfn)*xtfn)[:,:,:,np.newaxis]
                 else:
                     kfn=np.concatenate((kfn,(np.conj(xtfn)*xtfn)[:,:,:,np.newaxis]),axis=3)
-            self.hf_num = np.conj(self.yf)[:, :, None] * xtf
+            self.hf_num = self.yf[:, :, None] * np.conj(xtf)
             self.hf_den = np.conj(xtf) * xtf + self.lambda_ + self.lambda_2 * np.sum(kfn, axis=3)
 
         else:
@@ -223,12 +222,18 @@ class Staple(BaseCF):
             else:
                 hf=self.hf_num/(np.sum(self.hf_den,axis=2)[:,:,None])
 
-        response_cf=np.real(ifft2(np.sum(np.conj(hf)*xtf,axis=2)))
+        if self.use_ca is False:
+            response_cf=np.real(ifft2(np.sum(np.conj(hf)*xtf,axis=2)))
+        else:
+            response_cf = np.real(ifft2(np.sum(hf * xtf, axis=2)))
 
         response_sz=(self.floor_odd(self.norm_delta_area[0]/self.hog_cell_size),self.floor_odd(self.norm_delta_area[1]/self.hog_cell_size))
         response_cf=crop_filter_response(response_cf,response_sz)
         if self.hog_cell_size>1:
-            response_cf=self.mex_resize(response_cf,self.norm_delta_area)
+            if self.use_ca is True:
+                response_cf=self.mex_resize(response_cf,self.norm_delta_area)
+            else:
+                response_cf=cv2.resize(response_cf,self.norm_delta_area,cv2.INTER_NEAREST)
         likelihood_map=self.get_colour_map(im_patch_pwp,self.bg_hist,self.fg_hist,self.bin_mapping)
 
         likelihood_map[np.isnan(likelihood_map)]=0.
@@ -240,8 +245,7 @@ class Staple(BaseCF):
         if vis is True:
             self.score=response
         curr = np.unravel_index(np.argmax(response, axis=None), response.shape)
-
-        center=(self.norm_delta_area[0]/2,self.norm_delta_area[1]/2)
+        center=((self.norm_delta_area[0]-1)/2,(self.norm_delta_area[1]-1)/2)
         dy = (curr[0]-center[1])/self.area_resize_factor
         dx = (curr[1]-center[0])/self.area_resize_factor
         x_c,y_c=self._center
@@ -263,8 +267,7 @@ class Staple(BaseCF):
             bg_area = (round(self.target_sz[0] + avg_dim), round(self.target_sz[1] + avg_dim))
             fg_area = (round(self.target_sz[0] - avg_dim * self.inner_padding), round(self.target_sz[1] - avg_dim * self.inner_padding))
             bg_area = (min(bg_area[0], current_frame.shape[1] - 1), min(bg_area[1], current_frame.shape[0] - 1))
-            self.bg_area = (
-            bg_area[0] - (bg_area[0] - self.target_sz[0]) % 2, bg_area[1] - (bg_area[1] - self.target_sz[1]) % 2)
+            self.bg_area = (bg_area[0] - (bg_area[0] - self.target_sz[0]) % 2, bg_area[1] - (bg_area[1] - self.target_sz[1]) % 2)
             self.fg_area = (fg_area[0] + (self.bg_area[0] - fg_area[0]) % 2, fg_area[1] + (self.bg_area[1] - fg_area[1]) % 2)
             self.area_resize_factor = np.sqrt(self.fixed_area / (self.bg_area[0] * self.bg_area[1]))
 
@@ -292,7 +295,7 @@ class Staple(BaseCF):
             new_hf_num = np.conj(self.yf)[:, :, None] * xtf / (self.cf_response_size[0] * self.cf_response_size[1])
             new_hf_den = (np.conj(xtf) * xtf) / (self.cf_response_size[0] * self.cf_response_size[1])
         else:
-            new_hf_num = np.conj(self.yf)[:, :, None] * xtf
+            new_hf_num = self.yf[:, :, None] * np.conj(xtf)
             new_hf_den = np.conj(xtf) * xtf + self.lambda_ + self.lambda_2 * np.sum(kfn, axis=3)
 
 
