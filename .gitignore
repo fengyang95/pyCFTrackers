@@ -1,6 +1,6 @@
-*.idea
-*__pycache__*
-*.pyc
+/*.idea
+/*__pycache__*
+/*.pyc
 /dataset/
 /results/CF
 /results/tmp
