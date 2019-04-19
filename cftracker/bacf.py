@@ -242,13 +242,18 @@ class BACF(BaseCF):
         else:
             return input_dft
 
-    def mex_resize(self, img, sz):
+    def mex_resize(self, img, sz,method='auto'):
         sz = (int(sz[0]), int(sz[1]))
         src_sz = (img.shape[1], img.shape[0])
-        if sz[0] > src_sz[1]:
-            interpolation = cv2.INTER_LINEAR
+        if method=='antialias':
+            interpolation=cv2.INTER_AREA
+        elif method=='linear':
+            interpolation=cv2.INTER_LINEAR
         else:
-            interpolation = cv2.INTER_AREA
+            if sz[1] > src_sz[1]:
+                interpolation = cv2.INTER_LINEAR
+            else:
+                interpolation = cv2.INTER_AREA
         img = cv2.resize(img, sz, interpolation=interpolation)
         return img
 
