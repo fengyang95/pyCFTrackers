@@ -45,7 +45,7 @@ class OTBVideo(Video):
                     txt_name = 'jogging_1.txt'
                 elif self.name == 'Jogging-2':
                     txt_name = 'jogging_2.txt'
-                elif self.name == 'Skating2-1':
+                elif self.name == 'Skating2':
                     txt_name = 'skating2_1.txt'
                 elif self.name == 'Skating2-2':
                     txt_name = 'skating2_2.txt'
@@ -53,7 +53,7 @@ class OTBVideo(Video):
                     txt_name = 'faceocc1.txt'
                 elif self.name == 'FaceOcc2':
                     txt_name = 'faceocc2.txt'
-                elif self.name == 'Human4-2-2':
+                elif self.name == 'Human4-2':
                     txt_name = 'human4_2.txt'
                 else:
                     txt_name = self.name[0].lower()+self.name[1:]+'.txt'
