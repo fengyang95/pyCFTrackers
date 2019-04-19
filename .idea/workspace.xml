@@ -4,27 +4,7 @@
     <bookmark url="file://$PROJECT_DIR$/eval/eval_OTB.py" line="12" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="224459dd-dab2-4666-9281-dee54f6f3a0f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cftracker/config/staple_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/cftracker/config/staple_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cftracker/mosse.py" beforeDir="false" afterPath="$PROJECT_DIR$/cftracker/mosse.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cftracker/staple.py" beforeDir="false" afterPath="$PROJECT_DIR$/cftracker/staple.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/eval_OTB.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/eval_OTB.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/get_vot2016_result.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/get_vot2016_result.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/get_vot2018_result.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/get_vot2018_result.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/log_test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/eval/log_test.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/log_test_vot2016.txt" beforeDir="false" afterPath="$PROJECT_DIR$/eval/log_test_vot2016.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/log_test_vot2018.txt" beforeDir="false" afterPath="$PROJECT_DIR$/eval/log_test_vot2018.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/ope_otb.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/ope_otb.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/cf_demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/cf_demo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/pytracker_OPE_OTB100_precision.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/pytracker_OPE_OTB100_precision.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/pytracker_OPE_OTB100_success.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/pytracker_OPE_OTB100_success.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/pytracker_OPE_OTB2013_precision.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/pytracker_OPE_OTB2013_precision.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/pytracker_OPE_OTB2013_success.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/pytracker_OPE_OTB2013_success.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/pytracker_OPE_OTB50_precision.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/pytracker_OPE_OTB50_precision.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/pytracker_OPE_OTB50_success.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/pytracker_OPE_OTB50_success.png" afterDir="false" />
-    </list>
+    <list default="true" id="224459dd-dab2-4666-9281-dee54f6f3a0f" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -204,8 +184,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
-              <caret line="6" column="6" lean-forward="true" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
+            <state relative-caret-position="242">
+              <caret line="11" column="2" lean-forward="true" selection-start-line="11" selection-start-column="2" selection-end-line="11" selection-end-column="2" />
             </state>
           </provider>
         </entry>
@@ -582,12 +562,12 @@
     <frame x="-1" y="0" width="1922" height="1081" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.87900877" visible="true" weight="0.18443497" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.87900877" visible="true" weight="0.18443497" />
       <window_info id="Structure" order="1" sideWeight="0.12187959" side_tool="true" weight="0.13340448" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4903949" weight="0.32964602" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.8123667" visible="true" weight="0.40732986" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.8123667" weight="0.40732986" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49786553" weight="0.39933628" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -596,7 +576,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.18763326" side_tool="true" weight="0.3853403" />
-      <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.5901814" weight="0.27876106" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" sideWeight="0.5901814" visible="true" weight="0.39685863" />
       <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.49893278" weight="0.32964602" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -1011,8 +991,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="6" column="6" lean-forward="true" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
+        <state relative-caret-position="242">
+          <caret line="11" column="2" lean-forward="true" selection-start-line="11" selection-start-column="2" selection-end-line="11" selection-end-column="2" />
         </state>
       </provider>
     </entry>
