@@ -3141,3 +3141,30 @@
 [2019-04-19 12:18:20,793-rk0-get_vot2016_result.py#149] (60) Video: wiper        Time: 16.8s Speed: 20.3fps Lost: 1 Tracker:Staple-CA
 [2019-04-19 12:18:20,793-rk0-get_vot2016_result.py#179] Total Lost: 83
 [2019-04-19 12:18:20,793-rk0-get_vot2016_result.py#181] Mean Speed: 20.45 FPS
+[2019-04-19 13:39:50,405-rk0-get_vot2016_result.py#162] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-04-19 13:40:04,564-rk0-get_vot2016_result.py#149] (1) Video: bag          Time: 12.2s Speed: 16.0fps Lost: 0 Tracker:Staple-CA
+[2019-04-19 13:40:12,933-rk0-get_vot2016_result.py#149] (2) Video: ball1        Time: 5.5s Speed: 19.0fps Lost: 0 Tracker:Staple-CA
+[2019-04-19 13:40:15,431-rk0-get_vot2016_result.py#149] (3) Video: ball2        Time: 1.6s Speed: 24.5fps Lost: 2 Tracker:Staple-CA
+[2019-04-19 13:40:53,189-rk0-get_vot2016_result.py#149] (4) Video: basketball   Time: 27.5s Speed: 26.3fps Lost: 0 Tracker:Staple-CA
+[2019-04-19 13:41:20,177-rk0-get_vot2016_result.py#149] (5) Video: birds1       Time: 13.9s Speed: 24.4fps Lost: 8 Tracker:Staple-CA
+[2019-04-19 13:41:57,440-rk0-get_vot2016_result.py#149] (6) Video: birds2       Time: 29.6s Speed: 18.2fps Lost: 1 Tracker:Staple-CA
+[2019-04-19 13:42:05,762-rk0-get_vot2016_result.py#149] (7) Video: blanket      Time: 7.1s Speed: 31.5fps Lost: 1 Tracker:Staple-CA
+[2019-04-19 13:42:13,529-rk0-get_vot2016_result.py#149] (8) Video: bmx          Time: 5.9s Speed: 12.7fps Lost: 0 Tracker:Staple-CA
+[2019-04-19 13:42:29,817-rk0-get_vot2016_result.py#149] (9) Video: bolt1        Time: 10.9s Speed: 31.9fps Lost: 0 Tracker:Staple-CA
+[2019-04-19 13:42:48,125-rk0-get_vot2016_result.py#149] (10) Video: bolt2        Time: 15.2s Speed: 19.3fps Lost: 1 Tracker:Staple-CA
+[2019-04-19 13:42:58,215-rk0-get_vot2016_result.py#149] (11) Video: book         Time: 8.2s Speed: 21.2fps Lost: 2 Tracker:Staple-CA
+[2019-04-19 13:43:09,785-rk0-get_vot2016_result.py#149] (12) Video: butterfly    Time: 10.1s Speed: 14.8fps Lost: 1 Tracker:Staple-CA
+[2019-04-19 13:43:59,431-rk0-get_vot2016_result.py#149] (13) Video: car1         Time: 42.3s Speed: 17.5fps Lost: 1 Tracker:Staple-CA
+[2019-04-19 13:44:19,438-rk0-get_vot2016_result.py#149] (14) Video: car2         Time: 17.8s Speed: 22.1fps Lost: 0 Tracker:Staple-CA
+[2019-04-19 13:44:28,743-rk0-get_vot2016_result.py#149] (15) Video: crossing     Time: 6.9s Speed: 18.8fps Lost: 0 Tracker:Staple-CA
+[2019-04-19 13:44:44,268-rk0-get_vot2016_result.py#149] (16) Video: dinosaur     Time: 13.3s Speed: 24.5fps Lost: 1 Tracker:Staple-CA
+[2019-04-19 13:45:00,199-rk0-get_vot2016_result.py#149] (17) Video: fernando     Time: 13.7s Speed: 21.2fps Lost: 1 Tracker:Staple-CA
+[2019-04-19 13:45:15,578-rk0-get_vot2016_result.py#149] (18) Video: fish1        Time: 11.8s Speed: 30.9fps Lost: 3 Tracker:Staple-CA
+[2019-04-19 13:45:35,861-rk0-get_vot2016_result.py#149] (19) Video: fish2        Time: 16.0s Speed: 19.3fps Lost: 2 Tracker:Staple-CA
+[2019-04-19 13:45:59,874-rk0-get_vot2016_result.py#149] (20) Video: fish3        Time: 18.3s Speed: 28.3fps Lost: 1 Tracker:Staple-CA
+[2019-04-19 13:46:40,228-rk0-get_vot2016_result.py#149] (21) Video: fish4        Time: 31.9s Speed: 21.3fps Lost: 0 Tracker:Staple-CA
+[2019-04-19 13:47:51,349-rk0-get_vot2016_result.py#149] (22) Video: girl         Time: 58.0s Speed: 25.9fps Lost: 1 Tracker:Staple-CA
+[2019-04-19 13:47:58,035-rk0-get_vot2016_result.py#149] (23) Video: glove        Time: 5.6s Speed: 21.3fps Lost: 2 Tracker:Staple-CA
+[2019-04-19 13:48:14,857-rk0-get_vot2016_result.py#149] (24) Video: godfather    Time: 12.9s Speed: 28.3fps Lost: 2 Tracker:Staple-CA
+[2019-04-19 13:48:54,000-rk0-get_vot2016_result.py#149] (25) Video: graduate     Time: 33.2s Speed: 25.4fps Lost: 8 Tracker:Staple-CA
+[2019-04-19 13:49:20,103-rk0-get_vot2016_result.py#149] (26) Video: gymnastics1  Time: 21.9s Speed: 25.8fps Lost: 3 Tracker:Staple-CA

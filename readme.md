@@ -9,6 +9,7 @@ I use [pysot-toolkit](https://github.com/StrangerZhang/pysot-toolkit) to eval th
 - [x] [KCF/DCF](http://www.robots.ox.ac.uk/~joao/publications/henriques_tpami2015.pdf)
 - [x] [DSST](http://www.cvl.isy.liu.se/research/objrec/visualtracking/scalvistrack/ScaleTracking_BMVC14.pdf)
 - [x] [Staple](https://arxiv.org/pdf/1512.01355v2.pdf)
+- [x] [Staple-CA](https://ivul.kaust.edu.sa/Documents/Publications/2017/Context-Aware%20Correlation%20Filter%20Tracking.pdf)
 - [x] [BACF](http://openaccess.thecvf.com/content_ICCV_2017/papers/Galoogahi_Learning_Background-Aware_Correlation_ICCV_2017_paper.pdf)  
 - [x] [CSR-DCF](https://arxiv.org/pdf/1611.08461v1.pdf)   
 - [x] [DAT](https://www.tugraz.at/institute/icg/research/team-bischof/lrs/downloads/dat/)  This tracker is not based on CF, I re-implement it just for understanding Staple better  
@@ -16,7 +17,7 @@ I use [pysot-toolkit](https://github.com/StrangerZhang/pysot-toolkit) to eval th
 
 **Trackers from other repos**
 - [x] [ECO/ECO-HC](https://arxiv.org/pdf/1611.09224v1.pdf) from [pyECO](https://github.com/StrangerZhang/pyECO)
-- [x] [OPENCV_CSRDCF](https://github.com/opencv/opencv_contrib)(Note that trackers implemented in opencv get lower score because they will return a success flag and if this flag is False, the bbox will be set to (0,0,0,0))
+- [x] [OPENCV-CSRDCF](https://github.com/opencv/opencv_contrib)(Note that trackers implemented in opencv get lower score because they will return a success flag and if this flag is False, the bbox will be set to (0,0,0,0))
 
 
 ## Install
@@ -86,7 +87,6 @@ VOT2018
 |    ECO-HC     |  0.500   |   0.473    |    101.0    | 0.207 |
 |    Staple     |  0.524   |   0.665    |    142.0    | 0.179 |
 | OPENCV-CSRDCF |  0.486   |   0.651    |    139.0    | 0.170 |
-|   Staple-CA   |  0.532   |   0.726    |    155.0    | 0.166 |
 |      DAT      |  0.477   |   0.777    |    166.0    | 0.158 |
 |     BACF      |  0.508   |   1.054    |    225.0    | 0.119 |
 |      CN       |  0.439   |   1.100    |    235.0    | 0.112 |
@@ -104,7 +104,6 @@ VOT2016
 |      ECO      |  0.564   |   0.256    |    55.0     | 0.336 |
 |    Staple     |  0.560   |   0.387    |    83.0     | 0.299 |
 |    ECO-HC     |  0.532   |   0.350    |    75.0     | 0.293 |
-|   Staple-CA   |  0.558   |   0.387    |    83.0     | 0.287 |
 |    CSRDCF     |  0.537   |   0.326    |    70.0     | 0.284 |
 | OPENCV-CSRDCF |  0.521   |   0.438    |    94.0     | 0.239 |
 |      DAT      |  0.474   |   0.503    |    108.0    | 0.232 |
@@ -116,7 +115,6 @@ VOT2016
 |      CSK      |  0.433   |   0.886    |    190.0    | 0.139 |
 |     MOSSE     |  0.388   |   1.244    |    267.0    | 0.096 |
 ---------------------------------------------------------------
-
 ```
 ## License
 Licensed under an MIT license.
