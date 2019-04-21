@@ -40,6 +40,7 @@ def draw_success_precision(success_ret, name, videos, attr, precision_ret=None,
     plt.xticks(np.arange(xmin, xmax+0.01, 0.1))
     plt.yticks(np.arange(ymin, ymax, 0.1))
     ax.set_aspect((xmax - xmin)/(ymax-ymin))
+
     plt.show()
 
     if precision_ret:

@@ -15,6 +15,7 @@ from lib.pysot.utils import region
 from cftracker.mosse import MOSSE
 from cftracker.staple import Staple
 from cftracker.dsst import DSST
+from cftracker.samf import SAMF
 from cftracker.kcf import KCF
 from cftracker.csk import CSK
 from cftracker.cn import CN
@@ -44,6 +45,8 @@ def create_tracker(tracker_type):
         tracker = CN()
     elif tracker_type == 'DSST':
         tracker = DSST()
+    elif tracker_type=='SAMF':
+        tracker=SAMF()
     elif tracker_type == 'Staple':
         tracker = Staple(config=staple_config.StapleVOTConfig())
     #elif tracker_type=='Staple-CA':
@@ -168,7 +171,7 @@ def main():
     total_lost = 0  # VOT
     speed_list = []
 
-    trackers = ['Staple']
+    trackers = ['SAMF']
 
     for tracker_type in trackers:
 

@@ -22,6 +22,7 @@ from cftracker.dat import DAT
 from cftracker.eco import ECO
 from cftracker.bacf import BACF
 from cftracker.csrdcf import CSRDCF
+from cftracker.samf import SAMF
 from cftracker.opencv_cftracker import OpenCVCFTracker
 from lib.eco.config import vot16_deep_config,vot16_hc_config
 from cftracker.config import staple_config
@@ -44,6 +45,8 @@ def create_tracker(tracker_type):
         tracker = CN()
     elif tracker_type == 'DSST':
         tracker = DSST()
+    elif tracker_type=='SAMF':
+        tracker=SAMF()
     elif tracker_type == 'Staple':
         tracker = Staple(config=staple_config.StapleVOTConfig())
     #elif tracker_type=='Staple-CA':
@@ -167,7 +170,7 @@ def main():
     speed_list = []
 
     # tracker names
-    trackers = ['Staple']
+    trackers = ['SAMF']
 
     for tracker_type in trackers:
 

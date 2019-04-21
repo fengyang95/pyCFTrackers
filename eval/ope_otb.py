@@ -12,6 +12,7 @@ from lib.log_helper import init_log, add_file_handler
 from cftracker.mosse import MOSSE
 from cftracker.staple import Staple
 from cftracker.dsst import DSST
+from cftracker.samf import SAMF
 from cftracker.kcf import KCF
 from cftracker.csk import CSK
 from cftracker.cn import CN
@@ -47,6 +48,8 @@ def track_otb(tracker_type,dataset):
             tracker=CN()
         elif tracker_type=='DSST':
             tracker=DSST()
+        elif tracker_type=='SAMF':
+            tracker=SAMF()
         elif tracker_type=='Staple':
             tracker=Staple(config=staple_config.StapleConfig())
         elif tracker_type=='Staple-CA':
@@ -118,7 +121,7 @@ def main():
 
     logger = logging.getLogger('global')
     logger.info(args)
-    trackers = ['Staple-CA','BACF']
+    trackers = ['SAMF']
     dataset = DatasetFactory.create_dataset(name='OTB100',
                                             dataset_root='../dataset/OTB100',
                                             load_img=True

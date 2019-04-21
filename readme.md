@@ -8,12 +8,12 @@ I use [pysot-toolkit](https://github.com/StrangerZhang/pysot-toolkit) to eval th
 - [x] [CN](http://117.128.6.12/cache/www.cvl.isy.liu.se/research/objrec/visualtracking/colvistrack/CN_Tracking_CVPR14.pdf?ich_args2=465-31142901008185_f9df5d61efad793a151f3e0f467d3f75_10001002_9c896128d7c2f2d6933d518939a83798_91ccc5b03febd95ae516eb0f69b18b49)
 - [x] [KCF/DCF](http://www.robots.ox.ac.uk/~joao/publications/henriques_tpami2015.pdf)
 - [x] [DSST](http://www.cvl.isy.liu.se/research/objrec/visualtracking/scalvistrack/ScaleTracking_BMVC14.pdf)
+- [x] [SAMF](https://link.springer.com/content/pdf/10.1007%2F978-3-319-16181-5_18.pdf)  
 - [x] [Staple](https://arxiv.org/pdf/1512.01355v2.pdf)
 - [x] [Staple-CA](https://ivul.kaust.edu.sa/Documents/Publications/2017/Context-Aware%20Correlation%20Filter%20Tracking.pdf)
 - [x] [BACF](http://openaccess.thecvf.com/content_ICCV_2017/papers/Galoogahi_Learning_Background-Aware_Correlation_ICCV_2017_paper.pdf)  
 - [x] [CSR-DCF](https://arxiv.org/pdf/1611.08461v1.pdf)   
 - [x] [DAT](https://www.tugraz.at/institute/icg/research/team-bischof/lrs/downloads/dat/)  This tracker is not based on CF, I re-implement it just for understanding Staple better  
-
 
 **Trackers from other repos**
 - [x] [ECO/ECO-HC](https://arxiv.org/pdf/1611.09224v1.pdf) from [pyECO](https://github.com/StrangerZhang/pyECO)
@@ -90,6 +90,7 @@ VOT2018
 |      DAT      |  0.477   |   0.777    |    166.0    | 0.158 |
 |     BACF      |  0.508   |   1.054    |    225.0    | 0.119 |
 |      CN       |  0.439   |   1.100    |    235.0    | 0.112 |
+|     SAMF      |  0.499   |   1.147    |    245.0    | 0.110 |
 |     DSST      |  0.503   |   1.288    |    275.0    | 0.101 |
 |      DCF      |  0.463   |   1.246    |    266.0    | 0.099 |
 |      KCF      |  0.463   |   1.330    |    284.0    | 0.094 |
@@ -108,6 +109,7 @@ VOT2016
 | OPENCV-CSRDCF |  0.521   |   0.438    |    94.0     | 0.239 |
 |      DAT      |  0.474   |   0.503    |    108.0    | 0.232 |
 |     BACF      |  0.532   |   0.592    |    127.0    | 0.196 |
+|     SAMF      |  0.544   |   0.639    |    137.0    | 0.193 |
 |      CN       |  0.468   |   0.653    |    140.0    | 0.178 |
 |     DSST      |  0.540   |   0.736    |    158.0    | 0.175 |
 |      DCF      |  0.474   |   0.704    |    151.0    | 0.171 |

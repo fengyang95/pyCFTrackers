@@ -1,6 +1,6 @@
 *.idea
 *__pycache__*
-s*.pyc
+*.pyc
 /dataset/
 /results/CF
 /results/tmp
@@ -9,5 +9,6 @@ s*.pyc
 .eval/log_test_vot2016.txt
 .eval/log_test_vot2018.txt
 /got10k/
+/cftracker/ldes.py
 
 
