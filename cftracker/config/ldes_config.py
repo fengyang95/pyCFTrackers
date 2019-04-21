@@ -4,7 +4,7 @@ class LDESConfig:
     lambda_=1e-4
     output_sigma_factor=0.1
     interp_factor=0.01
-    cell_size=(4,4)
+    cell_size=4
 
     min_image_sample_size=100**2
     max_image_sample_size=350**2
