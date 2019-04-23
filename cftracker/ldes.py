@@ -54,8 +54,6 @@ def getLKcorner(warp_p,sz):
     warp_pts=warp_pts[:2,:]
     return warp_pts
 
-
-
 def PSR(response,rate):
     max_response=np.max(response)
     h,w=response.shape
@@ -63,39 +61,40 @@ def PSR(response,rate):
     yy,xx=np.unravel_index(np.argmax(response, axis=None),response.shape)
     idx=np.arange(w)-xx
     idy=np.arange(h)-yy
-    #idx=repmat(idx,w,1).T-xx
-    #idy=repmat(idy,h,1)-yy
-    idx,idy=np.meshgrid(idx,idy)
+    idx=repmat(idx,h,1)-xx
+    idy=repmat(idy,w,1).T-yy
     t=idx**2+idy**2
     delta=1-np.exp(-k*t)
     r=(max_response-response)/delta
     return np.min(r)
 
 
-
-
-
-
-def get_center_likelihood(likelihood_map,m):
+def get_center_likelihood(likelihood_map, sz):
     h,w=likelihood_map.shape[:2]
-    n1=h-m[1]+1
-    n2=w-m[0]+1
+    n1= h - sz[1] + 1
+    n2= w - sz[0] + 1
     sat=cv2.integral(likelihood_map)
     i,j=np.arange(n1),np.arange(n2)
     i,j=np.meshgrid(i,j)
     sat1=sat[i,j]
-    sat2=np.roll(sat,-m[1],axis=0)
-    sat2=np.roll(sat2,-m[0],axis=1)
+    sat2=np.roll(sat, -sz[1], axis=0)
+    sat2=np.roll(sat2, -sz[0], axis=1)
     sat2=sat2[i,j]
-    sat3=np.roll(sat,-m[1],axis=0)
+    sat3=np.roll(sat, -sz[1], axis=0)
     sat3=sat3[i,j]
-    sat4=np.roll(sat,-m[0],axis=1)
+    sat4=np.roll(sat, -sz[0], axis=1)
     sat4=sat4[i,j]
-    center_likelihood=(sat1+sat2-sat3-sat4)/(m[0]*m[1])
+    center_likelihood=(sat1+sat2-sat3-sat4)/(sz[0] * sz[1])
+    #def fillzeros(im,sz):
+    #    res=np.zeros((sz[1],sz[0]))
+    #    msz=((sz[0]-im.shape[1])//2,(sz[1]-im.shape[0])//2)
+    #    res[msz[1]:msz[1]+im.shape[0],msz[0]:msz[0]+im.shape[1]]=im
+    #    return res
+    #center_likelihood=fillzeros(center_likelihood,(w,h))
     return center_likelihood.T
 
 class LDES(BaseCF):
-    def __init__(self,config=ldes_config.LDESConfig()):
+    def __init__(self,config=ldes_config.LDESOTBConfig()):
         super(LDES).__init__()
         self.kernel_type=config.kernel_type
         self.padding=config.padding
@@ -122,17 +121,41 @@ class LDES(BaseCF):
         self.color_update_rate = config.color_update_rate
         self.merge_factor = config.merge_factor
 
+        self.vot=config.vot
         self.vis=False
 
-    def init(self,first_frame,bbox):
+    def init(self, first_frame, region):
         assert len(first_frame.shape)==3 and first_frame.shape[2]==3
-        bbox = np.array(bbox).astype(np.int64)
-        x0, y0, w, h = tuple(bbox)
-        rot=0
-        self._center=(x0+w/2,y0+h/2)
+        region = np.array(region).astype(np.int64)
+        if self.vot is False:
+            x0, y0, w, h = tuple(region)
+            rot=0
+            self._center = (x0 + w / 2, y0 + h / 2)
+            self.target_sz = (w, h)
+        else:
+            corners=region.reshape((4,2))
+            lu=np.min(corners,axis=0)
+            pos=np.mean(corners,axis=0)
+            pos=pos.T
+            lu=lu.T
+            target_sz=(pos-lu)*2
+            self.target_sz=(target_sz[0],target_sz[1])
+            self._center=(pos[0],pos[1])
+            A=np.array([0.,-1.])
+            B=np.array([region[4]-region[2],region[3]-region[5]])
+            rot1=np.arccos(A.dot(B)/(np.linalg.norm(A)*np.linalg.norm(B)))*2/np.pi
+            if np.prod(B)<0:
+                rot1=-rot1
+            C=np.array([region[6]-region[2],region[1]-region[7]])
+            rot2=np.arccos(A.dot(C)/(np.linalg.norm(A)*np.linalg.norm(C)))*2/np.pi
+            if np.prod(C)<0:
+                rot2=-rot2
+            rot=(rot1+rot2)/2
+
+
         self.bin_mapping=self.get_bin_mapping(self.nbin)
-        self.target_sz=(w,h)
-        self.window_sz=(int(np.floor(w * (1 + self.padding))), int(np.floor(h * (1 + self.padding))))
+
+        self.window_sz=(int(np.floor(self.target_sz[0] * (1 + self.padding))), int(np.floor(self.target_sz[1] * (1 + self.padding))))
         search_area= self.window_sz[0] * self.window_sz[1]
         self.sc=search_area/np.clip(search_area,a_min=self.min_image_sample_size,a_max=self.max_image_sample_size)
         self.window_sz0=(int(np.round(self.window_sz[0] / self.sc)), int(np.round(self.window_sz[1] / self.sc)))
@@ -173,16 +196,12 @@ class LDES(BaseCF):
         self.mag=self.cos_window_scale.shape[0]/np.log(np.sqrt((self.cos_window_scale.shape[0]**2+
                                                                self.cos_window_scale.shape[1]**2)/4))
         self.cell_size=cell_size_search
-
-        rect=np.zeros((4,))
-        point=np.zeros((8,))
-        tmp_sc=1.
-        tmp_rot=0.
-        aff=np.zeros((10,))
+        tmp_sc = 1.
+        tmp_rot = 0.
         self.logupdate(1,first_frame,self._center,tmp_sc,tmp_rot)
         x,y=self._center
-        x=np.clip(x,a_min=0,a_max=first_frame.shape[1])
-        y=np.clip(y,a_min=0,a_max=first_frame.shape[0])
+        x=np.clip(x,a_min=0,a_max=first_frame.shape[1]-1)
+        y=np.clip(y,a_min=0,a_max=first_frame.shape[0]-1)
         self._center=(x,y)
         # construct return variables
 
@@ -222,7 +241,8 @@ class LDES(BaseCF):
         aff=[]
         if self.is_rotation:
             T=parameters_to_projective_matrix([1,self.rot,self._center[0],self._center[1]])
-            aff=getLKcorner(T,self.target_sz)
+            aff=getLKcorner(T,target_sz)
+            """
             import copy
             show_img=copy.deepcopy(current_frame)
             tl=(int(aff[0,0]),int(aff[1,0]))
@@ -235,10 +255,14 @@ class LDES(BaseCF):
             show_img=cv2.line(show_img,bl,tl,color=(255,0,0))
             cv2.imshow('show_img',show_img)
             cv2.waitKey(0)
-
-
+            """
         self.aff=aff
-        return box
+        if self.vot is True:
+            aff=aff[:,[0,3,2,1]]
+            reg=aff.T.flatten()
+            return reg
+        else:
+            return box
 
     def logupdate(self,init,img,pos,tmp_sc,tmp_rot):
         tmp=np.floor(self.sc[0]*tmp_sc*self.window_sz0[0])+np.floor(self.sc[1]*tmp_sc*self.window_sz0[1])
@@ -253,10 +277,10 @@ class LDES(BaseCF):
         # compute the current CF model
         # sampling the image
         if self.is_rotation:
-            patch=self.get_affine_subwindow(img,pos,self.sc,self.rot,self.window_sz0)
+            patch=self.get_affine_subwindow(img, pos, self.sc, self.rot, self.window_sz0).astype(np.uint8)
         else:
             patchO=cv2.getRectSubPix(img,self.window_sz,pos)
-            patch=cv2.resize(patchO,self.window_sz0,interpolation=cv2.INTER_CUBIC)
+            patch=cv2.resize(patchO,self.window_sz0,interpolation=cv2.INTER_CUBIC).atype(np.uint8)
         x=self.get_features(patch,self.cell_size)
         x=x*self.cos_window[:,:,None]
         xf=fft2(x)
@@ -265,12 +289,12 @@ class LDES(BaseCF):
 
         if self.is_rotation:
             # here is not similarity transformation
-            patchL=self.get_affine_subwindow(img,pos,[1,1],self.rot,(int(np.floor(self.sc[0]*self.scale_sz[0])),
-                                                                 int(np.floor(self.sc[1]*self.scale_sz[1]))))
+            patchL=self.get_affine_subwindow(img, pos, [1, 1], self.rot, (int(np.floor(self.sc[0] * self.scale_sz[0])),
+                                                                          int(np.floor(self.sc[1]*self.scale_sz[1])))).astype(np.uint8)
         else:
             patchL=cv2.getRectSubPix(img,(int(np.floor(self.sc[0]*self.scale_sz[0])),
-                                               int(np.floor(self.sc[1]*self.scale_sz[1]))),pos)
-        patchL=cv2.resize(patchL,self.scale_sz_window,cv2.INTER_CUBIC)
+                                               int(np.floor(self.sc[1]*self.scale_sz[1]))),pos).astype(np.uint8)
+        patchL=cv2.resize(patchL,self.scale_sz_window,cv2.INTER_CUBIC).astype(np.uint8)
         # get logpolar space and apply feature extraction
         patchLp=cv2.logPolar(patchL.astype(np.float32),(patchL.shape[1]//2,patchL.shape[0]//2),self.mag,flags=cv2.INTER_LINEAR + cv2.WARP_FILL_OUTLIERS).astype(np.uint8)
         patchLp=extract_hog_feature(patchLp,self.cell_size)
@@ -278,11 +302,11 @@ class LDES(BaseCF):
         # updating color histogram probabilities
         sz=(patch.shape[1],patch.shape[0])
         is_color=not(np.all(patch[:,:,0]==patch[:,:,1]))
-
+        #is_color=True
         if is_color:
-            pos_in=(sz[0]/2,sz[1]/2)
+            pos_in=((sz[0]-1)/2,(sz[1]-1)/2)
             lab_patch=patch
-            inter_patch=cv2.getRectSubPix(lab_patch.astype(np.uint8),(int(round(sz[0]*self.inter_patch_rate)),int(round(sz[1]*self.inter_patch_rate))),pos_in)
+            inter_patch=cv2.getRectSubPix(lab_patch.astype(np.uint8),(int(round(sz[0]*self.inter_patch_rate)),int(round(sz[1]*self.inter_patch_rate))),pos_in).astype(np.uint8)
             self.interp_patch=inter_patch
             pl=self.get_color_space_hist(lab_patch,self.nbin)
             pi=self.get_color_space_hist(inter_patch,self.nbin)
@@ -323,11 +347,11 @@ class LDES(BaseCF):
             w_sz0=self.window_sz_search0
             c_w=self.cos_window_search
         if self.is_rotation:
-            patch=self.get_affine_subwindow(img,pos,self.sc,self.rot,w_sz0)
+            patch=self.get_affine_subwindow(img, pos, self.sc, self.rot, w_sz0).astype(np.uint8)
         else:
             sz_s=(int(np.floor(self.sc[0]*w_sz0[0])),int(np.floor(self.sc[1]*w_sz0[1])))
             patchO=cv2.getRectSubPix(img,sz_s,pos)
-            patch=cv2.resize(patchO,w_sz0,cv2.INTER_CUBIC)
+            patch=cv2.resize(patchO,w_sz0,cv2.INTER_CUBIC).astype(np.uint8)
 
         z=self.get_features(patch,self.cell_size)
         z=z*c_w[:,:,None]
@@ -340,7 +364,6 @@ class LDES(BaseCF):
             w=pad(ifft2(wf),(ssz[1],ssz[0]))
             wf=fft2(w)
 
-
         tmp_sz=ssz
         # compute convolution for each feature block in the Fourier domain
         # use general compute here for easy extension in future
@@ -349,13 +372,11 @@ class LDES(BaseCF):
         rff_real=cv2.resize(rff.real.astype(np.float32),(tmp_sz[0],tmp_sz[1]),interpolation=cv2.INTER_NEAREST)
         rff_imag=cv2.resize(rff.imag.astype(np.float32),(tmp_sz[0],tmp_sz[1]),interpolation=cv2.INTER_NEAREST)
         rff=rff_real+1j*rff_imag
-        rf=rff
-        response_cf=np.real(ifft2(rf))
+        response_cf=np.real(ifft2(rff))
         response_color=np.zeros_like(response_cf)
 
         if not(np.all(patch[:,:,0]==patch[:,:,1])):
             object_likelihood=self.get_colour_map(patch,self.pl,self.pi,self.bin_mapping)
-            object_likelihood[np.isnan(object_likelihood)] = 0
             response_color=get_center_likelihood(object_likelihood,self.target_sz0)
             response_color=cv2.resize(response_color,(response_cf.shape[1],response_cf.shape[0]),cv2.INTER_CUBIC)
         response_cf=np.fft.fftshift(response_cf)
@@ -368,7 +389,6 @@ class LDES(BaseCF):
             self.score=response
             self.crop_size=self.window_sz
         # sub-pixel search
-        cscore=response.max()
         pty,ptx=np.unravel_index(np.argmax(response, axis=None),response.shape)
         if self.is_subpixel:
             slobe=2
@@ -377,14 +397,14 @@ class LDES(BaseCF):
             idy=np.clip(idy,a_min=0,a_max=response.shape[0]-1)
             idx=np.clip(idx,a_min=0,a_max=response.shape[1]-1)
             weight_patch=response[idy,:][:,idx]
-            s=np.sum(weight_patch)+2e-52
+            s=np.sum(weight_patch)+2e-16
             pty=np.sum(np.sum(weight_patch,axis=1)*idy)/s
             ptx=np.sum(np.sum(weight_patch,axis=0)*idx)/s
         cscore=PSR(response,0.1)
 
         # update the translation status
-        dy=pty-np.floor((response.shape[0]-1)/2)
-        dx=ptx-np.floor((response.shape[1]-1)/2)
+        dy=pty-((response.shape[0]-1)/2)
+        dx=ptx-((response.shape[1]-1)/2)
 
         if self.is_rotation:
             sn,cs=np.sin(self.rot),np.cos(self.rot)
@@ -395,17 +415,16 @@ class LDES(BaseCF):
             x+=delta[0,1]
             y+=delta[0,0]
             pos=(x,y)
-            patchL=self.get_affine_subwindow(img,pos,[1,1],self.rot,(int(np.floor(self.sc[0]*self.scale_sz[0])),
-                                                                 int(np.floor(self.sc[1]*self.scale_sz[1]))))
-
+            patchL=self.get_affine_subwindow(img, pos, [1, 1], self.rot, (int(np.floor(self.sc[0] * self.scale_sz[0])),
+                                                                          int(np.floor(self.sc[1]*self.scale_sz[1])))).astype(np.uint8)
 
         else:
             x,y=pos
             pos=(x+self.sc[0]*self.cell_size*dx,y+self.sc[1]*self.cell_size*dy)
             patchL=cv2.getRectSubPix(img,(int(np.floor(self.sc[0]*self.scale_sz[0])),
-                                               int(np.floor(self.sc[1]*self.scale_sz[1]))),pos)
+                                               int(np.floor(self.sc[1]*self.scale_sz[1]))),pos).astype(np.uint8)
 
-        patchL=cv2.resize(patchL,self.scale_sz_window,cv2.INTER_CUBIC)
+        patchL=cv2.resize(patchL,self.scale_sz_window,cv2.INTER_CUBIC).astype(np.uint8)
         # convert into logpolar
         patchLp=cv2.logPolar(patchL.astype(np.float32),(patchL.shape[1]//2,patchL.shape[0]//2),self.mag,flags=cv2.INTER_LINEAR + cv2.WARP_FILL_OUTLIERS).astype(np.uint8)
         patchLp=extract_hog_feature(patchLp,self.cell_size)
@@ -421,7 +440,7 @@ class LDES(BaseCF):
             s1f=fft2(src1)
             s2f=fft2(src2)
             num=s2f*np.conj(s1f)
-            d=np.sqrt(num*np.conj(num))+1e-20
+            d=np.sqrt(num*np.conj(num))+2e-16
             Cf=np.sum(num/d,axis=2)
             C=np.real(ifft2(Cf))
             C=(np.fft.fftshift(C))
@@ -435,7 +454,7 @@ class LDES(BaseCF):
             idx=np.clip(idx,a_min=0,a_max=C.shape[1]-1)
             weight_patch=C[idy,:][:,idx]
 
-            s=np.sum(weight_patch)+1e-10
+            s=np.sum(weight_patch)+2e-16
             pty=np.sum(np.sum(weight_patch,axis=1)*idy)/s
             ptx=np.sum(np.sum(weight_patch,axis=0)*idx)/s
             pty=pty-(src1.shape[0])//2
@@ -443,10 +462,8 @@ class LDES(BaseCF):
             return ptx,pty,mscore
 
         ptx,pty,mscore=phase_correlation(model,obser)
-        rotate=pty*np.pi/np.floor(obser.shape[1]/2)
+        rotate=pty*np.pi/(obser.shape[1]//2)
         scale = np.exp(ptx / mag)
-        print('rotate', rotate)
-        print('scale:', scale)
         return scale,rotate,mscore
 
     def get_features(self,img,cell_size):
@@ -462,17 +479,18 @@ class LDES(BaseCF):
         frame_bin = cv2.LUT(patch.astype(np.uint8), bin_mapping).astype(np.int64)
         P_fg = fg_hist[frame_bin[:, :, 0], frame_bin[:, :, 1], frame_bin[:, :, 2]]
         P_bg=bg_hist[frame_bin[:,:,0],frame_bin[:,:,1],frame_bin[:,:,2]]
-        #nan_na=np.where(P_bg!=0)
-        #P_O=0.5*np.ones_like(P_fg)
-        #P_O[nan_na]=P_fg[nan_na]/P_bg[nan_na]
-        P_O=P_fg/(P_fg+P_bg)
+        not_na=np.where(P_bg!=0)
+        P_O=0.5*np.ones_like(P_fg)
+        P_O[not_na]=P_fg[not_na]/P_bg[not_na]
+        #P_O=P_fg/(P_fg+P_bg)
         return P_O
 
     def get_bin_mapping(self,num_bins):
         bin_mapping = np.zeros((256,))
         for i in range(bin_mapping.shape[0]):
             bin_mapping[i] = (np.floor(i / (256 / num_bins)))
-        return bin_mapping.astype(np.uint8)
+        return bin_mapping.astype(np.int)
+
 
     def get_affine_subwindow(self,img, pos, sc, rot, window_sz):
         def simiparam2mat(tx,ty,rot,s):
@@ -509,7 +527,7 @@ class LDES(BaseCF):
                 wimg[:,:,i]=interp2(img[:,:,i],pos[:,:,1],pos[:,:,0])
             return wimg
         x,y=pos
-        param0=simiparam2mat(x,y,-rot,sc)
+        param0=simiparam2mat(x,y,rot,sc)
         out=mwarpimg(img.astype(np.float32),param0,window_sz)
         return out
 

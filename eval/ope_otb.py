@@ -20,6 +20,7 @@ from cftracker.dat import DAT
 from cftracker.eco import ECO
 from cftracker.bacf import BACF
 from cftracker.csrdcf import CSRDCF
+from cftracker.ldes import LDES
 from cftracker.opencv_cftracker import OpenCVCFTracker
 from cftracker.config import staple_config
 
@@ -74,6 +75,8 @@ def track_otb(tracker_type,dataset):
             tracker = OpenCVCFTracker(name='MOSSE')
         elif tracker_type == 'OPENCV-CSRDCF':
             tracker = OpenCVCFTracker(name='CSRDCF')
+        elif tracker_type=='LDES':
+            tracker=LDES()
         else:
             raise NotImplementedError
         for idx, (img, gt_bbox) in enumerate(video):
@@ -121,7 +124,7 @@ def main():
 
     logger = logging.getLogger('global')
     logger.info(args)
-    trackers = ['SAMF']
+    trackers = ['LDES']
     dataset = DatasetFactory.create_dataset(name='OTB100',
                                             dataset_root='../dataset/OTB100',
                                             load_img=True

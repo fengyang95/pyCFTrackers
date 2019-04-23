@@ -23,6 +23,7 @@ from cftracker.eco import ECO
 from cftracker.bacf import BACF
 from cftracker.csrdcf import CSRDCF
 from cftracker.samf import SAMF
+from cftracker.ldes import LDES
 from cftracker.opencv_cftracker import OpenCVCFTracker
 from lib.eco.config import vot16_deep_config,vot16_hc_config
 from cftracker.config import staple_config
@@ -59,6 +60,7 @@ def create_tracker(tracker_type):
         tracker = DAT()
     elif tracker_type=='ECO-HC':
         tracker=ECO(config=vot16_hc_config.VOT16HCConfig())
+
     elif tracker_type=='ECO':
         tracker=ECO(config=vot16_deep_config.VOT16DeepConfig())
     elif tracker_type=='BACF':
@@ -71,6 +73,8 @@ def create_tracker(tracker_type):
         tracker=OpenCVCFTracker(name='MOSSE')
     elif tracker_type=='OPENCV-CSRDCF':
         tracker=OpenCVCFTracker(name='CSRDCF')
+    elif tracker_type=='LDES':
+        tracker=LDES()
     else:
         raise NotImplementedError
     return tracker
@@ -87,22 +91,28 @@ def track_vot(tracker_type, video):
         tic = cv2.getTickCount()
         if f == start_frame:  # init
             tracker=create_tracker(tracker_type)
-            cx, cy, w, h = get_axis_aligned_bbox(gt[f])
-            target_pos = np.array([cx, cy])
-            target_sz = np.array([w, h])
-            location=cxy_wh_2_rect(target_pos,target_sz)
-            tracker.init(im,((cx-w/2),(cy-h/2),(w),(h)))
+
+            if tracker_type=='LDES' and tracker.vot is True:
+                tracker.init(im,gt[f])
+            else:
+                cx, cy, w, h = get_axis_aligned_bbox(gt[f])
+                target_pos = np.array([cx, cy])
+                target_sz = np.array([w, h])
+                location = cxy_wh_2_rect(target_pos, target_sz)
+                tracker.init(im, ((cx - w / 2), (cy - h / 2), (w), (h)))
             regions.append(1 if 'VOT' in args.dataset else gt[f])
         elif f > start_frame:
-            bbox=tracker.update(im)
-            x,y,w,h=bbox
-            location = (cxy_wh_2_rect((x+w/2,y+h/2),(w,h)))
+            if tracker_type=='LDES' and tracker.vot is True:
+                location=tracker.update(im)
+            else:
+                bbox=tracker.update(im)
+                x,y,w,h=bbox
+                location = (cxy_wh_2_rect((x+w/2,y+h/2),(w,h)))
 
             if 'VOT' in args.dataset:
                 b_overlap = region.vot_overlap(gt[f], location, (im.shape[1], im.shape[0]))
             else:
                 b_overlap = 1
-
             if b_overlap:
                 regions.append(location)
             else:  # lost
@@ -170,7 +180,7 @@ def main():
     speed_list = []
 
     # tracker names
-    trackers = ['SAMF']
+    trackers = ['LDES']
 
     for tracker_type in trackers:
 
