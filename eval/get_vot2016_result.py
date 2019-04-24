@@ -92,7 +92,7 @@ def track_vot(tracker_type, video):
         if f == start_frame:  # init
             tracker=create_tracker(tracker_type)
 
-            if tracker_type=='LDES' and tracker.vot is True:
+            if tracker_type=='LDES' and tracker.polygon is True:
                 tracker.init(im,gt[f])
             else:
                 cx, cy, w, h = get_axis_aligned_bbox(gt[f])
@@ -102,7 +102,7 @@ def track_vot(tracker_type, video):
                 tracker.init(im, ((cx - w / 2), (cy - h / 2), (w), (h)))
             regions.append(1 if 'VOT' in args.dataset else gt[f])
         elif f > start_frame:
-            if tracker_type=='LDES' and tracker.vot is True:
+            if tracker_type=='LDES' and tracker.polygon is True:
                 location=tracker.update(im)
             else:
                 bbox=tracker.update(im)

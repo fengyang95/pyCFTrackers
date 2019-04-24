@@ -5,6 +5,10 @@ def fft2(x):
 def ifft2(x):
     return np.fft.ifft(np.fft.ifft(x, axis=1), axis=0).astype(np.complex64)
 
+def cifft2(xf):
+    x = np.real(ifft2(np.fft.ifftshift(np.fft.ifftshift(xf, 0),1))).astype(np.float32)
+    return x
+
 def cfft2(x):
     in_shape = x.shape
     if in_shape[0] % 2 == 1 and in_shape[1] % 2 == 1:

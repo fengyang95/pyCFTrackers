@@ -23,8 +23,8 @@ class LDESOTBConfig:
     nbin=10
     color_update_rate=0.01
     merge_factor=0.4
-
-    vot=False
+    use_color_hist=True
+    polygon=False
 
 
 class LDESVOTConfig:
@@ -52,7 +52,8 @@ class LDESVOTConfig:
     nbin = 10
     color_update_rate = 0.01
     merge_factor = 0.4
+    use_color_hist=True
 
-    vot = True
+    polygon = True
 
 
