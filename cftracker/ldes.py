@@ -3,7 +3,7 @@ from numpy.matlib import repmat
 import cv2
 from scipy.ndimage import map_coordinates
 from lib.utils import cos_window,gaussian2d_rolled_labels
-from lib.fft_tools import fft2,ifft2,cifft2
+from lib.fft_tools import fft2,ifft2
 from .base import BaseCF
 from .feature import extract_hog_feature,extract_cn_feature
 from .config import ldes_config
@@ -93,7 +93,7 @@ def get_center_likelihood(likelihood_map, sz):
     return center_likelihood.T
 
 class LDES(BaseCF):
-    def __init__(self,config=ldes_config.LDESOTBConfig()):
+    def __init__(self,config):
         super(LDES).__init__()
         self.kernel_type=config.kernel_type
         self.padding=config.padding
@@ -123,6 +123,7 @@ class LDES(BaseCF):
         self.polygon=config.polygon
         self.vis=False
         self.use_color_hist=config.use_color_hist
+        self.sigma=config.sigma
 
     def init(self, first_frame, region):
         assert len(first_frame.shape)==3 and first_frame.shape[2]==3
@@ -192,9 +193,10 @@ class LDES(BaseCF):
         self.scale_sz=((self.target_sz[0]+avg_dim)/self.sc,
                        (self.target_sz[1]+avg_dim)/self.sc)
         self.scale_sz0=self.scale_sz
-        self.cos_window_scale=cos_window(self.scale_sz_window)
+        self.cos_window_scale=cos_window((self.scale_sz_window[0],self.scale_sz_window[1]))
         self.mag=self.cos_window_scale.shape[0]/np.log(np.sqrt((self.cos_window_scale.shape[0]**2+
                                                                self.cos_window_scale.shape[1]**2)/4))
+
         self.cell_size=cell_size_search
         tmp_sc = 1.
         tmp_rot = 0.
@@ -246,7 +248,7 @@ class LDES(BaseCF):
         if self.is_rotation:
             T=parameters_to_projective_matrix([1,self.rot,self._center[0],self._center[1]])
             aff=getLKcorner(T,target_sz)
-
+            """
             import copy
             show_img=copy.deepcopy(current_frame)
             tl=(int(aff[0,0]),int(aff[1,0]))
@@ -259,6 +261,7 @@ class LDES(BaseCF):
             show_img=cv2.line(show_img,bl,tl,color=(255,0,0))
             cv2.imshow('show_img',show_img)
             cv2.waitKey(1)
+            """
 
         self.aff=aff
         if self.polygon is True:
@@ -288,7 +291,8 @@ class LDES(BaseCF):
         x=self.get_features(patch,self.cell_size)
         x=x*self.cos_window[:,:,None]
         xf=fft2(x)
-        kf=np.sum(xf*np.conj(xf),axis=2)/xf.size
+        #kf=np.sum(xf*np.conj(xf),axis=2)/xf.size
+        kf=self._kernel_correlation(xf,xf,self.kernel_type)
         alphaf=self.yf/(kf+self.lambda_)
 
         if self.is_rotation:
@@ -301,7 +305,9 @@ class LDES(BaseCF):
         patchL=cv2.resize(patchL,self.scale_sz_window)
         # get logpolar space and apply feature extraction
         patchLp=cv2.logPolar(patchL.astype(np.float32),((patchL.shape[1]-1)/2,(patchL.shape[0]-1)/2),self.mag,flags=cv2.INTER_LINEAR + cv2.WARP_FILL_OUTLIERS)
+
         patchLp=extract_hog_feature(patchLp,self.cell_size)
+        #patchLp = patchLp * self.cos_window_scale[:, :, None]
 
         # updating color histogram probabilities
         sz=(patch.shape[1],patch.shape[0])
@@ -363,7 +369,7 @@ class LDES(BaseCF):
         ssz=(zf.shape[1],zf.shape[0],zf.shape[2])
 
         # calculate response of the classifier at all shifts
-        wf=np.conj(self.model_xf)*self.model_alphaf[:,:,None]/self.model_xf.size
+        wf=np.conj(self.model_xf)*self.model_alphaf[:,:,None]/np.size(self.model_xf)
         if polish<=large_num:
             w=pad(ifft2(wf),(ssz[1],ssz[0]))
             wf=fft2(w)
@@ -371,13 +377,11 @@ class LDES(BaseCF):
         tmp_sz=ssz
         # compute convolution for each feature block in the Fourier domain
         # use general compute here for easy extension in future
+        #print('wf.shape:',wf.shape)
+        #print('zf.shape:',zf.shape)
         rff=np.sum(wf*zf,axis=2)
-
-        #rff_real=cv2.resize(rff.real.astype(np.float32),(tmp_sz[0],tmp_sz[1]),interpolation=cv2.INTER_NEAREST)
-        #rff_imag=cv2.resize(rff.imag.astype(np.float32),(tmp_sz[0],tmp_sz[1]),interpolation=cv2.INTER_NEAREST)
-        #rff=rff_real+1j*rff_imag
-
-        response_cf=np.real(np.fft.fftshift(ifft2(rff),axes=(0,1)))
+        response_cf=np.real(ifft2(rff))
+        response_cf=np.fft.fftshift(response_cf,axes=(0,1))
 
         response_cf=cv2.resize(response_cf,(tmp_sz[0],tmp_sz[1]))
         response_color=np.zeros_like(response_cf)
@@ -387,8 +391,6 @@ class LDES(BaseCF):
             response_color=get_center_likelihood(object_likelihood,self.target_sz0)
             response_color=cv2.resize(response_color,(response_cf.shape[1],response_cf.shape[0]))
 
-        #response_cf= np.roll(response_cf, int(np.floor(response_cf.shape[0] / 2)), axis=0)
-        #response_cf = np.roll(response_cf, int(np.floor(response_cf.shape[1] / 2)), axis=1)
 
 
         response=(1-self.merge_factor)*response_cf+self.merge_factor*response_color
@@ -433,7 +435,12 @@ class LDES(BaseCF):
         patchL=cv2.resize(patchL,self.scale_sz_window)
         # convert into logpolar
         patchLp=cv2.logPolar(patchL.astype(np.float32),((patchL.shape[1]-1)/2,(patchL.shape[0]-1)/2),self.mag,flags=cv2.INTER_LINEAR + cv2.WARP_FILL_OUTLIERS)
+        #cv2.imshow('polar',patchLp.astype(np.uint8))
+        #cv2.waitKey(1)
+
         patchLp=extract_hog_feature(patchLp,self.cell_size)
+        #patchLp = patchLp * self.cos_window_scale[:, :, None]
+
         tmp_sc,tmp_rot,sscore=self.estimate_scale(self.model_patchLp, patchLp, self.mag)
         tmp_sc=np.clip(tmp_sc,a_min=0.6,a_max=1.4)
         if tmp_rot>1 or tmp_rot<-1:
@@ -449,7 +456,7 @@ class LDES(BaseCF):
             d=np.sqrt(num*np.conj(num))+2e-16
             Cf=np.sum(num/d,axis=2)
             C=np.real(ifft2(Cf))
-            C=(np.fft.fftshift(C,axes=(0,1)))
+            C=np.fft.fftshift(C,axes=(0,1))
 
             mscore=np.max(C)
             pty,ptx=np.unravel_index(np.argmax(C, axis=None), C.shape)
@@ -468,7 +475,7 @@ class LDES(BaseCF):
             return ptx,pty,mscore
 
         ptx,pty,mscore=phase_correlation(model,obser)
-        rotate=pty*np.pi/(obser.shape[1]//2)
+        rotate=pty*np.pi/((obser.shape[1])//2)
         scale = np.exp(ptx / mag)
         #print('scale:',scale)
         #print('rotate:',rotate)
@@ -487,10 +494,11 @@ class LDES(BaseCF):
         frame_bin = cv2.LUT(patch.astype(np.uint8), bin_mapping).astype(np.int64)
         P_fg = fg_hist[frame_bin[:, :, 0], frame_bin[:, :, 1], frame_bin[:, :, 2]]
         P_bg=bg_hist[frame_bin[:,:,0],frame_bin[:,:,1],frame_bin[:,:,2]]
-        not_na=np.where(P_bg!=0)
-        P_O=0.5*np.ones_like(P_fg)
-        P_O[not_na]=P_fg[not_na]/P_bg[not_na]
-        #P_O=P_fg/(P_fg+P_bg)
+        #not_na=np.where(P_bg!=0)
+        #P_O=0.*np.ones_like(P_fg)
+        #P_O[not_na]=P_fg[not_na]/P_bg[not_na]
+        P_O=P_fg/(P_fg+P_bg)
+        P_O[np.isnan(P_O)]=0.5
         return P_O
 
     def get_bin_mapping(self,num_bins):
@@ -533,8 +541,23 @@ class LDES(BaseCF):
         x,y=pos
         param0=simiparam2mat(x,y,rot,sc)
         out=mwarpimg(img.astype(np.float32),param0,window_sz)
+        #cv2.imshow('affine_window',out.astype(np.uint8))
+        #cv2.waitKey(1)
         return out
 
+    def _kernel_correlation(self, xf, yf, kernel='gaussian'):
+        if kernel== 'gaussian':
+            N=xf.shape[0]*xf.shape[1]
+            xx=(np.dot(xf.flatten().conj().T,xf.flatten())/N)
+            yy=(np.dot(yf.flatten().conj().T,yf.flatten())/N)
+            xyf=xf*np.conj(yf)
+            xy=np.sum(np.real(ifft2(xyf)),axis=2)
+            kf = fft2(np.exp(-1 / self.sigma ** 2 * np.clip(xx+yy-2*xy,a_min=0,a_max=None) / np.size(xf)))
+        elif kernel== 'linear':
+            kf= np.sum(xf*np.conj(yf),axis=2)/np.size(xf)
+        else:
+            raise NotImplementedError
+        return kf
 
     """
         def get_affine_subwindow(self,img, pos, sc, rot, window_sz):

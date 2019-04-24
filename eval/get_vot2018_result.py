@@ -75,7 +75,7 @@ def create_tracker(tracker_type):
     elif tracker_type=='OPENCV-CSRDCF':
         tracker=OpenCVCFTracker(name='CSRDCF')
     elif tracker_type=='LDES':
-        tracker=LDES(config=ldes_config.LDESVOTConfig())
+        tracker=LDES(config=ldes_config.LDESVOTLinearConfig())
     else:
         raise NotImplementedError
     return tracker

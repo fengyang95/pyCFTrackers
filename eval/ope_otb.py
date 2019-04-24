@@ -22,7 +22,7 @@ from cftracker.bacf import BACF
 from cftracker.csrdcf import CSRDCF
 from cftracker.ldes import LDES
 from cftracker.opencv_cftracker import OpenCVCFTracker
-from cftracker.config import staple_config
+from cftracker.config import staple_config,ldes_config
 
 from lib.eco.config import otb_deep_config,otb_hc_config
 
@@ -76,7 +76,7 @@ def track_otb(tracker_type,dataset):
         elif tracker_type == 'OPENCV-CSRDCF':
             tracker = OpenCVCFTracker(name='CSRDCF')
         elif tracker_type=='LDES':
-            tracker=LDES()
+            tracker=LDES(ldes_config.LDESOTBLinearConfig())
         else:
             raise NotImplementedError
         for idx, (img, gt_bbox) in enumerate(video):

@@ -4121,3 +4121,120 @@
 [2019-04-24 15:57:33,861-rk0-get_vot2016_result.py#162] (57) Video: tiger        Time: 52.8s Speed: 6.9fps Lost: 3 Tracker:LDES
 [2019-04-24 15:57:45,578-rk0-get_vot2016_result.py#162] (58) Video: traffic      Time: 8.9s Speed: 21.3fps Lost: 2 Tracker:LDES
 [2019-04-24 15:58:05,279-rk0-get_vot2016_result.py#162] (59) Video: tunnel       Time: 18.1s Speed: 17.2fps Lost: 17 Tracker:LDES
+[2019-04-24 15:58:25,485-rk0-get_vot2016_result.py#162] (60) Video: wiper        Time: 18.1s Speed: 18.7fps Lost: 12 Tracker:LDES
+[2019-04-24 15:58:25,486-rk0-get_vot2016_result.py#192] Total Lost: 273
+[2019-04-24 15:58:25,486-rk0-get_vot2016_result.py#194] Mean Speed: 10.22 FPS
+[2019-04-24 16:18:55,810-rk0-get_vot2016_result.py#175] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-04-24 16:20:38,365-rk0-get_vot2016_result.py#162] (1) Video: bag          Time: 101.2s Speed: 1.9fps Lost: 0 Tracker:LDES
+[2019-04-24 16:21:04,415-rk0-get_vot2016_result.py#162] (2) Video: ball1        Time: 23.8s Speed: 4.4fps Lost: 0 Tracker:LDES
+[2019-04-24 16:21:31,955-rk0-get_vot2016_result.py#162] (3) Video: ball2        Time: 26.7s Speed: 1.5fps Lost: 1 Tracker:LDES
+[2019-04-24 16:27:41,765-rk0-get_vot2016_result.py#175] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-04-24 16:29:17,886-rk0-get_vot2016_result.py#162] (1) Video: bag          Time: 94.4s Speed: 2.1fps Lost: 0 Tracker:LDES
+[2019-04-24 16:29:34,164-rk0-get_vot2016_result.py#162] (2) Video: ball1        Time: 14.4s Speed: 7.2fps Lost: 0 Tracker:LDES
+[2019-04-24 16:29:56,315-rk0-get_vot2016_result.py#162] (3) Video: ball2        Time: 21.5s Speed: 1.9fps Lost: 2 Tracker:LDES
+[2019-04-24 16:31:40,247-rk0-get_vot2016_result.py#175] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-04-24 16:32:14,113-rk0-get_vot2016_result.py#175] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-04-24 16:33:40,966-rk0-get_vot2016_result.py#162] (1) Video: bag          Time: 85.5s Speed: 2.3fps Lost: 0 Tracker:LDES
+[2019-04-24 16:33:54,908-rk0-get_vot2016_result.py#162] (2) Video: ball1        Time: 12.5s Speed: 8.3fps Lost: 0 Tracker:LDES
+[2019-04-24 16:34:19,279-rk0-get_vot2016_result.py#162] (3) Video: ball2        Time: 23.8s Speed: 1.7fps Lost: 1 Tracker:LDES
+[2019-04-24 16:37:36,117-rk0-get_vot2016_result.py#162] (4) Video: basketball   Time: 190.6s Speed: 3.8fps Lost: 9 Tracker:LDES
+[2019-04-24 16:38:09,893-rk0-get_vot2016_result.py#162] (5) Video: birds1       Time: 25.5s Speed: 13.3fps Lost: 28 Tracker:LDES
+[2019-04-24 16:38:31,684-rk0-get_vot2016_result.py#175] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-04-24 16:39:04,586-rk0-get_vot2016_result.py#176] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-04-24 16:39:40,844-rk0-get_vot2016_result.py#162] (6) Video: birds2       Time: 85.7s Speed: 6.3fps Lost: 13 Tracker:LDES
+[2019-04-24 16:40:09,190-rk0-get_vot2016_result.py#176] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-04-24 16:43:25,908-rk0-get_vot2016_result.py#176] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-04-24 16:44:36,552-rk0-get_vot2016_result.py#176] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-04-24 16:44:52,240-rk0-get_vot2016_result.py#163] (1) Video: bag          Time: 84.9s Speed: 2.3fps Lost: 2 Tracker:LDES
+[2019-04-24 16:45:06,183-rk0-get_vot2016_result.py#163] (2) Video: ball1        Time: 12.3s Speed: 8.5fps Lost: 0 Tracker:LDES
+[2019-04-24 16:45:26,833-rk0-get_vot2016_result.py#163] (3) Video: ball2        Time: 20.1s Speed: 2.0fps Lost: 3 Tracker:LDES
+[2019-04-24 16:45:52,025-rk0-get_vot2016_result.py#176] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-04-24 16:47:08,690-rk0-get_vot2016_result.py#163] (1) Video: bag          Time: 75.4s Speed: 2.6fps Lost: 2 Tracker:LDES
+[2019-04-24 16:47:22,180-rk0-get_vot2016_result.py#163] (2) Video: ball1        Time: 11.8s Speed: 8.8fps Lost: 0 Tracker:LDES
+[2019-04-24 16:47:39,751-rk0-get_vot2016_result.py#163] (3) Video: ball2        Time: 16.8s Speed: 2.4fps Lost: 3 Tracker:LDES
+[2019-04-24 16:51:29,620-rk0-get_vot2016_result.py#163] (4) Video: basketball   Time: 224.8s Speed: 3.2fps Lost: 4 Tracker:LDES
+[2019-04-24 16:52:08,467-rk0-get_vot2016_result.py#163] (5) Video: birds1       Time: 31.5s Speed: 10.7fps Lost: 33 Tracker:LDES
+[2019-04-24 16:55:18,563-rk0-get_vot2016_result.py#163] (6) Video: birds2       Time: 184.3s Speed: 2.9fps Lost: 5 Tracker:LDES
+[2019-04-24 16:55:42,330-rk0-get_vot2016_result.py#163] (7) Video: blanket      Time: 22.9s Speed: 9.8fps Lost: 1 Tracker:LDES
+[2019-04-24 16:56:13,662-rk0-get_vot2016_result.py#163] (8) Video: bmx          Time: 30.4s Speed: 2.5fps Lost: 4 Tracker:LDES
+[2019-04-24 16:57:03,966-rk0-get_vot2016_result.py#163] (9) Video: bolt1        Time: 46.5s Speed: 7.5fps Lost: 5 Tracker:LDES
+[2019-04-24 16:57:38,567-rk0-get_vot2016_result.py#163] (10) Video: bolt2        Time: 32.7s Speed: 8.9fps Lost: 5 Tracker:LDES
+[2019-04-24 16:58:31,676-rk0-get_vot2016_result.py#163] (11) Video: book         Time: 52.0s Speed: 3.3fps Lost: 0 Tracker:LDES
+[2019-04-24 17:00:07,266-rk0-get_vot2016_result.py#163] (12) Video: butterfly    Time: 94.7s Speed: 1.6fps Lost: 2 Tracker:LDES
+[2019-04-24 17:07:55,321-rk0-get_vot2016_result.py#163] (13) Video: car1         Time: 462.8s Speed: 1.6fps Lost: 6 Tracker:LDES
+[2019-04-24 17:08:45,122-rk0-get_vot2016_result.py#163] (14) Video: car2         Time: 48.3s Speed: 8.1fps Lost: 4 Tracker:LDES
+[2019-04-24 17:09:19,953-rk0-get_vot2016_result.py#163] (15) Video: crossing     Time: 33.2s Speed: 3.9fps Lost: 0 Tracker:LDES
+[2019-04-24 17:11:56,499-rk0-get_vot2016_result.py#163] (16) Video: dinosaur     Time: 155.0s Speed: 2.1fps Lost: 0 Tracker:LDES
+[2019-04-24 17:16:07,029-rk0-get_vot2016_result.py#163] (17) Video: fernando     Time: 248.5s Speed: 1.2fps Lost: 4 Tracker:LDES
+[2019-04-24 17:17:02,053-rk0-get_vot2016_result.py#163] (18) Video: fish1        Time: 51.9s Speed: 7.0fps Lost: 2 Tracker:LDES
+[2019-04-24 17:18:01,970-rk0-get_vot2016_result.py#163] (19) Video: fish2        Time: 57.3s Speed: 5.4fps Lost: 6 Tracker:LDES
+[2019-04-24 17:19:16,307-rk0-get_vot2016_result.py#163] (20) Video: fish3        Time: 71.0s Speed: 7.3fps Lost: 1 Tracker:LDES
+[2019-04-24 17:20:54,380-rk0-get_vot2016_result.py#163] (21) Video: fish4        Time: 94.9s Speed: 7.2fps Lost: 3 Tracker:LDES
+[2019-04-24 17:31:55,613-rk0-get_vot2016_result.py#176] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-04-24 17:34:45,232-rk0-get_vot2016_result.py#163] (1) Video: bag          Time: 167.3s Speed: 1.2fps Lost: 0 Tracker:LDES
+[2019-04-24 17:35:01,234-rk0-get_vot2016_result.py#163] (2) Video: ball1        Time: 13.6s Speed: 7.6fps Lost: 0 Tracker:LDES
+[2019-04-24 17:35:25,148-rk0-get_vot2016_result.py#163] (3) Video: ball2        Time: 23.1s Speed: 1.7fps Lost: 3 Tracker:LDES
+[2019-04-24 17:38:47,056-rk0-get_vot2016_result.py#163] (4) Video: basketball   Time: 195.0s Speed: 3.7fps Lost: 1 Tracker:LDES
+[2019-04-24 17:39:49,645-rk0-get_vot2016_result.py#163] (5) Video: birds1       Time: 53.7s Speed: 6.3fps Lost: 6 Tracker:LDES
+[2019-04-24 17:43:23,686-rk0-get_vot2016_result.py#163] (6) Video: birds2       Time: 208.2s Speed: 2.6fps Lost: 1 Tracker:LDES
+[2019-04-24 17:43:51,933-rk0-get_vot2016_result.py#163] (7) Video: blanket      Time: 27.3s Speed: 8.2fps Lost: 1 Tracker:LDES
+[2019-04-24 17:45:46,223-rk0-get_vot2016_result.py#163] (8) Video: bmx          Time: 113.2s Speed: 0.7fps Lost: 0 Tracker:LDES
+[2019-04-24 17:46:32,703-rk0-get_vot2016_result.py#163] (9) Video: bolt1        Time: 42.8s Speed: 8.2fps Lost: 1 Tracker:LDES
+[2019-04-24 17:47:07,779-rk0-get_vot2016_result.py#163] (10) Video: bolt2        Time: 33.6s Speed: 8.7fps Lost: 0 Tracker:LDES
+[2019-04-24 17:47:50,906-rk0-get_vot2016_result.py#163] (11) Video: book         Time: 42.1s Speed: 4.1fps Lost: 1 Tracker:LDES
+[2019-04-24 17:49:18,060-rk0-get_vot2016_result.py#163] (12) Video: butterfly    Time: 86.2s Speed: 1.7fps Lost: 1 Tracker:LDES
+[2019-04-24 17:58:08,445-rk0-get_vot2016_result.py#163] (13) Video: car1         Time: 524.6s Speed: 1.4fps Lost: 1 Tracker:LDES
+[2019-04-24 18:01:04,500-rk0-get_vot2016_result.py#163] (14) Video: car2         Time: 174.4s Speed: 2.2fps Lost: 0 Tracker:LDES
+[2019-04-24 18:01:45,601-rk0-get_vot2016_result.py#163] (15) Video: crossing     Time: 39.2s Speed: 3.3fps Lost: 0 Tracker:LDES
+[2019-04-24 18:03:59,114-rk0-get_vot2016_result.py#163] (16) Video: dinosaur     Time: 131.8s Speed: 2.5fps Lost: 4 Tracker:LDES
+[2019-04-24 18:07:19,471-rk0-get_vot2016_result.py#163] (17) Video: fernando     Time: 198.1s Speed: 1.5fps Lost: 2 Tracker:LDES
+[2019-04-24 18:08:14,258-rk0-get_vot2016_result.py#163] (18) Video: fish1        Time: 52.1s Speed: 7.0fps Lost: 5 Tracker:LDES
+[2019-04-24 18:10:05,357-rk0-get_vot2016_result.py#163] (19) Video: fish2        Time: 109.0s Speed: 2.8fps Lost: 4 Tracker:LDES
+[2019-04-24 18:12:08,118-rk0-get_vot2016_result.py#163] (20) Video: fish3        Time: 119.2s Speed: 4.3fps Lost: 1 Tracker:LDES
+[2019-04-24 18:13:42,539-rk0-get_vot2016_result.py#163] (21) Video: fish4        Time: 91.0s Speed: 7.5fps Lost: 2 Tracker:LDES
+[2019-04-24 18:26:40,219-rk0-get_vot2016_result.py#163] (22) Video: girl         Time: 768.3s Speed: 2.0fps Lost: 2 Tracker:LDES
+[2019-04-24 18:26:59,411-rk0-get_vot2016_result.py#163] (23) Video: glove        Time: 18.4s Speed: 6.5fps Lost: 1 Tracker:LDES
+[2019-04-24 18:27:47,968-rk0-get_vot2016_result.py#163] (24) Video: godfather    Time: 46.0s Speed: 7.9fps Lost: 0 Tracker:LDES
+[2019-04-24 18:32:45,958-rk0-get_vot2016_result.py#163] (25) Video: graduate     Time: 291.8s Speed: 2.9fps Lost: 11 Tracker:LDES
+[2019-04-24 18:34:43,556-rk0-get_vot2016_result.py#163] (26) Video: gymnastics1  Time: 115.3s Speed: 4.9fps Lost: 7 Tracker:LDES
+[2019-04-24 18:36:01,837-rk0-get_vot2016_result.py#163] (27) Video: gymnastics2  Time: 75.0s Speed: 3.2fps Lost: 4 Tracker:LDES
+[2019-04-24 18:36:49,241-rk0-get_vot2016_result.py#163] (28) Video: gymnastics3  Time: 45.8s Speed: 2.6fps Lost: 3 Tracker:LDES
+[2019-04-24 18:40:06,352-rk0-get_vot2016_result.py#163] (29) Video: gymnastics4  Time: 192.8s Speed: 2.4fps Lost: 3 Tracker:LDES
+[2019-04-24 18:40:44,859-rk0-get_vot2016_result.py#163] (30) Video: hand         Time: 37.3s Speed: 7.1fps Lost: 5 Tracker:LDES
+[2019-04-24 18:42:32,734-rk0-get_vot2016_result.py#163] (31) Video: handball1    Time: 106.3s Speed: 3.5fps Lost: 8 Tracker:LDES
+[2019-04-24 18:43:21,869-rk0-get_vot2016_result.py#163] (32) Video: handball2    Time: 46.1s Speed: 8.7fps Lost: 5 Tracker:LDES
+[2019-04-24 18:48:09,677-rk0-get_vot2016_result.py#163] (33) Video: helicopter   Time: 282.7s Speed: 2.5fps Lost: 1 Tracker:LDES
+[2019-04-24 18:52:41,158-rk0-get_vot2016_result.py#163] (34) Video: iceskater1   Time: 268.2s Speed: 2.5fps Lost: 1 Tracker:LDES
+[2019-04-24 19:00:03,531-rk0-get_vot2016_result.py#163] (35) Video: iceskater2   Time: 437.9s Speed: 1.6fps Lost: 5 Tracker:LDES
+[2019-04-24 19:00:13,232-rk0-get_vot2016_result.py#163] (36) Video: leaves       Time: 8.8s Speed: 7.0fps Lost: 1 Tracker:LDES
+[2019-04-24 19:02:13,671-rk0-get_vot2016_result.py#163] (37) Video: marching     Time: 117.8s Speed: 1.7fps Lost: 1 Tracker:LDES
+[2019-04-24 19:02:31,502-rk0-get_vot2016_result.py#163] (38) Video: matrix       Time: 17.2s Speed: 5.8fps Lost: 1 Tracker:LDES
+[2019-04-24 19:04:30,818-rk0-get_vot2016_result.py#163] (39) Video: motocross1   Time: 118.4s Speed: 1.4fps Lost: 5 Tracker:LDES
+[2019-04-24 19:04:57,228-rk0-get_vot2016_result.py#163] (40) Video: motocross2   Time: 25.7s Speed: 2.3fps Lost: 3 Tracker:LDES
+[2019-04-24 19:24:44,627-rk0-get_vot2016_result.py#163] (41) Video: nature       Time: 1177.7s Speed: 0.8fps Lost: 4 Tracker:LDES
+[2019-04-24 19:29:50,519-rk0-get_vot2016_result.py#163] (42) Video: octopus      Time: 301.7s Speed: 1.0fps Lost: 0 Tracker:LDES
+[2019-04-24 19:30:18,427-rk0-get_vot2016_result.py#163] (43) Video: pedestrian1  Time: 27.3s Speed: 5.1fps Lost: 0 Tracker:LDES
+[2019-04-24 19:35:18,374-rk0-get_vot2016_result.py#163] (44) Video: pedestrian2  Time: 295.3s Speed: 2.4fps Lost: 2 Tracker:LDES
+[2019-04-24 19:35:36,089-rk0-get_vot2016_result.py#163] (45) Video: rabbit       Time: 16.9s Speed: 9.3fps Lost: 7 Tracker:LDES
+[2019-04-24 19:35:52,636-rk0-get_vot2016_result.py#163] (46) Video: racing       Time: 15.6s Speed: 9.9fps Lost: 0 Tracker:LDES
+[2019-04-24 19:38:36,797-rk0-get_vot2016_result.py#163] (47) Video: road         Time: 157.5s Speed: 3.5fps Lost: 2 Tracker:LDES
+[2019-04-24 19:39:36,954-rk0-get_vot2016_result.py#163] (48) Video: shaking      Time: 57.8s Speed: 6.3fps Lost: 0 Tracker:LDES
+[2019-04-24 19:40:07,640-rk0-get_vot2016_result.py#163] (49) Video: sheep        Time: 29.3s Speed: 8.5fps Lost: 1 Tracker:LDES
+[2019-04-24 19:46:25,946-rk0-get_vot2016_result.py#163] (50) Video: singer1      Time: 376.1s Speed: 0.9fps Lost: 0 Tracker:LDES
+[2019-04-24 19:48:28,716-rk0-get_vot2016_result.py#177] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-04-24 19:49:42,689-rk0-get_vot2016_result.py#164] (1) Video: bag          Time: 72.6s Speed: 2.7fps Lost: 0 Tracker:LDES
+[2019-04-24 19:49:56,578-rk0-get_vot2016_result.py#164] (2) Video: ball1        Time: 11.8s Speed: 8.8fps Lost: 0 Tracker:LDES
+[2019-04-24 19:50:17,229-rk0-get_vot2016_result.py#164] (3) Video: ball2        Time: 20.1s Speed: 2.0fps Lost: 1 Tracker:LDES
+[2019-04-24 19:54:31,053-rk0-get_vot2016_result.py#164] (4) Video: basketball   Time: 247.5s Speed: 2.9fps Lost: 0 Tracker:LDES
+[2019-04-24 19:55:20,615-rk0-get_vot2016_result.py#164] (5) Video: birds1       Time: 39.9s Speed: 8.5fps Lost: 4 Tracker:LDES
+[2019-04-24 19:56:50,242-rk0-get_vot2016_result.py#164] (6) Video: birds2       Time: 83.5s Speed: 6.4fps Lost: 0 Tracker:LDES
+[2019-04-24 19:57:13,284-rk0-get_vot2016_result.py#164] (7) Video: blanket      Time: 22.2s Speed: 10.1fps Lost: 0 Tracker:LDES
+[2019-04-24 19:58:03,680-rk0-get_vot2016_result.py#164] (8) Video: bmx          Time: 49.3s Speed: 1.5fps Lost: 0 Tracker:LDES
+[2019-04-24 19:59:02,900-rk0-get_vot2016_result.py#164] (9) Video: bolt1        Time: 55.7s Speed: 6.3fps Lost: 0 Tracker:LDES
+[2019-04-24 19:59:37,360-rk0-get_vot2016_result.py#164] (10) Video: bolt2        Time: 33.0s Speed: 8.8fps Lost: 0 Tracker:LDES
+[2019-04-24 20:00:16,112-rk0-get_vot2016_result.py#164] (11) Video: book         Time: 37.6s Speed: 4.6fps Lost: 1 Tracker:LDES
+[2019-04-24 20:01:25,800-rk0-get_vot2016_result.py#164] (12) Video: butterfly    Time: 68.6s Speed: 2.2fps Lost: 0 Tracker:LDES
+[2019-04-24 20:10:43,145-rk0-get_vot2016_result.py#164] (13) Video: car1         Time: 550.1s Speed: 1.3fps Lost: 1 Tracker:LDES
+[2019-04-24 20:12:16,437-rk0-get_vot2016_result.py#164] (14) Video: car2         Time: 91.5s Speed: 4.3fps Lost: 0 Tracker:LDES
+[2019-04-24 20:12:56,496-rk0-get_vot2016_result.py#164] (15) Video: crossing     Time: 38.2s Speed: 3.4fps Lost: 0 Tracker:LDES
+[2019-04-24 20:14:15,768-rk0-get_vot2016_result.py#164] (16) Video: dinosaur     Time: 77.7s Speed: 4.2fps Lost: 4 Tracker:LDES

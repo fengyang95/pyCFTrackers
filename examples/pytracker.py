@@ -14,8 +14,7 @@ from cftracker.csrdcf import CSRDCF
 from cftracker.samf import SAMF
 from cftracker.ldes import LDES
 from lib.eco.config import otb_deep_config,otb_hc_config
-from cftracker.config import staple_config
-
+from cftracker.config import staple_config,ldes_config
 class PyTracker:
     def __init__(self,img_dir,tracker_type,dataset_config):
         self.img_dir=img_dir
@@ -68,7 +67,7 @@ class PyTracker:
         elif self.tracker_type=='SAMF':
             self.tracker=SAMF()
         elif self.tracker_type=='LDES':
-            self.tracker=LDES()
+            self.tracker=LDES(ldes_config.LDESOTBGaussianConfig())
         else:
             raise NotImplementedError
 
