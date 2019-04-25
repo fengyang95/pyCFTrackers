@@ -6,6 +6,7 @@ from cftracker.csk import CSK
 from cftracker.kcf import KCF
 from cftracker.cn import CN
 from cftracker.dsst import DSST
+from cftracker.dsst_lp import DSST_LP
 from cftracker.staple import Staple
 from cftracker.dat import DAT
 from cftracker.eco import ECO
@@ -67,7 +68,9 @@ class PyTracker:
         elif self.tracker_type=='SAMF':
             self.tracker=SAMF()
         elif self.tracker_type=='LDES':
-            self.tracker=LDES(ldes_config.LDESOTBGaussianConfig())
+            self.tracker=LDES(ldes_config.LDESOTBLinearConfig())
+        elif self.tracker_type=='DSST_LP':
+            self.tracker=DSST_LP()
         else:
             raise NotImplementedError
 

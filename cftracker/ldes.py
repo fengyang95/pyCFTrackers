@@ -4,9 +4,9 @@ import cv2
 from scipy.ndimage import map_coordinates
 from lib.utils import cos_window,gaussian2d_rolled_labels
 from lib.fft_tools import fft2,ifft2
-from .base import BaseCF
-from .feature import extract_hog_feature,extract_cn_feature
-from .config import ldes_config
+from cftracker.base import BaseCF
+from cftracker.feature import extract_hog_feature,extract_cn_feature
+from cftracker.config import ldes_config
 
 # pad [h,w] format
 def pad(img,pad):
@@ -60,11 +60,12 @@ def PSR(response,rate):
     yy,xx=np.unravel_index(np.argmax(response, axis=None),response.shape)
     idx=np.arange(w)-xx
     idy=np.arange(h)-yy
-    idx=repmat(idx,h,1)-xx
-    idy=repmat(idy,w,1).T-yy
+    idx=repmat(idx,h,1)
+    idy=repmat(idy,w,1).T
     t=idx**2+idy**2
-    delta=1-np.exp(-k*t)
+    delta=1-np.exp(-k*t.astype(np.float32))
     r=(max_response-response)/delta
+    r[np.isnan(r)]=np.inf
     return np.min(r)
 
 
@@ -128,36 +129,37 @@ class LDES(BaseCF):
     def init(self, first_frame, region):
         assert len(first_frame.shape)==3 and first_frame.shape[2]==3
         region = np.array(region).astype(np.int64)
-        if self.polygon is False:
+        if len(region)==4:
             x0, y0, w, h = tuple(region)
             rot=0
             self._center = (x0 + w / 2, y0 + h / 2)
-            self.target_sz = (w, h)
-        else:
+            target_sz = (w, h)
+        elif len(region)==8:
             corners=region.reshape((4,2))
-            lu=np.min(corners,axis=0)
             pos=np.mean(corners,axis=0)
             pos=pos.T
-            lu=lu.T
-            target_sz=(pos-lu)*2
-            self.target_sz=(target_sz[0],target_sz[1])
+            dist12=np.sqrt(np.sum((corners[1,:]-corners[2,:])**2))
+            dist03=np.sqrt(np.sum((corners[0,:]-corners[3,:])**2))
+            dist10=np.sqrt(np.sum((corners[1,:]-corners[0,:])**2))
+            dist23=np.sqrt(np.sum((corners[2,:]-corners[3,:])**2))
+            target_sz=((dist10+dist23)/2,(dist12+dist03)/2)
             self._center=(pos[0],pos[1])
             A=np.array([0.,-1.])
             B=np.array([region[4]-region[2],region[3]-region[5]])
             rot1=np.arccos(A.dot(B)/(np.linalg.norm(A)*np.linalg.norm(B)))*2/np.pi
             if np.prod(B)<0:
                 rot1=-rot1
-            C=np.array([region[6]-region[2],region[1]-region[7]])
+            C=np.array([region[6]-region[0],region[1]-region[7]])
             rot2=np.arccos(A.dot(C)/(np.linalg.norm(A)*np.linalg.norm(C)))*2/np.pi
             if np.prod(C)<0:
                 rot2=-rot2
             rot=(rot1+rot2)/2
-
-
+        else:
+            raise ValueError()
 
         self.bin_mapping=self.get_bin_mapping(self.nbin)
 
-        self.window_sz=(int(np.floor(self.target_sz[0] * (1 + self.padding))), int(np.floor(self.target_sz[1] * (1 + self.padding))))
+        self.window_sz=(int(np.floor(target_sz[0] * (1 + self.padding))), int(np.floor(target_sz[1] * (1 + self.padding))))
         search_area= self.window_sz[0] * self.window_sz[1]
         self.sc=search_area/np.clip(search_area,a_min=self.min_image_sample_size,a_max=self.max_image_sample_size)
         self.window_sz0=(int(np.round(self.window_sz[0] / self.sc)), int(np.round(self.window_sz[1] / self.sc)))
@@ -178,20 +180,20 @@ class LDES(BaseCF):
         self.window_sz_search0=(feature_sz0[0]*cell_size_search,
                                 feature_sz0[1]*cell_size_search)
         self.sc=self.window_sz_search[0]/self.window_sz_search0[0]
-        self.target_sz0=(int(np.round(self.target_sz[0]/self.sc)),
-                         int(np.round(self.target_sz[1]/self.sc)))
-        self.output_sigma=np.sqrt(self.target_sz[0]*self.target_sz[1])*self.output_sigma_factor/self.cell_size
-        self.y=gaussian2d_rolled_labels((int(np.floor(self.window_sz0[0]/self.cell_size)),
-                                         int(np.floor(self.window_sz0[1]/self.cell_size))),
+        self.target_sz0=(int(np.round(target_sz[0]/self.sc)),
+                         int(np.round(target_sz[1]/self.sc)))
+        self.output_sigma=np.sqrt(target_sz[0]*target_sz[1])*self.output_sigma_factor/self.cell_size
+        self.y=gaussian2d_rolled_labels((int(np.round(self.window_sz0[0]/self.cell_size)),
+                                         int(np.round(self.window_sz0[1]/self.cell_size))),
                                         self.output_sigma)
         self.yf=fft2(self.y)
         self.cos_window=cos_window((self.y.shape[1],self.y.shape[0]))
         self.cos_window_search=cos_window((int(np.floor(self.window_sz_search0[0]/cell_size_search)),
                                            int(np.floor(self.window_sz_search0[1]/cell_size_search))))
         # scale setttings
-        avg_dim=(self.target_sz[0]+self.target_sz[1])/2.5
-        self.scale_sz=((self.target_sz[0]+avg_dim)/self.sc,
-                       (self.target_sz[1]+avg_dim)/self.sc)
+        avg_dim=(target_sz[0]+target_sz[1])/2.5
+        self.scale_sz=((target_sz[0]+avg_dim)/self.sc,
+                       (target_sz[1]+avg_dim)/self.sc)
         self.scale_sz0=self.scale_sz
         self.cos_window_scale=cos_window((self.scale_sz_window[0],self.scale_sz_window[1]))
         self.mag=self.cos_window_scale.shape[0]/np.log(np.sqrt((self.cos_window_scale.shape[0]**2+
@@ -287,7 +289,7 @@ class LDES(BaseCF):
             patch=self.get_affine_subwindow(img, pos, self.sc, self.rot, self.window_sz0)
         else:
             patchO=cv2.getRectSubPix(img,self.window_sz,pos)
-            patch=cv2.resize(patchO,self.window_sz0)
+            patch=cv2.resize(patchO,self.window_sz0,interpolation=cv2.INTER_CUBIC)
         x=self.get_features(patch,self.cell_size)
         x=x*self.cos_window[:,:,None]
         xf=fft2(x)
@@ -302,7 +304,7 @@ class LDES(BaseCF):
         else:
             patchL=cv2.getRectSubPix(img,(int(np.floor(self.sc*self.scale_sz[0])),
                                                int(np.floor(self.sc*self.scale_sz[1]))),pos)
-        patchL=cv2.resize(patchL,self.scale_sz_window)
+        patchL=cv2.resize(patchL,self.scale_sz_window,cv2.INTER_CUBIC)
         # get logpolar space and apply feature extraction
         patchLp=cv2.logPolar(patchL.astype(np.float32),((patchL.shape[1]-1)/2,(patchL.shape[0]-1)/2),self.mag,flags=cv2.INTER_LINEAR + cv2.WARP_FILL_OUTLIERS)
 
@@ -361,7 +363,7 @@ class LDES(BaseCF):
         else:
             sz_s=(int(np.floor(self.sc*w_sz0[0])),int(np.floor(self.sc*w_sz0[1])))
             patchO=cv2.getRectSubPix(img,sz_s,pos)
-            patch=cv2.resize(patchO,w_sz0)
+            patch=cv2.resize(patchO,w_sz0,cv2.INTER_CUBIC)
 
         z=self.get_features(patch,self.cell_size)
         z=z*c_w[:,:,None]
@@ -377,21 +379,18 @@ class LDES(BaseCF):
         tmp_sz=ssz
         # compute convolution for each feature block in the Fourier domain
         # use general compute here for easy extension in future
-        #print('wf.shape:',wf.shape)
-        #print('zf.shape:',zf.shape)
+
         rff=np.sum(wf*zf,axis=2)
         response_cf=np.real(ifft2(rff))
         response_cf=np.fft.fftshift(response_cf,axes=(0,1))
 
-        response_cf=cv2.resize(response_cf,(tmp_sz[0],tmp_sz[1]))
+        response_cf=cv2.resize(response_cf,(tmp_sz[0],tmp_sz[1]),cv2.INTER_CUBIC)
         response_color=np.zeros_like(response_cf)
 
         if self.use_color_hist:
             object_likelihood=self.get_colour_map(patch,self.pl,self.pi,self.bin_mapping)
             response_color=get_center_likelihood(object_likelihood,self.target_sz0)
-            response_color=cv2.resize(response_color,(response_cf.shape[1],response_cf.shape[0]))
-
-
+            response_color=cv2.resize(response_color,(response_cf.shape[1],response_cf.shape[0]),cv2.INTER_CUBIC)
 
         response=(1-self.merge_factor)*response_cf+self.merge_factor*response_color
         if self.vis is True:
@@ -412,8 +411,8 @@ class LDES(BaseCF):
         cscore=PSR(response,0.1)
 
         # update the translation status
-        dy=pty-((response.shape[0]-1)/2)
-        dx=ptx-((response.shape[1]-1)/2)
+        dy=pty-np.floor((response.shape[0])/2)
+        dx=ptx-np.floor((response.shape[1])/2)
 
         if self.is_rotation:
             sn,cs=np.sin(self.rot),np.cos(self.rot)
@@ -426,26 +425,20 @@ class LDES(BaseCF):
             pos=(x,y)
             patchL=self.get_affine_subwindow(img, pos, 1., self.rot, (int(np.floor(self.sc* self.scale_sz[0])),
                                                                           int(np.floor(self.sc*self.scale_sz[1]))))
-
         else:
             x,y=pos
             pos=(x+self.sc*self.cell_size*dx,y+self.sc*self.cell_size*dy)
             patchL=cv2.getRectSubPix(img,(int(np.floor(self.sc*self.scale_sz[0])),
                                                int(np.floor(self.sc*self.scale_sz[1]))),pos)
-        patchL=cv2.resize(patchL,self.scale_sz_window)
-        # convert into logpolar
+        patchL=cv2.resize(patchL,self.scale_sz_window,cv2.INTER_CUBIC)
         patchLp=cv2.logPolar(patchL.astype(np.float32),((patchL.shape[1]-1)/2,(patchL.shape[0]-1)/2),self.mag,flags=cv2.INTER_LINEAR + cv2.WARP_FILL_OUTLIERS)
-        #cv2.imshow('polar',patchLp.astype(np.uint8))
-        #cv2.waitKey(1)
 
         patchLp=extract_hog_feature(patchLp,self.cell_size)
         #patchLp = patchLp * self.cos_window_scale[:, :, None]
-
         tmp_sc,tmp_rot,sscore=self.estimate_scale(self.model_patchLp, patchLp, self.mag)
         tmp_sc=np.clip(tmp_sc,a_min=0.6,a_max=1.4)
         if tmp_rot>1 or tmp_rot<-1:
             tmp_rot=0
-
         return pos, tmp_sc, tmp_rot, cscore, sscore
 
     def estimate_scale(self,model,obser,mag):
@@ -457,7 +450,6 @@ class LDES(BaseCF):
             Cf=np.sum(num/d,axis=2)
             C=np.real(ifft2(Cf))
             C=np.fft.fftshift(C,axes=(0,1))
-
             mscore=np.max(C)
             pty,ptx=np.unravel_index(np.argmax(C, axis=None), C.shape)
             slobe_y=slobe_x=1
@@ -475,10 +467,8 @@ class LDES(BaseCF):
             return ptx,pty,mscore
 
         ptx,pty,mscore=phase_correlation(model,obser)
-        rotate=pty*np.pi/((obser.shape[1])//2)
-        scale = np.exp(ptx / mag)
-        #print('scale:',scale)
-        #print('rotate:',rotate)
+        rotate=pty*np.pi/(np.floor(obser.shape[1]/2))
+        scale = np.exp(ptx/mag)
         return scale,rotate,mscore
 
     def get_features(self,img,cell_size):
@@ -495,7 +485,7 @@ class LDES(BaseCF):
         P_fg = fg_hist[frame_bin[:, :, 0], frame_bin[:, :, 1], frame_bin[:, :, 2]]
         P_bg=bg_hist[frame_bin[:,:,0],frame_bin[:,:,1],frame_bin[:,:,2]]
         #not_na=np.where(P_bg!=0)
-        #P_O=0.*np.ones_like(P_fg)
+        #P_O=0.5*np.ones_like(P_fg)
         #P_O[not_na]=P_fg[not_na]/P_bg[not_na]
         P_O=P_fg/(P_fg+P_bg)
         P_O[np.isnan(P_O)]=0.5
@@ -515,35 +505,39 @@ class LDES(BaseCF):
             return p
 
         def interp2(img, Xq, Yq):
-            wimg = map_coordinates(img, [Xq.ravel(), Yq.ravel()], order=1, mode='constant')
+            wimg = map_coordinates(img, [Xq.ravel(), Yq.ravel()], order=1, mode='wrap')
             wimg = wimg.reshape(Xq.shape)
             return wimg
 
         def mwarpimg(img,p,sz):
             imsz=img.shape
             w,h=sz
-            x,y=np.meshgrid(np.arange(w).astype(np.int64)-w//2,np.arange(h).astype(np.int64)-h//2)
+            x,y=np.meshgrid(np.arange(1,w+1)-w//2,np.arange(1,h+1)-h//2)
             tmp1=np.zeros((h*w,3))
             tmp1[:,0]=1
             tmp1[:,1]=x.flatten()
             tmp1[:,2]=y.flatten()
             tmp2=np.array([[p[0],p[1]],[p[2],p[4]],[p[3],p[5]]])
             tmp3=tmp1.dot(tmp2)
-            tmp3=np.clip(tmp3,a_min=0,a_max=None)
-            tmp3[:, 0] = np.clip(tmp3[:, 0], a_min=None,a_max=imsz[1]-1)
-            tmp3[:, 1] = np.clip(tmp3[:, 1], a_min=None,a_max=imsz[0]-1)
+            tmp3=np.clip(tmp3,a_min=1,a_max=None)
+            tmp3[:, 0] = np.clip(tmp3[:, 0], a_min=None,a_max=imsz[1])
+            tmp3[:, 1] = np.clip(tmp3[:, 1], a_min=None,a_max=imsz[0])
             pos=np.reshape(tmp3,(h,w,2))
             c=img.shape[2]
             wimg=np.zeros((sz[1],sz[0],c))
+            pos=pos-1
             for i in range(c):
                 wimg[:,:,i]=interp2(img[:,:,i],pos[:,:,1],pos[:,:,0])
             return wimg
         x,y=pos
         param0=simiparam2mat(x,y,rot,sc)
-        out=mwarpimg(img.astype(np.float32),param0,window_sz)
+        out=mwarpimg(img.astype(np.float32),param0,window_sz).astype(np.uint8)
         #cv2.imshow('affine_window',out.astype(np.uint8))
         #cv2.waitKey(1)
         return out
+
+
+
 
     def _kernel_correlation(self, xf, yf, kernel='gaussian'):
         if kernel== 'gaussian':
@@ -559,45 +553,21 @@ class LDES(BaseCF):
             raise NotImplementedError
         return kf
 
-    """
-        def get_affine_subwindow(self,img, pos, sc, rot, window_sz):
-        def pad_img(img,border):
-            x1,y1,x2,y2=border
-            h,w=img.shape[:2]
-            left=int(max(0,-x1))
-            right=int(max(0,x2-(w-1)))
-            top=int(max(0,-y1))
-            bottom=int(max(0,y2-(h-1)))
-            return cv2.copyMakeBorder(img,top,bottom,left,right,cv2.BORDER_REFLECT)
 
-        rot_M=cv2.getRotationMatrix2D(pos,-rot,sc[0])
-        rot_M=cv2.transpose(rot_M)
-        x,y=pos
-        w,h=window_sz
-        corners=np.array([
-            [x-w/2,y-h/2,1.],
-            [x-w/2,y+h/2,1.],
-            [x+w/2,y+h/2,1.],
-            [x+w/2,y-h/2,1.]
-        ])
-        wcorners=corners.dot(rot_M)
-        x_min,x_max=np.min(wcorners[:,0]),np.max(wcorners[:,0])
-        y_min,y_max=np.min(wcorners[:,1]),np.max(wcorners[:,1])
-        padded=pad_img(img,(x_min,y_min,x_max,y_max))
-        p=(x+x_min,y+y_min)
-
-        rot_M=cv2.getRotationMatrix2D(p,-rot,1./sc[0])
-        M1=np.zeros((3,3))
-        M1[2,2]=1.
-        M1[:2,:3]=rot_M
-        shift=np.array([[1.,0,(w-1)/2-x],
-                        [0,1,(h-1)/2-y]])
-        M=shift.dot(M1)
-        patch=cv2.warpAffine(padded,M,window_sz)
-        return patch
-    """
+if __name__=='__main__':
+    tracker=LDES(config=ldes_config.LDESOTBLinearConfig())
+    model=np.arange(1,10).astype(np.float32).reshape(3,3)
+    obser=np.arange(1,10).astype(np.float32).reshape(3,3)
+    obser[0,0]=1.1
+    model=model[:,:,None]
+    obser=obser[:,:,None]
+    print(model)
+    print(obser)
+    print(tracker.estimate_scale(model,obser,10))
+    print(PSR(obser[:,:,0],0.1))
 
 
-
+    x=tracker.get_affine_subwindow(obser, (1,1), 1.2, 0.1, (5,4))
+    print(x)
 
 

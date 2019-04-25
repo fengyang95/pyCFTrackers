@@ -12,6 +12,7 @@ from lib.log_helper import init_log, add_file_handler
 from cftracker.mosse import MOSSE
 from cftracker.staple import Staple
 from cftracker.dsst import DSST
+from cftracker.dsst_lp import DSST_LP
 from cftracker.samf import SAMF
 from cftracker.kcf import KCF
 from cftracker.csk import CSK
@@ -77,6 +78,8 @@ def track_otb(tracker_type,dataset):
             tracker = OpenCVCFTracker(name='CSRDCF')
         elif tracker_type=='LDES':
             tracker=LDES(ldes_config.LDESOTBLinearConfig())
+        elif tracker_type=='DSST-LP':
+            tracker=DSST_LP()
         else:
             raise NotImplementedError
         for idx, (img, gt_bbox) in enumerate(video):

@@ -15,6 +15,7 @@ from lib.pysot.utils import region
 from cftracker.mosse import MOSSE
 from cftracker.staple import Staple
 from cftracker.dsst import DSST
+from cftracker.dsst_lp import DSST_LP
 from cftracker.samf import SAMF
 from cftracker.kcf import KCF
 from cftracker.csk import CSK
@@ -48,6 +49,8 @@ def create_tracker(tracker_type):
         tracker = CN()
     elif tracker_type == 'DSST':
         tracker = DSST()
+    elif tracker_type=='DSST-LP':
+        tracker=DSST_LP()
     elif tracker_type=='SAMF':
         tracker=SAMF()
     elif tracker_type == 'Staple':
@@ -92,8 +95,7 @@ def track_vot(tracker_type, video):
         tic = cv2.getTickCount()
         if f == start_frame:  # init
             tracker=create_tracker(tracker_type)
-            tracker.polygon=False
-            if tracker_type=='LDES' and tracker.polygon is True:
+            if tracker_type=='LDES':
                 tracker.init(im,gt[f])
                 location=gt[f]
             else:
@@ -104,12 +106,7 @@ def track_vot(tracker_type, video):
                 tracker.init(im,((cx-w/2),(cy-h/2),(w),(h)))
             regions.append(1 if 'VOT' in args.dataset else gt[f])
         elif f > start_frame:
-            if tracker_type=='LDES' and tracker.polygon is True:
-                location=tracker.update(im)
-            else:
-                bbox=tracker.update(im)
-                x,y,w,h=bbox
-                location = cxy_wh_2_rect((x+w/2,y+h/2),(w,h))
+            location=tracker.update(im)
 
             if 'VOT' in args.dataset:
                 b_overlap = region.vot_overlap(gt[f],location, (im.shape[1], im.shape[0]))
