@@ -123,10 +123,10 @@ class LDES(BaseCF):
 
         self.polygon=config.polygon
         self.vis=False
-        self.use_color_hist=config.use_color_hist
         self.sigma=config.sigma
 
     def init(self, first_frame, region):
+        self.use_color_hist=not(np.all(first_frame[:,:,0]==first_frame[:,:,1]))
         assert len(first_frame.shape)==3 and first_frame.shape[2]==3
         region = np.array(region).astype(np.int64)
         if len(region)==4:
@@ -166,12 +166,12 @@ class LDES(BaseCF):
         feature_sz=(self.window_sz0[0] // self.cell_size, self.window_sz0[1] // self.cell_size)
         self.window_sz0=(feature_sz[0] * self.cell_size, feature_sz[1] * self.cell_size)
 
-        self.sc= self.window_sz[0] / self.window_sz0[0]
+        self.sc= (self.window_sz[0] / self.window_sz0[0],self.window_sz[1]/self.window_sz0[1])
         self.cell_size=int(np.round((self.window_sz0[0] / feature_sz[0])))
         self.rot=rot
         self.avg_dim= (self.window_sz[0] + self.window_sz[1]) / 4
         self.window_sz_search=(int(np.floor(self.window_sz[0]+self.avg_dim)),int(np.floor(self.window_sz[1]+self.avg_dim)))
-        self.window_sz_search0=(int(np.floor(self.window_sz_search[0]/self.sc)),int(np.floor(self.window_sz_search[1]/self.sc)))
+        self.window_sz_search0=(int(np.floor(self.window_sz_search[0]/self.sc[0])),int(np.floor(self.window_sz_search[1]/self.sc[1])))
         cell_size_search=self.cell_size
         feature_sz0=(int(np.floor(self.window_sz_search0[0]/cell_size_search)),
                      int(np.floor(self.window_sz_search0[1]/cell_size_search)))
@@ -179,9 +179,10 @@ class LDES(BaseCF):
         feature_sz0=(feature_sz0[0]+residual[0]%2,feature_sz0[1]+residual[1]%2)
         self.window_sz_search0=(feature_sz0[0]*cell_size_search,
                                 feature_sz0[1]*cell_size_search)
-        self.sc=self.window_sz_search[0]/self.window_sz_search0[0]
-        self.target_sz0=(int(np.round(target_sz[0]/self.sc)),
-                         int(np.round(target_sz[1]/self.sc)))
+        self.sc=(self.window_sz_search[0]/self.window_sz_search0[0],
+                 self.window_sz_search[1]/self.window_sz_search0[1])
+        self.target_sz0=(int(np.round(target_sz[0]/self.sc[0])),
+                         int(np.round(target_sz[1]/self.sc[1])))
         self.output_sigma=np.sqrt(target_sz[0]*target_sz[1])*self.output_sigma_factor/self.cell_size
         self.y=gaussian2d_rolled_labels((int(np.round(self.window_sz0[0]/self.cell_size)),
                                          int(np.round(self.window_sz0[1]/self.cell_size))),
@@ -192,8 +193,8 @@ class LDES(BaseCF):
                                            int(np.floor(self.window_sz_search0[1]/cell_size_search))))
         # scale setttings
         avg_dim=(target_sz[0]+target_sz[1])/2.5
-        self.scale_sz=((target_sz[0]+avg_dim)/self.sc,
-                       (target_sz[1]+avg_dim)/self.sc)
+        self.scale_sz=((target_sz[0]+avg_dim)/self.sc[0],
+                       (target_sz[1]+avg_dim)/self.sc[1])
         self.scale_sz0=self.scale_sz
         self.cos_window_scale=cos_window((self.scale_sz_window[0],self.scale_sz_window[1]))
         self.mag=self.cos_window_scale.shape[0]/np.log(np.sqrt((self.cos_window_scale.shape[0]**2+
@@ -220,9 +221,9 @@ class LDES(BaseCF):
             msc = None
             mrot = None
             while iter<5:
-                if np.floor(self.sc*tmp_sc*self.window_sz0[0])+np.floor(self.sc*tmp_sc*self.window_sz0[1])<10:
+                if np.floor(self.sc[0]*tmp_sc*self.window_sz0[0])+np.floor(self.sc[1]*tmp_sc*self.window_sz0[1])<10:
                     tmp_sc=1.
-                self.sc=self.sc*tmp_sc
+                self.sc=(self.sc[0]*tmp_sc,self.sc[1]*tmp_sc)
                 self.rot=self.rot+tmp_rot
                 if cscore>=mcscore:
                     msc=self.sc
@@ -244,7 +245,7 @@ class LDES(BaseCF):
         x = np.clip(x, a_min=0, a_max=current_frame.shape[1]-1)
         y = np.clip(y, a_min=0, a_max=current_frame.shape[0]-1)
         self._center=(x,y)
-        target_sz=(self.sc*self.target_sz0[0],self.sc*self.target_sz0[1])
+        target_sz=(self.sc[0]*self.target_sz0[0],self.sc[1]*self.target_sz0[1])
         box=[x-target_sz[0]/2,y-target_sz[1]/2,target_sz[0],target_sz[1]]
         aff=[]
         if self.is_rotation:
@@ -274,15 +275,15 @@ class LDES(BaseCF):
             return box
 
     def logupdate(self,init,img,pos,tmp_sc,tmp_rot):
-        tmp=np.floor(self.sc*tmp_sc*self.window_sz0[0])+np.floor(self.sc*tmp_sc*self.window_sz0[1])
+        tmp=np.floor(self.sc[0]*tmp_sc*self.window_sz0[0])+np.floor(self.sc[1]*tmp_sc*self.window_sz0[1])
         if tmp<10:
             tmp_sc=1.
-        self.sc=self.sc*tmp_sc
+        self.sc=(self.sc[0]*tmp_sc,self.sc[1]*tmp_sc)
         self.rot=self.rot+tmp_rot
-        self.window_sz=(int(np.floor(self.sc*self.window_sz0[0])),
-                        int(np.floor(self.sc*self.window_sz0[1])))
-        self.window_sz_search=(int(np.floor(self.sc*self.window_sz_search0[0])),
-                               int(np.floor(self.sc*self.window_sz_search0[1])))
+        self.window_sz=(int(np.floor(self.sc[0]*self.window_sz0[0])),
+                        int(np.floor(self.sc[1]*self.window_sz0[1])))
+        self.window_sz_search=(int(np.floor(self.sc[0]*self.window_sz_search0[0])),
+                               int(np.floor(self.sc[1]*self.window_sz_search0[1])))
         # compute the current CF model
         # sampling the image
         if self.is_rotation:
@@ -299,11 +300,11 @@ class LDES(BaseCF):
 
         if self.is_rotation:
             # here is not similarity transformation
-            patchL=self.get_affine_subwindow(img, pos,1., self.rot, (int(np.floor(self.sc* self.scale_sz[0])),
-                                                                          int(np.floor(self.sc*self.scale_sz[1]))))
+            patchL=self.get_affine_subwindow(img, pos,[1.,1.], self.rot, (int(np.floor(self.sc[0]* self.scale_sz[0])),
+                                                                          int(np.floor(self.sc[1]*self.scale_sz[1]))))
         else:
-            patchL=cv2.getRectSubPix(img,(int(np.floor(self.sc*self.scale_sz[0])),
-                                               int(np.floor(self.sc*self.scale_sz[1]))),pos)
+            patchL=cv2.getRectSubPix(img,(int(np.floor(self.sc[0]*self.scale_sz[0])),
+                                               int(np.floor(self.sc[1]*self.scale_sz[1]))),pos)
         patchL=cv2.resize(patchL,self.scale_sz_window,cv2.INTER_CUBIC)
         # get logpolar space and apply feature extraction
         patchLp=cv2.logPolar(patchL.astype(np.float32),((patchL.shape[1]-1)/2,(patchL.shape[0]-1)/2),self.mag,flags=cv2.INTER_LINEAR + cv2.WARP_FILL_OUTLIERS)
@@ -361,7 +362,7 @@ class LDES(BaseCF):
         if self.is_rotation:
             patch=self.get_affine_subwindow(img, pos, self.sc, self.rot, w_sz0)
         else:
-            sz_s=(int(np.floor(self.sc*w_sz0[0])),int(np.floor(self.sc*w_sz0[1])))
+            sz_s=(int(np.floor(self.sc[0]*w_sz0[0])),int(np.floor(self.sc[1]*w_sz0[1])))
             patchO=cv2.getRectSubPix(img,sz_s,pos)
             patch=cv2.resize(patchO,w_sz0,cv2.INTER_CUBIC)
 
@@ -381,10 +382,13 @@ class LDES(BaseCF):
         # use general compute here for easy extension in future
 
         rff=np.sum(wf*zf,axis=2)
+        rff_real=cv2.resize(rff.real,(tmp_sz[0],tmp_sz[1]),cv2.INTER_NEAREST)
+        rff_imag=cv2.resize(rff.imag,(tmp_sz[0],tmp_sz[1]),cv2.INTER_NEAREST)
+        rff=rff_real+1.j*rff_imag
         response_cf=np.real(ifft2(rff))
         response_cf=np.fft.fftshift(response_cf,axes=(0,1))
 
-        response_cf=cv2.resize(response_cf,(tmp_sz[0],tmp_sz[1]),cv2.INTER_CUBIC)
+        #response_cf=cv2.resize(response_cf,(tmp_sz[0],tmp_sz[1]),cv2.INTER_CUBIC)
         response_color=np.zeros_like(response_cf)
 
         if self.use_color_hist:
@@ -398,6 +402,7 @@ class LDES(BaseCF):
             self.crop_size=self.window_sz
         # sub-pixel search
         pty,ptx=np.unravel_index(np.argmax(response, axis=None),response.shape)
+
         if self.is_subpixel:
             slobe=2
             idy=np.arange(pty-slobe,pty+slobe+1)
@@ -411,25 +416,25 @@ class LDES(BaseCF):
         cscore=PSR(response,0.1)
 
         # update the translation status
-        dy=pty-np.floor((response.shape[0])/2)
-        dx=ptx-np.floor((response.shape[1])/2)
+        dy=pty-(response.shape[0])//2
+        dx=ptx-(response.shape[1])//2
 
         if self.is_rotation:
             sn,cs=np.sin(self.rot),np.cos(self.rot)
-            pp=np.array([[self.sc*cs,-self.sc*sn],
-                         [self.sc*sn,self.sc*cs]])
+            pp=np.array([[self.sc[1]*cs,-self.sc[0]*sn],
+                         [self.sc[1]*sn,self.sc[0]*cs]])
             x,y=pos
             delta=self.cell_size*np.array([[dy,dx]]).dot(pp)
             x+=delta[0,1]
             y+=delta[0,0]
             pos=(x,y)
-            patchL=self.get_affine_subwindow(img, pos, 1., self.rot, (int(np.floor(self.sc* self.scale_sz[0])),
-                                                                          int(np.floor(self.sc*self.scale_sz[1]))))
+            patchL=self.get_affine_subwindow(img, pos, [1.,1.], self.rot, (int(np.floor(self.sc[0]* self.scale_sz[0])),
+                                                                          int(np.floor(self.sc[1]*self.scale_sz[1]))))
         else:
             x,y=pos
-            pos=(x+self.sc*self.cell_size*dx,y+self.sc*self.cell_size*dy)
-            patchL=cv2.getRectSubPix(img,(int(np.floor(self.sc*self.scale_sz[0])),
-                                               int(np.floor(self.sc*self.scale_sz[1]))),pos)
+            pos=(x+self.sc[0]*self.cell_size*dx,y+self.sc[1]*self.cell_size*dy)
+            patchL=cv2.getRectSubPix(img,(int(np.floor(self.sc[0]*self.scale_sz[0])),
+                                               int(np.floor(self.sc[1]*self.scale_sz[1]))),pos)
         patchL=cv2.resize(patchL,self.scale_sz_window,cv2.INTER_CUBIC)
         patchLp=cv2.logPolar(patchL.astype(np.float32),((patchL.shape[1]-1)/2,(patchL.shape[0]-1)/2),self.mag,flags=cv2.INTER_LINEAR + cv2.WARP_FILL_OUTLIERS)
 
@@ -477,18 +482,18 @@ class LDES(BaseCF):
         return np.concatenate((hog_feature,cn_feature),axis=2)
 
     def get_color_space_hist(self,patch,n_bins):
-        histogram=cv2.calcHist([patch.astype(np.uint8)],[0,1,2],None,[n_bins,n_bins,n_bins],[0,256,0,256,0,256])/patch.size
+        histogram=cv2.calcHist([patch.astype(np.uint8)],[0,1,2],None,[n_bins,n_bins,n_bins],[0,256,0,256,0,256])
         return histogram
 
     def get_colour_map(self,patch,bg_hist,fg_hist,bin_mapping):
         frame_bin = cv2.LUT(patch.astype(np.uint8), bin_mapping).astype(np.int64)
         P_fg = fg_hist[frame_bin[:, :, 0], frame_bin[:, :, 1], frame_bin[:, :, 2]]
         P_bg=bg_hist[frame_bin[:,:,0],frame_bin[:,:,1],frame_bin[:,:,2]]
-        #not_na=np.where(P_bg!=0)
-        #P_O=0.5*np.ones_like(P_fg)
-        #P_O[not_na]=P_fg[not_na]/P_bg[not_na]
-        P_O=P_fg/(P_fg+P_bg)
-        P_O[np.isnan(P_O)]=0.5
+        not_na=np.where(P_bg!=0)
+        P_O=0.5*np.ones_like(P_fg)
+        P_O[not_na]=P_fg[not_na]/P_bg[not_na]
+        #P_O=P_fg/(P_fg+P_bg)
+        #P_O[np.isnan(P_O)]=0.5
         return P_O
 
     def get_bin_mapping(self,num_bins):
@@ -498,10 +503,10 @@ class LDES(BaseCF):
         return bin_mapping.astype(np.int)
 
 
-    def get_affine_subwindow(self,img, pos, sc, rot, window_sz):
+    def get_affine_subwindow(self,img, pos,sc, rot, window_sz):
         def simiparam2mat(tx,ty,rot,s):
-            sn,cs=s*np.sin(rot),s*np.cos(rot)
-            p=[tx,ty,cs,-sn,sn,cs]
+            sn,cs=np.sin(rot),np.cos(rot)
+            p=[tx,ty,s[0]*cs,-s[1]*sn,s[0]*sn,s[1]*cs]
             return p
 
         def interp2(img, Xq, Yq):

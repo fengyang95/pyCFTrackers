@@ -68,7 +68,7 @@ class PyTracker:
         elif self.tracker_type=='SAMF':
             self.tracker=SAMF()
         elif self.tracker_type=='LDES':
-            self.tracker=LDES(ldes_config.LDESOTBLinearConfig())
+            self.tracker=LDES(ldes_config.LDESDemoLinearConfig())
         elif self.tracker_type=='DSST_LP':
             self.tracker=DSST_LP()
         else:
