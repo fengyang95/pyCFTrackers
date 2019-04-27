@@ -5,15 +5,40 @@ from scipy.ndimage import map_coordinates
 from lib.utils import cos_window,gaussian2d_rolled_labels
 from lib.fft_tools import fft2,ifft2
 from cftracker.base import BaseCF
-from cftracker.feature import extract_hog_feature,extract_cn_feature
-from cftracker.config import ldes_config
+from cftracker.feature import extract_hog_feature,extract_cn_feature,extract_cn_feature_byw2c
+from skimage.feature.peak import peak_local_max
+from lib.utils import APCE
+
+
+def cf_confidence(response_cf):
+    peak_loc_indices = peak_local_max(response_cf, min_distance=1,indices=True)
+    max_peak_val=0
+    secondmax_peak_val=0
+    max_peak_val_indice=[0,0]
+    secondmax_peak_val_indice=[0,0]
+    for indice in peak_loc_indices:
+        if response_cf[indice]>max_peak_val:
+            max_peak_val_indice=indice
+            max_peak_val=response_cf[indice]
+        elif response_cf[indice]>secondmax_peak_val:
+            secondmax_peak_val_indice=indice
+            secondmax_peak_val=response_cf[indice]
+    pass
+
+def confidence_cf_apce(response_cf):
+    apce=APCE(response_cf)
+    conf=np.clip(apce/50,a_min=0,a_max=1)
+    return conf
+
+
+
 
 # pad [h,w] format
 def pad(img,pad):
     h,w=img.shape[:2]
     delta=(int((pad[0]-h)/2),int((pad[1]-w)/2))
     c=img.shape[2]
-    r=np.zeros((pad[0],pad[1],c),dtype=np.complex64)
+    r=np.zeros((pad[0],pad[1],c))
     idy=[delta[0],delta[0]+h]
     idx=[delta[1],delta[1]+w]
     r[idy[0]:idy[1], idx[0]:idx[1], :] = img
@@ -124,8 +149,12 @@ class LDES(BaseCF):
         self.polygon=config.polygon
         self.vis=False
         self.sigma=config.sigma
+        self.adaptive_merge_factor=config.adaptive_merge_factor
+        self.theta=config.theta
 
     def init(self, first_frame, region):
+        #file = h5py.File('../lib/w2crs.mat', 'r')
+        #self.w2c = file['w2crs']
         self.use_color_hist=not(np.all(first_frame[:,:,0]==first_frame[:,:,1]))
         assert len(first_frame.shape)==3 and first_frame.shape[2]==3
         region = np.array(region).astype(np.int64)
@@ -196,9 +225,9 @@ class LDES(BaseCF):
         self.scale_sz=((target_sz[0]+avg_dim)/self.sc[0],
                        (target_sz[1]+avg_dim)/self.sc[1])
         self.scale_sz0=self.scale_sz
-        self.cos_window_scale=cos_window((self.scale_sz_window[0],self.scale_sz_window[1]))
-        self.mag=self.cos_window_scale.shape[0]/np.log(np.sqrt((self.cos_window_scale.shape[0]**2+
-                                                               self.cos_window_scale.shape[1]**2)/4))
+        self.cos_window_scale=cos_window((self.scale_sz_window[0]//self.cell_size,self.scale_sz_window[1]//self.cell_size))
+        self.mag=self.scale_sz_window[1]/np.log(np.sqrt((self.scale_sz_window[0]**2+
+                                                               self.scale_sz_window[1]**2)/4))
 
         self.cell_size=cell_size_search
         tmp_sc = 1.
@@ -208,7 +237,8 @@ class LDES(BaseCF):
         x=np.clip(x,a_min=0,a_max=first_frame.shape[1]-1)
         y=np.clip(y,a_min=0,a_max=first_frame.shape[0]-1)
         self._center=(x,y)
-        # construct return variables
+
+
 
     def update(self,current_frame,vis=False):
         self.vis=vis
@@ -266,6 +296,8 @@ class LDES(BaseCF):
             cv2.waitKey(1)
             """
 
+
+
         self.aff=aff
         if self.polygon is True:
             aff=aff[:,[0,3,2,1]]
@@ -307,7 +339,7 @@ class LDES(BaseCF):
                                                int(np.floor(self.sc[1]*self.scale_sz[1]))),pos)
         patchL=cv2.resize(patchL,self.scale_sz_window,cv2.INTER_CUBIC)
         # get logpolar space and apply feature extraction
-        patchLp=cv2.logPolar(patchL.astype(np.float32),((patchL.shape[1]-1)/2,(patchL.shape[0]-1)/2),self.mag,flags=cv2.INTER_LINEAR + cv2.WARP_FILL_OUTLIERS)
+        patchLp=cv2.logPolar(patchL.astype(np.float32),(patchL.shape[1]//2,patchL.shape[0]//2),self.mag,flags=cv2.INTER_LINEAR + cv2.WARP_FILL_OUTLIERS)
 
         patchLp=extract_hog_feature(patchLp,self.cell_size)
         #patchLp = patchLp * self.cos_window_scale[:, :, None]
@@ -317,7 +349,7 @@ class LDES(BaseCF):
 
         #is_color=True
         if self.use_color_hist:
-            pos_in=((sz[0]-1)/2,(sz[1]-1)/2)
+            pos_in=((sz[0])/2-1,(sz[1])/2-1)
             lab_patch=patch
             inter_patch=cv2.getRectSubPix(lab_patch.astype(np.uint8),(int(round(sz[0]*self.inter_patch_rate)),int(round(sz[1]*self.inter_patch_rate))),pos_in)
             self.interp_patch=inter_patch
@@ -370,11 +402,10 @@ class LDES(BaseCF):
         z=z*c_w[:,:,None]
         zf=fft2(z)
         ssz=(zf.shape[1],zf.shape[0],zf.shape[2])
-
         # calculate response of the classifier at all shifts
         wf=np.conj(self.model_xf)*self.model_alphaf[:,:,None]/np.size(self.model_xf)
         if polish<=large_num:
-            w=pad(ifft2(wf),(ssz[1],ssz[0]))
+            w=pad(np.real(ifft2(wf)),(ssz[1],ssz[0]))
             wf=fft2(w)
 
         tmp_sz=ssz
@@ -388,7 +419,7 @@ class LDES(BaseCF):
         response_cf=np.real(ifft2(rff))
         response_cf=np.fft.fftshift(response_cf,axes=(0,1))
 
-        #response_cf=cv2.resize(response_cf,(tmp_sz[0],tmp_sz[1]),cv2.INTER_CUBIC)
+
         response_color=np.zeros_like(response_cf)
 
         if self.use_color_hist:
@@ -396,7 +427,13 @@ class LDES(BaseCF):
             response_color=get_center_likelihood(object_likelihood,self.target_sz0)
             response_color=cv2.resize(response_color,(response_cf.shape[1],response_cf.shape[0]),cv2.INTER_CUBIC)
 
-        response=(1-self.merge_factor)*response_cf+self.merge_factor*response_color
+        # adaptive merge factor
+        if self.adaptive_merge_factor is True:
+            cf_conf=confidence_cf_apce(response_cf)
+            adaptive_merge_factor=self.merge_factor*self.theta+(1-self.theta)*(1-cf_conf)
+            response=(1-adaptive_merge_factor)*response_cf+adaptive_merge_factor*response_color
+        else:
+            response=(1-self.merge_factor)*response_cf+self.merge_factor*response_color
         if self.vis is True:
             self.score=response
             self.crop_size=self.window_sz
@@ -436,8 +473,7 @@ class LDES(BaseCF):
             patchL=cv2.getRectSubPix(img,(int(np.floor(self.sc[0]*self.scale_sz[0])),
                                                int(np.floor(self.sc[1]*self.scale_sz[1]))),pos)
         patchL=cv2.resize(patchL,self.scale_sz_window,cv2.INTER_CUBIC)
-        patchLp=cv2.logPolar(patchL.astype(np.float32),((patchL.shape[1]-1)/2,(patchL.shape[0]-1)/2),self.mag,flags=cv2.INTER_LINEAR + cv2.WARP_FILL_OUTLIERS)
-
+        patchLp=cv2.logPolar(patchL.astype(np.float32),(patchL.shape[1]//2,patchL.shape[0]//2),self.mag,flags=cv2.INTER_LINEAR + cv2.WARP_FILL_OUTLIERS)
         patchLp=extract_hog_feature(patchLp,self.cell_size)
         #patchLp = patchLp * self.cos_window_scale[:, :, None]
         tmp_sc,tmp_rot,sscore=self.estimate_scale(self.model_patchLp, patchLp, self.mag)
@@ -478,7 +514,9 @@ class LDES(BaseCF):
 
     def get_features(self,img,cell_size):
         hog_feature=extract_hog_feature(img.astype(np.uint8),cell_size)
-        cn_feature=extract_cn_feature(img.astype(np.uint8),cell_size)
+        #resized_img=cv2.resize(img,(hog_feature.shape[1],hog_feature.shape[0]),cv2.INTER_CUBIC).astype(np.uint8)
+        #cn_feature=extract_cn_feature(resized_img.astype(np.uint8),1)
+        cn_feature=extract_cn_feature(img,cell_size)
         return np.concatenate((hog_feature,cn_feature),axis=2)
 
     def get_color_space_hist(self,patch,n_bins):
@@ -492,8 +530,6 @@ class LDES(BaseCF):
         not_na=np.where(P_bg!=0)
         P_O=0.5*np.ones_like(P_fg)
         P_O[not_na]=P_fg[not_na]/P_bg[not_na]
-        #P_O=P_fg/(P_fg+P_bg)
-        #P_O[np.isnan(P_O)]=0.5
         return P_O
 
     def get_bin_mapping(self,num_bins):
@@ -542,8 +578,6 @@ class LDES(BaseCF):
         return out
 
 
-
-
     def _kernel_correlation(self, xf, yf, kernel='gaussian'):
         if kernel== 'gaussian':
             N=xf.shape[0]*xf.shape[1]
@@ -557,22 +591,5 @@ class LDES(BaseCF):
         else:
             raise NotImplementedError
         return kf
-
-
-if __name__=='__main__':
-    tracker=LDES(config=ldes_config.LDESOTBLinearConfig())
-    model=np.arange(1,10).astype(np.float32).reshape(3,3)
-    obser=np.arange(1,10).astype(np.float32).reshape(3,3)
-    obser[0,0]=1.1
-    model=model[:,:,None]
-    obser=obser[:,:,None]
-    print(model)
-    print(obser)
-    print(tracker.estimate_scale(model,obser,10))
-    print(PSR(obser[:,:,0],0.1))
-
-
-    x=tracker.get_affine_subwindow(obser, (1,1), 1.2, 0.1, (5,4))
-    print(x)
 
 

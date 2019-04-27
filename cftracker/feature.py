@@ -42,9 +42,8 @@ def extract_cn_feature(img,cell_size=1):
     out = np.concatenate((gray, cn_feature), axis=2)
     return out
 
-"""
-def extract_cn_feature(img, center, sz, w2c):
-    patch=cv2.getRectSubPix(img,sz,center)
+
+def extract_cn_feature_byw2c(patch, w2c):
     gray = cv2.cvtColor(patch, cv2.COLOR_BGR2GRAY).astype(np.float32) / 255 - 0.5
     gray = gray[:, :, np.newaxis]
 
@@ -55,12 +54,10 @@ def extract_cn_feature(img, center, sz, w2c):
     index_im = ( r//8 + 32 * g//8 + 32 * 32 * b//8)
     h, w = patch.shape[:2]
     w2c=np.array(w2c)
-    print(w2c.shape)
-    print(index_im.shape)
     out=w2c.T[index_im.flatten(order='F')].reshape((h,w,w2c.shape[0]))
     out=np.concatenate((gray,out),axis=2)
     return out
-"""
+
 
 
 

@@ -26,6 +26,8 @@ class LDESOTBLinearConfig:
     polygon=False
 
     sigma=None
+    adaptive_merge_factor=True
+    theta=0.9
 
 
 class LDESVOTLinearConfig:
@@ -55,6 +57,8 @@ class LDESVOTLinearConfig:
     merge_factor = 0.4
     sigma=None
     polygon = True
+    theta=1.
+    adaptive_merge_factor=False
 
 class LDESDemoLinearConfig:
     kernel_type='linear'
@@ -84,6 +88,8 @@ class LDESDemoLinearConfig:
     polygon=False
 
     sigma=None
+    theta=0.9
+    adaptive_merge_factor=False
 
 
 
