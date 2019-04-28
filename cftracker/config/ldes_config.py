@@ -26,8 +26,8 @@ class LDESOTBLinearConfig:
     polygon=False
 
     sigma=None
-    adaptive_merge_factor=True
-    theta=0.9
+    adaptive_merge_factor=False
+    theta=1.
 
 
 class LDESVOTLinearConfig:
@@ -89,7 +89,7 @@ class LDESDemoLinearConfig:
 
     sigma=None
     theta=0.9
-    adaptive_merge_factor=False
+    adaptive_merge_factor=True
 
 
 

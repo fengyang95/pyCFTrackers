@@ -97,7 +97,14 @@ def track_vot(tracker_type, video):
             tracker=create_tracker(tracker_type)
             if tracker_type=='LDES':
                 tracker.init(im,gt[f])
-                location=gt[f]
+                if tracker.polygon is True:
+                    location=gt[f]
+                else:
+                    cx, cy, w, h = get_axis_aligned_bbox(gt[f])
+                    target_pos = np.array([cx, cy])
+                    target_sz = np.array([w, h])
+                    location = cxy_wh_2_rect(target_pos, target_sz)
+
             else:
                 cx, cy, w, h = get_axis_aligned_bbox(gt[f])
                 target_pos = np.array([cx, cy])

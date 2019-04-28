@@ -9,6 +9,9 @@ from cftracker.feature import extract_hog_feature,extract_cn_feature,extract_cn_
 from skimage.feature.peak import peak_local_max
 from lib.utils import APCE
 
+def mod_one(a, b):
+    y = np.mod(a - 1, b) + 1
+    return y
 
 def cf_confidence(response_cf):
     peak_loc_indices = peak_local_max(response_cf, min_distance=1,indices=True)
@@ -31,7 +34,27 @@ def confidence_cf_apce(response_cf):
     return conf
 
 
+# max val at the bottom right loc
+def gaussian2d_rolled_labels_staple(sz, sigma):
+    halfx, halfy = int(np.floor((sz[0] - 1) / 2)), int(np.floor((sz[1] - 1) / 2))
+    x_range = np.arange(-halfx, halfx + 1)
+    y_range = np.arange(-halfy, halfy + 1)
+    i, j = np.meshgrid(y_range, x_range)
+    i_mod_range = mod_one(i, sz[1])
+    j_mod_range = mod_one(j, sz[0])
+    labels = np.zeros((sz[1], sz[0]))
+    labels[i_mod_range - 1, j_mod_range - 1] = np.exp(-(i ** 2 + j ** 2) / (2 * sigma ** 2))
+    return labels
 
+
+def crop_filter_response(response_cf, response_sz):
+    h, w = response_cf.shape[:2]
+    half_width = int(np.floor(response_sz[0] / 2))
+    half_height = int(np.floor(response_sz[1] / 2))
+    range_i, range_j = np.arange(-half_height, half_height + 1), np.arange(-half_width, half_width + 1)
+    i, j = np.meshgrid(mod_one(range_i, h), mod_one(range_j, w))
+    new_responses = response_cf[i - 1, j - 1]
+    return new_responses.T
 
 # pad [h,w] format
 def pad(img,pad):
@@ -213,7 +236,7 @@ class LDES(BaseCF):
         self.target_sz0=(int(np.round(target_sz[0]/self.sc[0])),
                          int(np.round(target_sz[1]/self.sc[1])))
         self.output_sigma=np.sqrt(target_sz[0]*target_sz[1])*self.output_sigma_factor/self.cell_size
-        self.y=gaussian2d_rolled_labels((int(np.round(self.window_sz0[0]/self.cell_size)),
+        self.y=gaussian2d_rolled_labels_staple((int(np.round(self.window_sz0[0]/self.cell_size)),
                                          int(np.round(self.window_sz0[1]/self.cell_size))),
                                         self.output_sigma)
         self.yf=fft2(self.y)
@@ -295,9 +318,6 @@ class LDES(BaseCF):
             cv2.imshow('show_img',show_img)
             cv2.waitKey(1)
             """
-
-
-
         self.aff=aff
         if self.polygon is True:
             aff=aff[:,[0,3,2,1]]
@@ -417,8 +437,8 @@ class LDES(BaseCF):
         rff_imag=cv2.resize(rff.imag,(tmp_sz[0],tmp_sz[1]),cv2.INTER_NEAREST)
         rff=rff_real+1.j*rff_imag
         response_cf=np.real(ifft2(rff))
-        response_cf=np.fft.fftshift(response_cf,axes=(0,1))
-
+        #response_cf=np.fft.fftshift(response_cf,axes=(0,1))
+        response_cf=crop_filter_response(response_cf,(response_cf.shape[1],response_cf.shape[0]))
 
         response_color=np.zeros_like(response_cf)
 
@@ -515,7 +535,7 @@ class LDES(BaseCF):
     def get_features(self,img,cell_size):
         hog_feature=extract_hog_feature(img.astype(np.uint8),cell_size)
         #resized_img=cv2.resize(img,(hog_feature.shape[1],hog_feature.shape[0]),cv2.INTER_CUBIC).astype(np.uint8)
-        #cn_feature=extract_cn_feature(resized_img.astype(np.uint8),1)
+        #cn_feature=extract_cn_feature(resized_img,1)
         cn_feature=extract_cn_feature(img,cell_size)
         return np.concatenate((hog_feature,cn_feature),axis=2)
 
