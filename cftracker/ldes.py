@@ -132,14 +132,14 @@ def get_center_likelihood(likelihood_map, sz):
     sat3=sat3[i,j]
     sat4=np.roll(sat, -sz[0], axis=1)
     sat4=sat4[i,j]
-    center_likelihood=(sat1+sat2-sat3-sat4)/(sz[0] * sz[1])
+    center_likelihood=((sat1+sat2-sat3-sat4)/(sz[0] * sz[1])).T
     def fillzeros(im,sz):
         res=np.zeros((sz[1],sz[0]))
         msz=((sz[0]-im.shape[1])//2,(sz[1]-im.shape[0])//2)
         res[msz[1]:msz[1]+im.shape[0],msz[0]:msz[0]+im.shape[1]]=im
         return res
-    center_likelihood=fillzeros(center_likelihood,(h,w))
-    return center_likelihood.T
+    center_likelihood=fillzeros(center_likelihood,(w,h))
+    return center_likelihood
 
 class LDES(BaseCF):
     def __init__(self,config):
@@ -156,7 +156,7 @@ class LDES(BaseCF):
 
         self.fixed_model_sz = config.fixed_model_sz
         self.is_rotation = config.is_rotation
-        self.is_BGD = self.is_rotation
+        self.is_BGD = config.is_BGD
         self.is_subpixel = config.is_subpixel
         self.interp_n = config.interp_n
 
@@ -267,6 +267,7 @@ class LDES(BaseCF):
         self.vis=vis
         pos,tmp_sc,tmp_rot,cscore,sscore=self.tracking(current_frame,self._center,0)
         if self.is_BGD:
+            #print('cscore:',cscore,'  sscore:',sscore)
             cscore=(1-self.interp_n)*cscore+self.interp_n*sscore
             iter=0
             mcscore=0
@@ -285,6 +286,7 @@ class LDES(BaseCF):
                     mcscore=cscore
                 else:
                     break
+                #print('iter:',iter)
                 pos,tmp_sc,tmp_rot,cscore,sscore=self.tracking(current_frame,pos,iter)
                 cscore=(1-self.interp_n)*cscore+self.interp_n*sscore
                 iter+=1
@@ -511,7 +513,8 @@ class LDES(BaseCF):
             Cf=np.sum(num/d,axis=2)
             C=np.real(ifft2(Cf))
             C=np.fft.fftshift(C,axes=(0,1))
-            mscore=np.max(C)
+            #mscore=np.max(C)
+            mscore=PSR(C,0.1)
             pty,ptx=np.unravel_index(np.argmax(C, axis=None), C.shape)
             slobe_y=slobe_x=1
             idy=np.arange(pty-slobe_y,pty+slobe_y+1).astype(np.int64)
@@ -611,5 +614,3 @@ class LDES(BaseCF):
         else:
             raise NotImplementedError
         return kf
-
-

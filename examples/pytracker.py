@@ -12,8 +12,10 @@ from cftracker.dat import DAT
 from cftracker.eco import ECO
 from cftracker.bacf import BACF
 from cftracker.csrdcf import CSRDCF
+from cftracker.csrdcf_lp import CSRDCF_LP
 from cftracker.samf import SAMF
 from cftracker.ldes import LDES
+from cftracker.mkcfup import MKCFup
 from lib.eco.config import otb_deep_config,otb_hc_config
 from cftracker.config import staple_config,ldes_config
 class PyTracker:
@@ -65,12 +67,16 @@ class PyTracker:
             self.tracker=BACF()
         elif self.tracker_type=='CSRDCF':
             self.tracker=CSRDCF()
+        elif self.tracker_type=='CSRDCF-LP':
+            self.tracker=CSRDCF_LP()
         elif self.tracker_type=='SAMF':
             self.tracker=SAMF()
         elif self.tracker_type=='LDES':
             self.tracker=LDES(ldes_config.LDESDemoLinearConfig())
         elif self.tracker_type=='DSST_LP':
             self.tracker=DSST_LP()
+        elif self.tracker_type=='MKCFup':
+            self.tracker=MKCFup()
         else:
             raise NotImplementedError
 
@@ -99,7 +105,7 @@ class PyTracker:
                     apce = APCE(score)
                     psr = PSR(score)
                     F_max = np.max(score)
-                    size=self.tracker.crop_size
+                    size=self.tracker.win_sz
                     score = cv2.resize(score, size)
                     score -= score.min()
                     score =score/ score.max()

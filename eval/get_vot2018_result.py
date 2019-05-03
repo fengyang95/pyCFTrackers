@@ -24,7 +24,9 @@ from cftracker.dat import DAT
 from cftracker.eco import ECO
 from cftracker.bacf import BACF
 from cftracker.csrdcf import CSRDCF
+from cftracker.csrdcf_lp import CSRDCF_LP
 from cftracker.ldes import LDES
+from cftracker.mkcfup import MKCFup
 from cftracker.opencv_cftracker import OpenCVCFTracker
 
 from lib.eco.config import vot18_deep_config,vot18_hc_config
@@ -69,6 +71,8 @@ def create_tracker(tracker_type):
         tracker=BACF()
     elif tracker_type=='CSRDCF':
         tracker=CSRDCF()
+    elif tracker_type=='CSRDCF-LP':
+        tracker=CSRDCF_LP()
     elif tracker_type=='OPENCV_KCF':
         tracker=OpenCVCFTracker(name='KCF')
     elif tracker_type=='OPENCV_MOSSE':
@@ -77,8 +81,12 @@ def create_tracker(tracker_type):
         tracker=OpenCVCFTracker(name='CSRDCF')
     elif tracker_type=='LDES':
         tracker=LDES(config=ldes_config.LDESVOTLinearConfig())
+    elif tracker_type=='LDES-NoBGD':
+        tracker=LDES(config=ldes_config.LDESVOTNoBGDLinearConfig())
     elif tracker_type=='DSST-LP':
         tracker=DSST_LP()
+    elif tracker_type=='MKCFup':
+        tracker=MKCFup()
     else:
         raise NotImplementedError
     return tracker
@@ -180,7 +188,7 @@ def main():
     total_lost = 0  # VOT
     speed_list = []
 
-    trackers = ['LDES']
+    trackers = ['MKCFup']
 
     for tracker_type in trackers:
 
