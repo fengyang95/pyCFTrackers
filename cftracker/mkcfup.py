@@ -111,9 +111,9 @@ class MKCFup(BaseCF):
             self.scale_basis,_=np.linalg.qr(bigY)
             self.scale_basis_den,_=np.linalg.qr(bigY_den)
             self.scale_basis=self.scale_basis.T
-            sf_proj=np.fft.fft(self.scale_window*(self.scale_basis.dot(self.s_num)))
+            sf_proj=np.fft.fft(self.scale_basis.dot(self.s_num),axis=1)
             self.sf_num=self.ysf*np.conj(sf_proj)
-            xs=self.scale_window*(self.scale_basis_den.T.dot(xs))
+            xs = self.scale_basis_den.T.dot(xs)
             xsf=np.fft.fft(xs,axis=1)
             new_sf_den=np.sum(xsf*np.conj(xsf),axis=0)
             self.sf_den=new_sf_den
@@ -204,7 +204,7 @@ class MKCFup(BaseCF):
 
         if self.num_of_scales>0:
             xs = self.get_scale_subwindow(current_frame, self._center)
-            xs=self.scale_window*(self.scale_basis.dot(xs))
+            xs=self.scale_basis.dot(xs)
             xsf = np.fft.fft(xs, axis=1)
             scale_responsef = np.sum(self.sf_num * xsf, axis=0) / (self.sf_den + self.lambda_)
             interp_scale_response=np.real(np.fft.ifft(self.resize_dft(scale_responsef,len(self.interp_scale_factors))))
@@ -220,9 +220,9 @@ class MKCFup(BaseCF):
             self.scale_basis, _ = np.linalg.qr(bigY)
             self.scale_basis_den, _ = np.linalg.qr(bigY_den)
             self.scale_basis = self.scale_basis.T
-            sf_proj = np.fft.fft(self.scale_window * (self.scale_basis.dot(self.s_num)))
+            sf_proj = np.fft.fft(self.scale_basis.dot(self.s_num),axis=1)
             self.sf_num = self.ysf * np.conj(sf_proj)
-            new_xs = self.scale_window * (self.scale_basis_den.T.dot(new_xs))
+            new_xs =  self.scale_basis_den.T.dot(new_xs)
             xsf = np.fft.fft(new_xs,axis=1)
             new_sf_den = np.sum(xsf * np.conj(xsf), axis=0)
             self.sf_den = (1-self.interp_factor)*self.sf_den+self.interp_factor*new_sf_den
@@ -249,7 +249,7 @@ class MKCFup(BaseCF):
                                                   self._window)
         if self.frame_index%self.modnum==0:
             self.train_model()
-        target_sz=(int(self.base_target_sz[0]*self.sc),int(self.base_target_sz[1]*self.sc))
+        target_sz=((self.base_target_sz[0]*self.sc),(self.base_target_sz[1]*self.sc))
         return [(self._center[0] - target_sz[0] / 2), (self._center[1] - target_sz[1] / 2), target_sz[0],target_sz[1]]
 
     def dense_gauss_kernel(self,x1,x2,sigma):
@@ -343,9 +343,9 @@ class MKCFup(BaseCF):
             mids=(int(np.ceil(minsz[0]/2)),int(np.ceil(minsz[1]/2)))
             mide=(int(np.floor((minsz[0]-1)/2))-1,int(np.floor((minsz[1]-1)/2))-1)
             resized_dfft[:mids[1],:mids[0]]=scaling*input_dft[:mids[1],:mids[0]]
-            resized_dfft[:mids[1],-1-mide[0]:-1]=scaling*input_dft[:mids[1],-1-mide[0]:-1]
-            resized_dfft[-1-mide[1]:-1,:mids[0]]=scaling*input_dft[-1-mide[1]:-1,:mids[0]]
-            resized_dfft[-1-mide[1]:-1,-1-mide[0]:-1]=scaling*input_dft[-1-mide[1]:-1,-1-mide[0]:-1]
+            resized_dfft[:mids[1],-1-mide[0]:]=scaling*input_dft[:mids[1],-1-mide[0]:]
+            resized_dfft[-1-mide[1]:,:mids[0]]=scaling*input_dft[-1-mide[1]:,:mids[0]]
+            resized_dfft[-1-mide[1]:,-1-mide[0]:]=scaling*input_dft[-1-mide[1]:,-1-mide[0]:]
             return resized_dfft
         else:
             return input_dft

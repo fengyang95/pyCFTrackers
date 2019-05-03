@@ -235,9 +235,9 @@ class BACF(BaseCF):
             mids=(int(np.ceil(minsz[0]/2)),int(np.ceil(minsz[1]/2)))
             mide=(int(np.floor((minsz[0]-1)/2))-1,int(np.floor((minsz[1]-1)/2))-1)
             resized_dfft[:mids[1],:mids[0],:]=scaling*input_dft[:mids[1],:mids[0],:]
-            resized_dfft[:mids[1],-1-mide[0]:-1,:]=scaling*input_dft[:mids[1],-1-mide[0]:-1,:]
-            resized_dfft[-1-mide[1]:-1,:mids[0],:]=scaling*input_dft[-1-mide[1]:-1,:mids[0],:]
-            resized_dfft[-1-mide[1]:-1,-1-mide[0]:-1,:]=scaling*input_dft[-1-mide[1]:-1,-1-mide[0]:-1,:]
+            resized_dfft[:mids[1],-1-mide[0]:,:]=scaling*input_dft[:mids[1],-1-mide[0]:,:]
+            resized_dfft[-1-mide[1]:,:mids[0],:]=scaling*input_dft[-1-mide[1]:,:mids[0],:]
+            resized_dfft[-1-mide[1]:,-1-mide[0]:,:]=scaling*input_dft[-1-mide[1]:,-1-mide[0]:,:]
             return resized_dfft
         else:
             return input_dft

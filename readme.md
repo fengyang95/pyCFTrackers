@@ -15,7 +15,8 @@ I use [pysot-toolkit](https://github.com/StrangerZhang/pysot-toolkit) to eval th
 - [x] [BACF](http://openaccess.thecvf.com/content_ICCV_2017/papers/Galoogahi_Learning_Background-Aware_Correlation_ICCV_2017_paper.pdf)  
 - [x] [CSR-DCF](https://arxiv.org/pdf/1611.08461v1.pdf)   
 - [x] [DAT](https://www.tugraz.at/institute/icg/research/team-bischof/lrs/downloads/dat/)  This tracker is not based on CF, I re-implement it just for understanding Staple better  
-- [x] [LDES](https://arxiv.org/pdf/1712.05231.pdf)    
+- [x] [LDES](https://arxiv.org/pdf/1712.05231.pdf)  
+- [x] [MKCFup](http://openaccess.thecvf.com/content_cvpr_2018/papers/Tang_High-Speed_Tracking_With_CVPR_2018_paper.pdf)    
 **Trackers from other repos**
 - [x] [ECO/ECO-HC](https://arxiv.org/pdf/1611.09224v1.pdf) from [pyECO](https://github.com/StrangerZhang/pyECO)
 - [x] [OPENCV-CSRDCF](https://github.com/opencv/opencv_contrib)(Note that trackers implemented in opencv get lower score because they will return a success flag and if this flag is False, the bbox will be set to (0,0,0,0))
