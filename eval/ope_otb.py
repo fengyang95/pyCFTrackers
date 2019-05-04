@@ -138,7 +138,7 @@ def main():
 
     logger = logging.getLogger('global')
     logger.info(args)
-    trackers = ['MKCFup-LP']
+    trackers = ['MKCFup']
     dataset = DatasetFactory.create_dataset(name='OTB100',
                                             dataset_root='../dataset/OTB100',
                                             load_img=True

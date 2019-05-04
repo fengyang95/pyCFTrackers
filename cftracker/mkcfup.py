@@ -378,6 +378,7 @@ class MKCFup(BaseCF):
         return out
 
     def get_features(self,patch,cell_size):
+        """
         def cell_grayscale(patch,cell_size):
             gray_img=cv2.cvtColor(patch,cv2.COLOR_BGR2GRAY)
             i_image=cv2.integral(gray_img.astype(np.float32))
@@ -387,12 +388,8 @@ class MKCFup(BaseCF):
                      i_image[ys-cell_size,:][:,xs]+i_image[ys-cell_size,:][:,xs-cell_size]
             cell_gray=cell_sum/(cell_size**2*255)-0.5
             return cell_gray
-
+        """
         hog_feature=extract_hog_feature(patch,cell_size=cell_size)
-        gray_feature=cell_grayscale(patch,cell_size)[:,:,np.newaxis]
-        #gray_feature=cv2.cvtColor(cv2.resize(patch,(patch.shape[1]//cell_size,patch.shape[0]//cell_size)),
-        #                          cv2.COLOR_BGR2GRAY)[:,:,np.newaxis]/255-0.5
-        #hog_feature=np.concatenate((hog_feature,gray_feature),axis=2)
         cn_feature=extract_cn_feature(patch,cell_size=cell_size)
         return hog_feature,cn_feature
 
