@@ -22,7 +22,7 @@ if __name__ == '__main__':
     tracker_dir = args.result_dir
     trackers = glob.glob(join(tracker_dir, args.tracker_prefix+'*'))
     trackers = [t.split('/')[-1] for t in trackers]
-    trackers=['CSRDCF-LP','DSST-LP','LDES','SAMF','OPENCV-CSRDCF','DCF','CSK','KCF','Staple','DSST','DAT','MOSSE','ECO-HC','ECO','CN','BACF','CSRDCF']
+    trackers=['MKCFup','CSRDCF-LP','DSST-LP','LDES','SAMF','OPENCV-CSRDCF','DCF','CSK','KCF','Staple','DSST','DAT','MOSSE','ECO-HC','ECO','CN','BACF','CSRDCF']
     print(trackers)
     assert len(trackers) > 0
     args.num = min(args.num, len(trackers))

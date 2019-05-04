@@ -86,7 +86,7 @@ class MKCFup(BaseCF):
 
             ys = np.exp(-0.5 * (scale_exp_shift ** 2) / (self.scale_sigma ** 2))
             self.ysf = np.fft.fft(ys)
-            self.scale_window = np.hanning(len(self.ysf))
+            self.scale_window = np.hanning(len(self.ysf)).T
 
             if self.scale_model_factor**2*(self.base_target_sz[0]*self.base_target_sz[1])>self.scale_model_max_area:
                 self.scale_model_factor=np.sqrt(self.scale_model_max_area/(self.base_target_sz[0]*self.base_target_sz[1]))
@@ -111,7 +111,7 @@ class MKCFup(BaseCF):
             scale_basis_den,_=np.linalg.qr(bigY_den)
             self.scale_basis=scale_basis.T
             self.scale_basis_den=scale_basis_den.T
-            sf_proj=np.fft.fft(self.scale_basis.dot(self.s_num),axis=1)
+            sf_proj=np.fft.fft(self.scale_window*self.scale_basis.dot(self.s_num),axis=1)
             self.sf_num=self.ysf*np.conj(sf_proj)
             xs = self.scale_basis_den.dot(xs)
             xsf=np.fft.fft(xs,axis=1)
@@ -189,7 +189,7 @@ class MKCFup(BaseCF):
 
         if self.num_of_scales>0:
             xs = self.get_scale_subwindow(current_frame, self._center)
-            xs=self.scale_basis.dot(xs)
+            xs=self.scale_window*self.scale_basis.dot(xs)
             xsf = np.fft.fft(xs, axis=1)
             scale_responsef = np.sum(self.sf_num * xsf, axis=0) / (self.sf_den + self.lambda_)
             interp_scale_response=np.real(np.fft.ifft(self.resize_dft(scale_responsef,self.num_of_interp_scales)))
@@ -206,9 +206,9 @@ class MKCFup(BaseCF):
             self.scale_basis_den, _ = np.linalg.qr(bigY_den)
             self.scale_basis = self.scale_basis.T
             self.scale_basis_den=self.scale_basis_den.T
-            sf_proj = np.fft.fft(self.scale_basis.dot(self.s_num),axis=1)
+            sf_proj = np.fft.fft(self.scale_window*self.scale_basis.dot(self.s_num),axis=1)
             self.sf_num = self.ysf * np.conj(sf_proj)
-            new_xs =  self.scale_basis_den.dot(new_xs)
+            new_xs =  self.scale_window*self.scale_basis_den.dot(new_xs)
             xsf = np.fft.fft(new_xs,axis=1)
             new_sf_den = np.sum(xsf * np.conj(xsf), axis=0)
             self.sf_den = (1-self.interp_factor)*self.sf_den+self.interp_factor*new_sf_den
@@ -372,15 +372,30 @@ class MKCFup(BaseCF):
             im_patch_resized=cv2.resize(im_patch,self.scale_model_sz,interpolation=interpolation).astype(np.uint8)
             tmp=extract_hog_feature(im_patch_resized, cell_size=4)
             if out is None:
-                out=tmp.flatten()*self.scale_window[s]
+                out=tmp.flatten()
             else:
-                out=np.c_[out,tmp.flatten()*self.scale_window[s]]
+                out=np.c_[out,tmp.flatten()]
         return out
 
     def get_features(self,patch,cell_size):
+        def cell_grayscale(patch,cell_size):
+            gray_img=cv2.cvtColor(patch,cv2.COLOR_BGR2GRAY)
+            i_image=cv2.integral(gray_img.astype(np.float32))
+            ys=np.arange(cell_size,gray_img.shape[0]+1,cell_size)
+            xs=np.arange(cell_size,gray_img.shape[1]+1,cell_size)
+            cell_sum=i_image[ys,:][:,xs]-i_image[ys,:][:,xs-cell_size]-\
+                     i_image[ys-cell_size,:][:,xs]+i_image[ys-cell_size,:][:,xs-cell_size]
+            cell_gray=cell_sum/(cell_size**2*255)-0.5
+            return cell_gray
+
         hog_feature=extract_hog_feature(patch,cell_size=cell_size)
+        gray_feature=cell_grayscale(patch,cell_size)[:,:,np.newaxis]
+        #gray_feature=cv2.cvtColor(cv2.resize(patch,(patch.shape[1]//cell_size,patch.shape[0]//cell_size)),
+        #                          cv2.COLOR_BGR2GRAY)[:,:,np.newaxis]/255-0.5
+        #hog_feature=np.concatenate((hog_feature,gray_feature),axis=2)
         cn_feature=extract_cn_feature(patch,cell_size=cell_size)
         return hog_feature,cn_feature
+
 
 
 
