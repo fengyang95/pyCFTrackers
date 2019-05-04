@@ -16,6 +16,7 @@ from cftracker.csrdcf_lp import CSRDCF_LP
 from cftracker.samf import SAMF
 from cftracker.ldes import LDES
 from cftracker.mkcfup import MKCFup
+from cftracker.mkcfup_lp import MKCFupLP
 from lib.eco.config import otb_deep_config,otb_hc_config
 from cftracker.config import staple_config,ldes_config
 class PyTracker:
@@ -77,6 +78,8 @@ class PyTracker:
             self.tracker=DSST_LP()
         elif self.tracker_type=='MKCFup':
             self.tracker=MKCFup()
+        elif self.tracker_type=='MKCFup-LP':
+            self.tracker=MKCFupLP()
         else:
             raise NotImplementedError
 

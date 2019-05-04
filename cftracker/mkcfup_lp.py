@@ -1,13 +1,3 @@
-"""
-Python re-implementation of "High-speed Tracking with Multi-kernel Correlation Filters"
-@inproceedings{tang2018high,
-  title={High-speed tracking with multi-kernel correlation filters},
-  author={Tang, Ming and Yu, Bin and Zhang, Fan and Wang, Jinqiao},
-  booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
-  pages={4874--4883},
-  year={2018}
-}
-"""
 import numpy as np
 import cv2
 from lib.utils import cos_window,gaussian2d_rolled_labels
@@ -17,9 +7,9 @@ from .feature import extract_hog_feature,extract_cn_feature
 from .config import mkcf_up_config
 
 
-class MKCFup(BaseCF):
+class MKCFupLP(BaseCF):
     def __init__(self,config=mkcf_up_config.MKCFupOTB50Config()):
-        super(MKCFup).__init__()
+        super(MKCFupLP).__init__()
         self.gap=config.gap
         self.lr_cn_color = config.lr_cn_color
         self.lr_cn_gray = config.lr_cn_gray
@@ -42,14 +32,11 @@ class MKCFup(BaseCF):
         self.refinement_iterations=config.refinement_iterations
         self.translation_model_max_area=config.translation_model_max_area
         self.interpolate_response=config.interpolate_response
-        self.num_of_scales=config.num_of_scales
-        self.num_of_interp_scales=config.num_of_interp_scales
-        self.scale_model_factor=config.scale_model_factor
-        self.scale_step=config.scale_step
-        self.scale_model_max_area=config.scale_model_max_area
-        self.s_num_compressed_dim=config.s_num_compressed_dim
         self.cell_size=4
         self.sc = 1.
+
+        self.learning_rate_scale = 0.015
+        self.scale_sz_window = (128, 128)
 
 
     def init(self,first_frame,bbox):
@@ -58,10 +45,6 @@ class MKCFup(BaseCF):
         x0, y0, w, h = tuple(bbox)
         self.target_sz=(w,h)
         self._center = (int(x0 + w / 2),int( y0 + h / 2))
-        if w*h>self.translation_model_max_area:
-            self.sc=np.sqrt(w*h/self.translation_model_max_area)
-        else:
-            self.sc=1.
         self.base_target_sz=(w/self.sc,h/self.sc)
         self.win_sz = (int(np.floor(self.base_target_sz[0] * (1 + self.padding))), int(np.floor(self.base_target_sz[1] * (1 + self.padding))))
 
@@ -73,50 +56,22 @@ class MKCFup(BaseCF):
         self.interp_sz=(use_sz[0]*self.cell_size,use_sz[1]*self.cell_size)
         self._window=cos_window(use_sz)
 
-        if self.num_of_scales>0:
-            self.scale_sigma = self.num_of_interp_scales * self.scale_sigma_factor
-            scale_exp=np.arange(-int(np.floor((self.num_of_scales-1)/2)),
-                                int(np.ceil((self.num_of_scales-1)/2))+1)*self.num_of_interp_scales/self.num_of_scales
-            scale_exp_shift=np.roll(scale_exp,-int(np.floor((self.num_of_scales-1)/2)))
-            interp_scale_exp=np.arange(-int(np.floor((self.num_of_interp_scales-1)/2)),
-                                int(np.ceil((self.num_of_interp_scales-1)/2))+1)
-            interp_scale_exp_shift=np.roll(interp_scale_exp,-int(np.floor((self.num_of_interp_scales-1)/2)))
-            self.scale_size_factors = self.scale_step ** scale_exp
-            self.interp_scale_factors=self.scale_step**interp_scale_exp_shift
+        avg_dim = (w + h) / 2.5
+        self.scale_sz = ((w + avg_dim) / self.sc,
+                         (h + avg_dim) / self.sc)
+        self.scale_sz0 = self.scale_sz
+        self.cos_window_scale = cos_window((self.scale_sz_window[0], self.scale_sz_window[1]))
+        self.mag = self.cos_window_scale.shape[0] / np.log(np.sqrt((self.cos_window_scale.shape[0] ** 2 +
+                                                                    self.cos_window_scale.shape[1] ** 2) / 4))
 
-            ys = np.exp(-0.5 * (scale_exp_shift ** 2) / (self.scale_sigma ** 2))
-            self.ysf = np.fft.fft(ys)
-            self.scale_window = np.hanning(len(self.ysf))
+        # scale lp
+        patchL = cv2.getRectSubPix(first_frame, (int(np.floor(self.sc * self.scale_sz[0])),
+                                                 int(np.floor(self.sc * self.scale_sz[1]))), self._center)
+        patchL = cv2.resize(patchL, self.scale_sz_window)
+        patchLp = cv2.logPolar(patchL.astype(np.float32), ((patchL.shape[1] - 1) / 2, (patchL.shape[0] - 1) / 2),
+                               self.mag, flags=cv2.INTER_LINEAR + cv2.WARP_FILL_OUTLIERS)
+        self.model_patchLp = extract_hog_feature(patchLp, cell_size=4)
 
-            if self.scale_model_factor**2*(self.base_target_sz[0]*self.base_target_sz[1])>self.scale_model_max_area:
-                self.scale_model_factor=np.sqrt(self.scale_model_max_area/(self.base_target_sz[0]*self.base_target_sz[1]))
-
-            self.scale_model_sz = (
-            int(np.floor(self.base_target_sz[0] * self.scale_model_factor)), int(np.floor(self.base_target_sz[1] * self.scale_model_factor)))
-
-            self.min_scale_factor = self.scale_step ** (
-                int(np.ceil(np.log(max(5 / self.win_sz[0], 5 / self.win_sz[1])) /
-                            np.log(self.scale_step))))
-            self.max_scale_factor = self.scale_step ** (
-                int(np.floor((np.log(min(first_frame.shape[1] / self.base_target_sz[0], first_frame.shape[0] / self.base_target_sz[1])) /
-                              np.log(self.scale_step)))))
-
-            self.s_num_compressed_dim=len(self.scale_size_factors)
-            xs = self.get_scale_subwindow(first_frame, self._center)
-
-            bigY=xs
-            bigY_den=xs
-            self.s_num=xs
-            scale_basis,_=np.linalg.qr(bigY)
-            scale_basis_den,_=np.linalg.qr(bigY_den)
-            self.scale_basis=scale_basis.T
-            self.scale_basis_den=scale_basis_den.T
-            sf_proj=np.fft.fft(self.scale_basis.dot(self.s_num),axis=1)
-            self.sf_num=self.ysf*np.conj(sf_proj)
-            xs = self.scale_basis_den.dot(xs)
-            xsf=np.fft.fft(xs,axis=1)
-            new_sf_den=np.sum(xsf*np.conj(xsf),axis=0)
-            self.sf_den=new_sf_den
 
         self.cn_sigma = self.cn_sigma_color
         self.hog_sigma = self.hog_sigma_color
@@ -125,8 +80,6 @@ class MKCFup(BaseCF):
         self.modnum = self.gap
         self.is_gray = False
 
-
-
         patch=cv2.getRectSubPix(first_frame,self.win_sz,self._center).astype(np.uint8)
         self.z_hog,self.z_cn=self.get_features(patch,cell_size=self.cell_size)
 
@@ -134,7 +87,6 @@ class MKCFup(BaseCF):
         data_matrix_cn=self.z_cn.reshape((-1,self.z_cn.shape[2]))
         pca_basis_cn,_,_=np.linalg.svd(data_matrix_cn.T.dot(data_matrix_cn))
         self.projection_matrix_cn=pca_basis_cn[:,:self.num_compressed_dim_cn]
-
         data_matrix_hog=self.z_hog.reshape((-1,self.z_hog.shape[2]))
         pca_basis_hog,_,_=np.linalg.svd(data_matrix_hog.T.dot(data_matrix_hog))
         self.projection_matrix_hog=pca_basis_hog[:,:self.num_compressed_dim_hog]
@@ -187,31 +139,18 @@ class MKCFup(BaseCF):
             self._center=(old_pos[0]+translation_vec[1],old_pos[1]+translation_vec[0])
             iter+=1
 
-        if self.num_of_scales>0:
-            xs = self.get_scale_subwindow(current_frame, self._center)
-            xs=self.scale_basis.dot(xs)
-            xsf = np.fft.fft(xs, axis=1)
-            scale_responsef = np.sum(self.sf_num * xsf, axis=0) / (self.sf_den + self.lambda_)
-            interp_scale_response=np.real(np.fft.ifft(self.resize_dft(scale_responsef,self.num_of_interp_scales)))
-            recovered_scale = np.argmax(interp_scale_response)
-            self.sc = self.sc * self.interp_scale_factors[recovered_scale]
-            self.sc = np.clip(self.sc, a_min=self.min_scale_factor,
-                              a_max=self.max_scale_factor)
+        patchL = cv2.getRectSubPix(current_frame, (int(np.floor(self.sc * self.scale_sz[0])),
+                                                   int(np.floor(self.sc * self.scale_sz[1]))), self._center)
+        patchL = cv2.resize(patchL, self.scale_sz_window)
+        # convert into logpolar
+        patchLp = cv2.logPolar(patchL.astype(np.float32), ((patchL.shape[1] - 1) / 2, (patchL.shape[0] - 1) / 2),
+                               self.mag, flags=cv2.INTER_LINEAR + cv2.WARP_FILL_OUTLIERS)
+        patchLp = extract_hog_feature(patchLp, cell_size=4)
+        tmp_sc, _, _ = self.estimate_scale(self.model_patchLp, patchLp, self.mag)
+        tmp_sc = np.clip(tmp_sc, a_min=0.6, a_max=1.4)
+        self.sc = self.sc * tmp_sc
 
-            new_xs = self.get_scale_subwindow(current_frame, self._center)
-            self.s_num=(1-self.interp_factor)*self.s_num+self.interp_factor*new_xs
-            bigY = self.s_num
-            bigY_den = new_xs
-            self.scale_basis, _ = np.linalg.qr(bigY)
-            self.scale_basis_den, _ = np.linalg.qr(bigY_den)
-            self.scale_basis = self.scale_basis.T
-            self.scale_basis_den=self.scale_basis_den.T
-            sf_proj = np.fft.fft(self.scale_basis.dot(self.s_num),axis=1)
-            self.sf_num = self.ysf * np.conj(sf_proj)
-            new_xs =  self.scale_basis_den.dot(new_xs)
-            xsf = np.fft.fft(new_xs,axis=1)
-            new_sf_den = np.sum(xsf * np.conj(xsf), axis=0)
-            self.sf_den = (1-self.interp_factor)*self.sf_den+self.interp_factor*new_sf_den
+        self.model_patchLp = (1 - self.learning_rate_scale) * self.model_patchLp + self.learning_rate_scale*patchLp
 
         patch = cv2.getRectSubPix(current_frame, (int(self.base_target_sz[0] * self.sc * (1 + self.padding)),
                                                   int(self.base_target_sz[1] * self.sc * (1 + self.padding))),
@@ -358,29 +297,41 @@ class MKCFup(BaseCF):
         x_proj_hog=x_proj_hog*window[:,:,None]
         return x_proj_cn,x_proj_hog
 
-    def get_scale_subwindow(self, im, center):
-        n_scales=len(self.scale_size_factors)
-        out=None
-        for s in range(n_scales):
-            patch_sz=(int(self.base_target_sz[0] * self.sc * self.scale_size_factors[s]),
-                      int(self.base_target_sz[1] * self.sc * self.scale_size_factors[s]))
-            im_patch=cv2.getRectSubPix(im,patch_sz,center)
-            if self.scale_model_sz[0] > patch_sz[1]:
-                interpolation = cv2.INTER_LINEAR
-            else:
-                interpolation = cv2.INTER_AREA
-            im_patch_resized=cv2.resize(im_patch,self.scale_model_sz,interpolation=interpolation).astype(np.uint8)
-            tmp=extract_hog_feature(im_patch_resized, cell_size=4)
-            if out is None:
-                out=tmp.flatten()*self.scale_window[s]
-            else:
-                out=np.c_[out,tmp.flatten()*self.scale_window[s]]
-        return out
-
     def get_features(self,patch,cell_size):
         hog_feature=extract_hog_feature(patch,cell_size=cell_size)
         cn_feature=extract_cn_feature(patch,cell_size=cell_size)
         return hog_feature,cn_feature
+
+    def estimate_scale(self,model,obser,mag):
+        def phase_correlation(src1,src2):
+            s1f=fft2(src1)
+            s2f=fft2(src2)
+            num=s2f*np.conj(s1f)
+            d=np.sqrt(num*np.conj(num))+2e-16
+            Cf=np.sum(num/d,axis=2)
+            C=np.real(ifft2(Cf))
+            C=np.fft.fftshift(C,axes=(0,1))
+
+            mscore=np.max(C)
+            pty,ptx=np.unravel_index(np.argmax(C, axis=None), C.shape)
+            slobe_y=slobe_x=1
+            idy=np.arange(pty-slobe_y,pty+slobe_y+1).astype(np.int64)
+            idx=np.arange(ptx-slobe_x,ptx+slobe_x+1).astype(np.int64)
+            idy=np.clip(idy,a_min=0,a_max=C.shape[0]-1)
+            idx=np.clip(idx,a_min=0,a_max=C.shape[1]-1)
+            weight_patch=C[idy,:][:,idx]
+
+            s=np.sum(weight_patch)+2e-16
+            pty=np.sum(np.sum(weight_patch,axis=1)*idy)/s
+            ptx=np.sum(np.sum(weight_patch,axis=0)*idx)/s
+            pty=pty-(src1.shape[0])//2
+            ptx=ptx-(src1.shape[1])//2
+            return ptx,pty,mscore
+
+        ptx,pty,mscore=phase_correlation(model,obser)
+        rotate=pty*np.pi/(np.floor(obser.shape[1]/2))
+        scale = np.exp(ptx/mag)
+        return scale,rotate,mscore
 
 
 

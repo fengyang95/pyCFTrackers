@@ -27,6 +27,7 @@ from cftracker.csrdcf import CSRDCF
 from cftracker.csrdcf_lp import CSRDCF_LP
 from cftracker.ldes import LDES
 from cftracker.mkcfup import MKCFup
+from cftracker.mkcfup_lp import MKCFupLP
 from cftracker.opencv_cftracker import OpenCVCFTracker
 
 from lib.eco.config import vot16_deep_config,vot16_hc_config
@@ -87,6 +88,8 @@ def create_tracker(tracker_type):
         tracker=LDES(config=ldes_config.LDESVOTNoBGDLinearConfig())
     elif tracker_type=='MKCFup':
         tracker=MKCFup()
+    elif tracker_type=='MKCFup-LP':
+        tracker=MKCFupLP()
     else:
         raise NotImplementedError
     return tracker
@@ -195,7 +198,7 @@ def main():
     total_lost = 0  # VOT
     speed_list = []
 
-    trackers = ['MKCFup']
+    trackers = ['MKCFup-LP']
 
     for tracker_type in trackers:
 

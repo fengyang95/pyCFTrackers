@@ -24,6 +24,7 @@ from cftracker.csrdcf import CSRDCF
 from cftracker.csrdcf_lp import CSRDCF_LP
 from cftracker.ldes import LDES
 from cftracker.mkcfup import MKCFup
+from cftracker.mkcfup_lp import MKCFupLP
 from cftracker.opencv_cftracker import OpenCVCFTracker
 from cftracker.config import staple_config,ldes_config
 
@@ -88,6 +89,8 @@ def track_otb(tracker_type,dataset):
             tracker=DSST_LP()
         elif tracker_type=='MKCFup':
             tracker=MKCFup()
+        elif tracker_type=='MKCFup-LP':
+            tracker=MKCFupLP()
         else:
             raise NotImplementedError
         for idx, (img, gt_bbox) in enumerate(video):
@@ -135,7 +138,7 @@ def main():
 
     logger = logging.getLogger('global')
     logger.info(args)
-    trackers = ['MKCFup']
+    trackers = ['MKCFup-LP']
     dataset = DatasetFactory.create_dataset(name='OTB100',
                                             dataset_root='../dataset/OTB100',
                                             load_img=True
