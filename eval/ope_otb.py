@@ -12,7 +12,6 @@ from lib.log_helper import init_log, add_file_handler
 from cftracker.mosse import MOSSE
 from cftracker.staple import Staple
 from cftracker.dsst import DSST
-from cftracker.dsst_lp import DSST_LP
 from cftracker.samf import SAMF
 from cftracker.kcf import KCF
 from cftracker.csk import CSK
@@ -21,12 +20,11 @@ from cftracker.dat import DAT
 from cftracker.eco import ECO
 from cftracker.bacf import BACF
 from cftracker.csrdcf import CSRDCF
-from cftracker.csrdcf_lp import CSRDCF_LP
 from cftracker.ldes import LDES
 from cftracker.mkcfup import MKCFup
-from cftracker.mkcfup_lp import MKCFupLP
+from cftracker.strcf import STRCF
 from cftracker.opencv_cftracker import OpenCVCFTracker
-from cftracker.config import staple_config,ldes_config
+from cftracker.config import staple_config,ldes_config,dsst_config,csrdcf_config,mkcf_up_config
 
 from lib.eco.config import otb_deep_config,otb_hc_config
 
@@ -52,7 +50,7 @@ def track_otb(tracker_type,dataset):
         elif tracker_type=='CN':
             tracker=CN()
         elif tracker_type=='DSST':
-            tracker=DSST()
+            tracker=DSST(dsst_config.DSSTConfig())
         elif tracker_type=='SAMF':
             tracker=SAMF()
         elif tracker_type=='Staple':
@@ -72,9 +70,9 @@ def track_otb(tracker_type,dataset):
         elif tracker_type=='BACF':
             tracker=BACF()
         elif tracker_type=='CSRDCF':
-            tracker=CSRDCF()
+            tracker=CSRDCF(csrdcf_config.CSRDCFConfig())
         elif  tracker_type=='CSRDCF-LP':
-            tracker=CSRDCF_LP()
+            tracker=CSRDCF(csrdcf_config.CSRDCFLPConfig())
         elif tracker_type == 'OPENCV_KCF':
             tracker = OpenCVCFTracker(name='KCF')
         elif tracker_type == 'OPENCV_MOSSE':
@@ -86,11 +84,13 @@ def track_otb(tracker_type,dataset):
         elif tracker_type=='LDES-NoBGD':
             tracker=LDES(ldes_config.LDESOTBNoBGDLinearConfig())
         elif tracker_type=='DSST-LP':
-            tracker=DSST_LP()
+            tracker=DSST(dsst_config.DSSTLPConfig())
         elif tracker_type=='MKCFup':
-            tracker=MKCFup()
+            tracker=MKCFup(mkcf_up_config.MKCFupConfig())
         elif tracker_type=='MKCFup-LP':
-            tracker=MKCFupLP()
+            tracker=MKCFup(mkcf_up_config.MKCFupLPConfig())
+        elif tracker_type=='STRCF':
+            tracker=STRCF()
         else:
             raise NotImplementedError
         for idx, (img, gt_bbox) in enumerate(video):
@@ -138,7 +138,7 @@ def main():
 
     logger = logging.getLogger('global')
     logger.info(args)
-    trackers = ['MKCFup']
+    trackers = ['STRCF']
     dataset = DatasetFactory.create_dataset(name='OTB100',
                                             dataset_root='../dataset/OTB100',
                                             load_img=True
