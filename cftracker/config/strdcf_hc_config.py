@@ -23,8 +23,8 @@ class STRDCFHCConfig:
 
 
     # detection parameters
-    refinement_iterations = 1          # number of iterations used to refine the resulting position in a frame
-    newton_iterations = 5               # the number of Netwon iterations used for optimizing the detection score
+    refinement_iterations = 1         # number of iterations used to refine the resulting position in a frame
+    newton_iterations = 5              # the number of Netwon iterations used for optimizing the detection score
     clamp_position = False              # clamp the target position to be inside the image
 
     # learning parameters
@@ -47,8 +47,8 @@ class STRDCFHCConfig:
 
 
     # scale parameters
-    number_of_scales = 1              # number of scales to run the detector
-    scale_step = 1.01                 # the scale factor
+    number_of_scales = 5        # number of scales to run the detector
+    scale_step = 1.01                # the scale factor
     use_scale_filter = True             # use the fDSST scale filter or not
 
     class ScaleConfig:

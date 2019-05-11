@@ -87,7 +87,7 @@ class STRCF(BaseCF):
                           int(round(self.crop_size[1] / self.cell_size) * self.cell_size))
         self.feature_map_sz = (self.crop_size[0] // self.cell_size, self.crop_size[1] // self.cell_size)
         y=gaussian2d_rolled_labels(self.feature_map_sz,output_sigma)
-        self.cosine_window=cos_window((y.shape[1],y.shape[0]))
+        self.cosine_window=cos_window((y.shape[1],y.shape[0]))**0.5
         self.yf=fft2(y)
         reg_scale=(int(np.floor(self.base_target_sz[0]/self.feature_downsample_ratio)),
                    int(np.floor(self.base_target_sz[1] / self.feature_downsample_ratio)))
@@ -108,6 +108,7 @@ class STRCF(BaseCF):
 
         self.scale_factors=self.scale_step**scale_exp
 
+
         if self.number_of_scales>0:
             self._min_scale_factor = self.scale_step ** np.ceil(
                 np.log(np.max(5 / np.array(([self.crop_size[0], self.crop_size[1]])))) / np.log(self.scale_step))
@@ -115,22 +116,25 @@ class STRCF(BaseCF):
                 first_frame.shape[:2] / np.array([self.base_target_sz[1], self.base_target_sz[0]]))) / np.log(
                 self.scale_step))
 
-        self.scale_estimator = LPScaleEstimator(self.target_sz, config=self.scale_config)
-        self.scale_estimator.init(first_frame, self._center, self.base_target_sz, self.sc)
+        #self.scale_estimator = LPScaleEstimator(self.target_sz, config=self.scale_config)
+        #self.scale_estimator.init(first_frame, self._center, self.base_target_sz, self.sc)
 
         # admm
         patch = self.get_sub_window(first_frame, self._center, model_sz=self.crop_size,
                                     scaled_sz=(int(np.round(self.crop_size[0] * self.sc)),
                                                int(np.round(self.crop_size[1] * self.sc))))
-        xl = self.extrac_hc_feature(patch, self.cell_size)
-        xlw = xl * self.cosine_window[:, :, None]
-        xlf = fft2(xlw)
+        xl_hc = self.extrac_hc_feature(patch, self.cell_size)
+        xlw_hc = xl_hc * self.cosine_window[:, :, None]
+        xlf_hc = fft2(xlw_hc)
 
-        f_pre_f=np.zeros_like(xlf)
-        mu=0
-        f_f=self.ADMM(xlf,f_pre_f,mu)
-        self.cf_f=f_f
-        self.f_pre_f=f_f
+
+        f_pre_f_hc=np.zeros_like(xlf_hc)
+        mu_hc=0
+
+        f_f_hc=self.ADMM(xlf_hc,f_pre_f_hc,mu_hc)
+        self.cf_f_hc=f_f_hc
+        self.f_pre_f_hc=f_f_hc
+
 
     def update(self,current_frame,vis=False):
         assert len(current_frame.shape) == 3 and current_frame.shape[2] == 3
@@ -140,34 +144,42 @@ class STRCF(BaseCF):
                                                     np.abs(old_pos[1]-self._center[1])>1e-2):
 
             sample_scales=self.sc*self.scale_factors
-            xt = None
+            xt_hc = None
+
             for scale in sample_scales:
                 sub_window = self.get_sub_window(current_frame, self._center, model_sz=self.crop_size,
                                                  scaled_sz=(int(round(self.crop_size[0] * scale)),
                                                             int(round(self.crop_size[1] * scale))))
-                feature =self.extrac_hc_feature(sub_window, self.cell_size)[:, :, :, np.newaxis]
-                if xt is None:
-                    xt = feature
-                else:
-                    xt = np.concatenate((xt, feature), axis=3)
-            xtw=xt*self.cosine_window[:,:,None,None]
-            xtf=fft2(xtw)
-            responsef=np.sum(np.conj(self.cf_f)[:,:,:,None]*xtf,axis=2)
-            response=np.real(ifft2(responsef))
-            disp_row,disp_col,sind=self.resp_newton(response,responsef,self.newton_iterations,self.ky,self.kx,self.feature_map_sz)
 
+                hc_features=self.extrac_hc_feature(sub_window, self.cell_size)[:,:,:,np.newaxis]
+
+                if xt_hc is None:
+                    xt_hc = hc_features
+                else:
+                    xt_hc = np.concatenate((xt_hc, hc_features), axis=3)
+            xtw_hc=xt_hc*self.cosine_window[:,:,None,None]
+            xtf_hc=fft2(xtw_hc)
+
+            responsef_hc=np.sum(np.conj(self.cf_f_hc)[:,:,:,None]*xtf_hc,axis=2)
+            responsef=responsef_hc
+            response=np.real(ifft2(responsef))
+            #print(responsef.shape)
+            disp_row,disp_col,sind=self.resp_newton(response,responsef,self.newton_iterations,self.ky,self.kx,self.feature_map_sz)
+            #row,col, sind = np.unravel_index(np.argmax(response, axis=None), response.shape)
+            #disp_row = (row - 1 + int(np.floor(self.feature_map_sz[1] - 1) / 2)) % self.feature_map_sz[1] - int(
+            #    np.floor((self.feature_map_sz[1] - 1) / 2))
+            #disp_col = (col - 1 + int(np.floor(self.feature_map_sz[0] - 1) / 2)) % self.feature_map_sz[0] - int(
+            #    np.floor((self.feature_map_sz[0] - 1) / 2))
             if vis is True:
                 self.score = response[:, :, sind]
                 self.score = np.roll(self.score, int(np.floor(self.score.shape[0] / 2)), axis=0)
                 self.score = np.roll(self.score, int(np.floor(self.score.shape[1] / 2)), axis=1)
 
-
             self.sc = self.sc * self.scale_factors[sind]
             self.sc=np.clip(self.sc,self._min_scale_factor,self._max_scale_factor)
-            self.sc = self.scale_estimator.update(current_frame, self._center, self.base_target_sz,
-                                                  self.sc)
-            factor = self.crop_size[0] / self.feature_map_sz[0] * self.sc
-            dx, dy = round(disp_col * factor), round(disp_row * factor)
+            #self.sc = self.scale_estimator.update(current_frame, self._center, self.base_target_sz,
+            #                                      self.sc)
+            dx, dy = (disp_col * self.crop_size[0]/self.feature_map_sz[0]*self.sc), (disp_row * self.crop_size[1]/self.feature_map_sz[1]*self.sc)
             old_pos = (self._center[0], self._center[1])
             self._center = (self._center[0] + dx, self._center[1] + dy)
             iter+=1
@@ -176,14 +188,14 @@ class STRCF(BaseCF):
         patch = self.get_sub_window(current_frame, self._center, model_sz=self.crop_size,
                                          scaled_sz=(int(np.round(self.crop_size[0] * self.sc)),
                                                     int(np.round(self.crop_size[1] * self.sc))))
-        xl = self.extrac_hc_feature(patch, self.cell_size)
-        xlw = xl * self.cosine_window[:, :, None]
-        xlf = fft2(xlw)
-
+        xl_hc = self.extrac_hc_feature(patch, self.cell_size)
+        xlw_hc = xl_hc * self.cosine_window[:, :, None]
+        xlf_hog = fft2(xlw_hc)
         mu = self.temporal_regularization_factor
-        f_f=self.ADMM(xlf,self.f_pre_f,mu)
-        self.f_pre_f = f_f
-        self.cf_f = f_f
+        f_f_hc=self.ADMM(xlf_hog,self.f_pre_f_hc,mu)
+
+        self.f_pre_f_hc= f_f_hc
+        self.cf_f_hc = f_f_hc
         target_sz=(self.base_target_sz[0]*self.sc,self.base_target_sz[1]*self.sc)
         return [(self._center[0] - target_sz[0] / 2), (self._center[1] -target_sz[1] / 2), target_sz[0],target_sz[1]]
 
@@ -230,6 +242,7 @@ class STRCF(BaseCF):
         gamma_max = self.max_penalty_factor
         gamma_scale_step = self.penalty_scale_step
         T = self.feature_map_sz[0] * self.feature_map_sz[1]
+
         S_xx = np.sum(np.conj(model_xf) * model_xf, axis=2)
         Sf_pre_f = np.sum(np.conj(model_xf) * f_pre_f, axis=2)
         Sfx_pre_f = model_xf * Sf_pre_f[:, :, None]
@@ -246,8 +259,8 @@ class STRCF(BaseCF):
             tmp2 = mu / (gamma + mu) * Sfx_pre_f
             tmp3 = 1 / (gamma + mu) * (model_xf * (Shx_f[:, :, None]))
             tmp4 = gamma / (gamma + mu) * (model_xf * Sgx_f[:, :, None])
-            f_f = tmp0 - (tmp1 + tmp2 - tmp3 + tmp4) / B[:, :, None]
-            g_f = fft2(self.argmin_g(self.reg_window, gamma, np.real(ifft2(gamma * f_f + h_f))))
+            f_f = tmp0 - (tmp1 + tmp2 - tmp3 +tmp4) / B[:, :, None]
+            g_f = fft2(self.argmin_g(self.reg_window, gamma, np.real(ifft2(gamma * (f_f + h_f)))))
             h_f = h_f + (gamma * (f_f - g_f))
             gamma = min(gamma_scale_step * gamma, gamma_max)
             iter += 1
