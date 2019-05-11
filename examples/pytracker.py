@@ -16,10 +16,8 @@ from cftracker.ldes import LDES
 from cftracker.mkcfup import MKCFup
 from cftracker.strcf import STRCF
 from cftracker.mccth_staple import MCCTHStaple
-from cftracker.mccth import MCCTH
 from lib.eco.config import otb_deep_config,otb_hc_config
-from cftracker.config import staple_config,ldes_config,dsst_config,csrdcf_config,mkcf_up_config,mccth_staple_config,mccth_config
-
+from cftracker.config import staple_config,ldes_config,dsst_config,csrdcf_config,mkcf_up_config,mccth_staple_config
 class PyTracker:
     def __init__(self,img_dir,tracker_type,dataset_config):
         self.img_dir=img_dir

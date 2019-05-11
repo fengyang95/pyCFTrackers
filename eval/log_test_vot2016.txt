@@ -7731,3 +7731,5 @@
 [2019-05-11 21:41:56,270-rk0-get_vot2016_result.py#184] (1) Video: bag          Time: 16.8s Speed: 11.6fps Lost: 0 Tracker:MCCTH
 [2019-05-11 21:42:11,392-rk0-get_vot2016_result.py#184] (2) Video: ball1        Time: 10.9s Speed: 9.5fps Lost: 5 Tracker:MCCTH
 [2019-05-11 21:42:14,469-rk0-get_vot2016_result.py#184] (3) Video: ball2        Time: 2.4s Speed: 16.4fps Lost: 4 Tracker:MCCTH
+[2019-05-11 22:28:07,679-rk0-get_vot2016_result.py#193] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-05-11 22:28:43,486-rk0-get_vot2016_result.py#193] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)

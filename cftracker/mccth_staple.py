@@ -1,3 +1,15 @@
+"""Python re-implementation of "Multi-Cue Correlation Filters for Robust Visual Tracking"
+@inproceedings{wang2018multi,
+  title={Multi-cue correlation filters for robust visual tracking},
+  author={Wang, Ning and Zhou, Wengang and Tian, Qi and Hong, Richang and Wang, Meng and Li, Houqiang},
+  booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
+  pages={4844--4853},
+  year={2018}
+}
+
+I implemented its hand-crafted feature version
+"""
+
 import numpy as np
 import cv2
 from .base import BaseCF
@@ -246,7 +258,6 @@ class MCCTHStaple(BaseCF):
             row, col = np.unravel_index(np.argmax(self.experts[i].response, axis=None), self.experts[i].response.shape)
             dy = (row - center[1]) / self.area_resize_factor
             dx = (col - center[0]) / self.area_resize_factor
-            #print(dy,dx)
 
             self.experts[i].pos = (self._center[0] + dx, self._center[1] + dy)
             cx, cy, w, h = self.experts[i].pos[0], self.experts[i].pos[1], self.target_sz[0], self.target_sz[1]
@@ -328,7 +339,6 @@ class MCCTHStaple(BaseCF):
             xtf = fft2(self.experts[i].xt)
             hf_den = np.conj(xtf) * xtf / (self.cf_response_size[0] * self.cf_response_size[1])
             hf_num = np.conj(self.yf)[:, :, None] * xtf / (self.cf_response_size[0] * self.cf_response_size[1])
-            #print(self.learning_rate_cf)
             self.experts[i].hf_den = (1 - self.learning_rate_cf) * self.experts[i].hf_den + self.learning_rate_cf * hf_den
             self.experts[i].hf_num = (1 - self.learning_rate_cf) * self.experts[i].hf_num + self.learning_rate_cf * hf_num
         if self.learning_rate_pwp != 0:
@@ -437,13 +447,9 @@ class MCCTHStaple(BaseCF):
     def robustness_eva(self, experts, num, frame_idx, period, weight, expert_num):
         overlap_score = np.zeros((period, expert_num))
         for i in range(expert_num):
-            # print(experts[i].rect_positions)
-            # print(frame_idx)
             bboxes1 = np.array(experts[i].rect_positions)[frame_idx - period + 1:frame_idx + 1]
             bboxes2 = np.array(experts[num].rect_positions)[frame_idx - period + 1:frame_idx + 1]
-            # print(bboxes1)
             overlaps = cal_ious(bboxes1, bboxes2)
-            # print(overlaps)
             overlap_score[:, i] = np.exp(-(1 - overlaps) ** 2 / 2)
         avg_overlap = np.sum(overlap_score, axis=1) / expert_num
         expert_avg_overlap = np.sum(overlap_score, axis=0) / period
