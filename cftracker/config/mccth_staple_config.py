@@ -8,20 +8,16 @@ class MCCTHOTBConfig:
     lambda_ = 1e-3
     interp_factor_cf = 0.01
     merge_factor = 0.3
+    padding=1
     den_per_channel = False
 
-    scale_adaptation = True
-    hog_scale_cell_size = 4
-    interp_factor_scale = 0.025
-    scale_sigma_factor = 1. / 4
-    num_scales = 33
-    scale_model_factor = 1.
-    scale_step = 1.02
-    scale_model_max_area = 32 * 16
-    padding = 1
+    scale_adaptation=True
+    class ScaleConfig:
+        learning_rate_scale = 0.015
+        scale_sz_window = (128, 128)
 
+    scale_config=ScaleConfig()
     use_ca=False
-
     period=5
     update_thresh=0.6
     expert_num=7
@@ -37,21 +33,18 @@ class MCCTHVOTConfig:
     interp_factor_cf = 0.0153
     merge_factor = 0.567
     den_per_channel = False
+    padding=1
 
     scale_adaptation = True
-    hog_scale_cell_size = 4
-    interp_factor_scale = 0.0245
-    scale_sigma_factor = 0.355
-    num_scales = 27
-    scale_model_factor = 1.
-    scale_step = 1.0292
-    scale_model_max_area = 32 * 16
-    padding = 1
+    class ScaleConfig:
+        learning_rate_scale = 0.015
+        scale_sz_window = (128, 128)
 
+    scale_config = ScaleConfig()
+    use_ca = False
     period = 5
     update_thresh = 0.6
     expert_num = 7
-
 
 
 

@@ -23,9 +23,9 @@ from cftracker.csrdcf import CSRDCF
 from cftracker.ldes import LDES
 from cftracker.mkcfup import MKCFup
 from cftracker.strcf import STRCF
-from cftracker.mccth import MCCTH
+from cftracker.mccth_staple import MCCTHStaple
 from cftracker.opencv_cftracker import OpenCVCFTracker
-from cftracker.config import staple_config,ldes_config,dsst_config,csrdcf_config,mkcf_up_config,mccth_config
+from cftracker.config import staple_config,ldes_config,dsst_config,csrdcf_config,mkcf_up_config,mccth_staple_config
 
 from lib.eco.config import otb_deep_config,otb_hc_config
 
@@ -93,7 +93,7 @@ def track_otb(tracker_type,dataset):
         elif tracker_type=='STRCF':
             tracker=STRCF()
         elif tracker_type=='MCCTH':
-            tracker=MCCTH(mccth_config.MCCTHOTBConfig())
+            tracker=MCCTHStaple(mccth_staple_config.MCCTHOTBConfig())
         else:
             raise NotImplementedError
         for idx, (img, gt_bbox) in enumerate(video):

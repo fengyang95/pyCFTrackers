@@ -6,7 +6,7 @@ from lib.fft_tools import fft2,ifft2
 from .base import BaseCF
 from .feature import extract_hog_feature,extract_cn_feature
 from .config import strdcf_hc_config
-from cftracker.scale_estimator import LPScaleEstimator
+
 
 class STRCF(BaseCF):
     def __init__(self,config=strdcf_hc_config.STRDCFHCConfig()):

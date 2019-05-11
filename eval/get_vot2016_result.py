@@ -26,11 +26,11 @@ from cftracker.csrdcf import CSRDCF
 from cftracker.ldes import LDES
 from cftracker.mkcfup import MKCFup
 from cftracker.strcf import STRCF
-from cftracker.mccth import MCCTH
+from cftracker.mccth_staple import MCCTHStaple
 from cftracker.opencv_cftracker import OpenCVCFTracker
 
 from lib.eco.config import vot16_deep_config,vot16_hc_config
-from cftracker.config import ldes_config,dsst_config,csrdcf_config,staple_config,mkcf_up_config,mccth_config
+from cftracker.config import ldes_config,dsst_config,csrdcf_config,staple_config,mkcf_up_config,mccth_staple_config
 
 parser = argparse.ArgumentParser(description='Test')
 
@@ -91,7 +91,7 @@ def create_tracker(tracker_type):
     elif tracker_type=='STRCF':
         tracker=STRCF()
     elif tracker_type=='MCCTH':
-        tracker=MCCTH(config=mccth_config.MCCTHVOTConfig())
+        tracker=MCCTHStaple(config=mccth_staple_config.MCCTHVOTConfig())
     else:
         raise NotImplementedError
     return tracker
