@@ -7057,3 +7057,16 @@
 [2019-05-10 11:35:21,601-rk0-get_vot2018_result.py#171] (60) Video: zebrafish1   Time: 22.4s Speed: 17.8fps Lost: 27 Tracker:STRCF
 [2019-05-10 11:35:21,602-rk0-get_vot2018_result.py#202] Total Lost: 145
 [2019-05-10 11:35:21,602-rk0-get_vot2018_result.py#204] Mean Speed: 15.04 FPS
+[2019-05-11 11:22:33,231-rk0-get_vot2018_result.py#187] Namespace(dataset='VOT2018', gt=False, log='log_test_vot2018.txt', visualization=True)
+[2019-05-11 11:23:31,147-rk0-get_vot2018_result.py#174] (1) Video: ants1        Time: 45.2s Speed: 7.2fps Lost: 7 Tracker:STRCF
+[2019-05-11 11:25:33,285-rk0-get_vot2018_result.py#174] (2) Video: ants3        Time: 85.6s Speed: 6.7fps Lost: 8 Tracker:STRCF
+[2019-05-11 11:25:48,379-rk0-get_vot2018_result.py#174] (3) Video: bag          Time: 13.8s Speed: 14.1fps Lost: 0 Tracker:STRCF
+[2019-05-11 11:26:03,106-rk0-get_vot2018_result.py#174] (4) Video: ball1        Time: 13.1s Speed: 7.9fps Lost: 0 Tracker:STRCF
+[2019-05-11 11:26:24,271-rk0-get_vot2018_result.py#174] (5) Video: ball2        Time: 20.5s Speed: 1.9fps Lost: 1 Tracker:STRCF
+[2019-05-11 11:27:52,630-rk0-get_vot2018_result.py#174] (6) Video: basketball   Time: 81.2s Speed: 8.9fps Lost: 0 Tracker:STRCF
+[2019-05-11 11:29:02,676-rk0-get_vot2018_result.py#174] (7) Video: birds1       Time: 58.2s Speed: 5.8fps Lost: 4 Tracker:STRCF
+[2019-05-11 11:29:37,108-rk0-get_vot2018_result.py#174] (8) Video: blanket      Time: 33.5s Speed: 6.7fps Lost: 1 Tracker:STRCF
+[2019-05-11 11:29:47,479-rk0-get_vot2018_result.py#174] (9) Video: bmx          Time: 8.8s Speed: 8.5fps Lost: 0 Tracker:STRCF
+[2019-05-11 11:30:45,522-rk0-get_vot2018_result.py#174] (10) Video: bolt1        Time: 53.7s Speed: 6.5fps Lost: 0 Tracker:STRCF
+[2019-05-11 11:31:23,255-rk0-get_vot2018_result.py#174] (11) Video: bolt2        Time: 36.1s Speed: 8.1fps Lost: 0 Tracker:STRCF
+[2019-05-11 11:31:45,822-rk0-get_vot2018_result.py#174] (12) Video: book         Time: 21.3s Speed: 8.2fps Lost: 3 Tracker:STRCF

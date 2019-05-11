@@ -80,7 +80,7 @@ class Expert:
         
 
 class MCCTH(BaseCF):
-    def __init__(self, config=mccth_config.MCCTHConfig()):
+    def __init__(self, config):
         super(MCCTH).__init__()
         self.hog_cell_size = config.hog_cell_size
         self.fixed_area = config.fixed_area
@@ -103,7 +103,7 @@ class MCCTH(BaseCF):
         self.scale_step = config.scale_step
         self.scale_model_max_area = config.scale_model_max_area
         self.padding = config.padding
-        self.use_ca = config.use_ca
+
         self.period=config.period
         self.update_thresh=config.update_thresh
         self.expert_num=config.expert_num
@@ -169,6 +169,7 @@ class MCCTH(BaseCF):
             self.norm_target_sz[0] * self.norm_target_sz[1]) * self.output_sigma_factor / self.hog_cell_size
         self.y = gaussian2d_rolled_labels_staple(self.cf_response_size, output_sigma)
         self._init_response_center = np.unravel_index(np.argmax(self.y, axis=None), self.y.shape)
+        #print(self._init_response_center)
         self.yf = fft2(self.y)
 
 
@@ -203,7 +204,6 @@ class MCCTH(BaseCF):
                 int(np.floor((np.log(min(first_frame.shape[1] / self.w, first_frame.shape[0] / self.h)) /
                               np.log(self.scale_step)))))
         im_patch_bg = self.get_sub_window(first_frame, self._center, self.norm_bg_area, self.bg_area)
-
         xt = self.get_feature_map(im_patch_bg, self.hog_cell_size)
         xt = self._window[:, :, None] * xt
         xt_cn, xt_hog1, xt_hog2 = self.split_features(xt)
@@ -275,13 +275,14 @@ class MCCTH(BaseCF):
                            self.floor_odd(self.norm_delta_area[1] / self.hog_cell_size))
             response_cf = cv2.resize(crop_filter_response(response_cf, response_sz),self.norm_delta_area,
                                       cv2.INTER_NEAREST)
+            response_cf[np.isnan(response_cf)] = 0.
             self.experts[i].response = (1 - self.merge_factor) * response_cf + self.merge_factor * response_pwp
 
             row,col = np.unravel_index(np.argmax(self.experts[i].response, axis=None), self.experts[i].response.shape)
-            print('row:',row)
-            print('col:',col)
             dy=(row-center[1])/self.area_resize_factor
             dx=(col-center[0])/self.area_resize_factor
+            #print(dy,dx)
+
             self.experts[i].pos=(self._center[0]+dx,self._center[1]+dy)
             cx,cy,w,h=self.experts[i].pos[0],self.experts[i].pos[1],self.target_sz[0],self.target_sz[1]
             self.experts[i].rect_positions.append([cx-w/2,cy-h/2,w,h])
