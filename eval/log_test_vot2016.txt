@@ -7717,3 +7717,17 @@
 [2019-05-11 16:17:17,944-rk0-get_vot2016_result.py#181] (60) Video: wiper        Time: 41.6s Speed: 8.2fps Lost: 0 Tracker:MCCTH
 [2019-05-11 16:17:17,945-rk0-get_vot2016_result.py#212] Total Lost: 77
 [2019-05-11 16:17:17,946-rk0-get_vot2016_result.py#214] Mean Speed: 10.83 FPS
+[2019-05-11 21:21:00,978-rk0-get_vot2016_result.py#197] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-05-11 21:21:15,859-rk0-get_vot2016_result.py#184] (1) Video: bag          Time: 13.5s Speed: 14.4fps Lost: 0 Tracker:MCCTH
+[2019-05-11 21:21:27,737-rk0-get_vot2016_result.py#184] (2) Video: ball1        Time: 10.1s Speed: 10.3fps Lost: 1 Tracker:MCCTH
+[2019-05-11 21:21:31,108-rk0-get_vot2016_result.py#184] (3) Video: ball2        Time: 2.8s Speed: 14.0fps Lost: 3 Tracker:MCCTH
+[2019-05-11 21:22:28,611-rk0-get_vot2016_result.py#184] (4) Video: basketball   Time: 51.9s Speed: 13.9fps Lost: 0 Tracker:MCCTH
+[2019-05-11 21:23:02,643-rk0-get_vot2016_result.py#184] (5) Video: birds1       Time: 23.5s Speed: 14.4fps Lost: 1 Tracker:MCCTH
+[2019-05-11 21:24:06,216-rk0-get_vot2016_result.py#184] (6) Video: birds2       Time: 58.4s Speed: 9.2fps Lost: 0 Tracker:MCCTH
+[2019-05-11 21:24:23,038-rk0-get_vot2016_result.py#184] (7) Video: blanket      Time: 15.7s Speed: 14.2fps Lost: 0 Tracker:MCCTH
+[2019-05-11 21:24:32,248-rk0-get_vot2016_result.py#184] (8) Video: bmx          Time: 8.2s Speed: 9.1fps Lost: 0 Tracker:MCCTH
+[2019-05-11 21:24:58,288-rk0-get_vot2016_result.py#184] (9) Video: bolt1        Time: 21.9s Speed: 15.9fps Lost: 0 Tracker:MCCTH
+[2019-05-11 21:41:37,342-rk0-get_vot2016_result.py#197] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-05-11 21:41:56,270-rk0-get_vot2016_result.py#184] (1) Video: bag          Time: 16.8s Speed: 11.6fps Lost: 0 Tracker:MCCTH
+[2019-05-11 21:42:11,392-rk0-get_vot2016_result.py#184] (2) Video: ball1        Time: 10.9s Speed: 9.5fps Lost: 5 Tracker:MCCTH
+[2019-05-11 21:42:14,469-rk0-get_vot2016_result.py#184] (3) Video: ball2        Time: 2.4s Speed: 16.4fps Lost: 4 Tracker:MCCTH

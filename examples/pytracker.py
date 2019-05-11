@@ -16,8 +16,9 @@ from cftracker.ldes import LDES
 from cftracker.mkcfup import MKCFup
 from cftracker.strcf import STRCF
 from cftracker.mccth_staple import MCCTHStaple
+from cftracker.mccth import MCCTH
 from lib.eco.config import otb_deep_config,otb_hc_config
-from cftracker.config import staple_config,ldes_config,dsst_config,csrdcf_config,mkcf_up_config,mccth_staple_config
+from cftracker.config import staple_config,ldes_config,dsst_config,csrdcf_config,mkcf_up_config,mccth_staple_config,mccth_config
 
 class PyTracker:
     def __init__(self,img_dir,tracker_type,dataset_config):
@@ -82,8 +83,10 @@ class PyTracker:
             self.tracker=MKCFup(config=mkcf_up_config.MKCFupLPConfig())
         elif self.tracker_type=='STRCF':
             self.tracker=STRCF()
-        elif self.tracker_type=='MCCTH':
+        elif self.tracker_type=='MCCTH-Staple':
             self.tracker=MCCTHStaple(config=mccth_staple_config.MCCTHOTBConfig())
+        elif self.tracker_type=='MCCTH':
+            self.tracker=MCCTH(config=mccth_config.MCCTHConfig())
         else:
             raise NotImplementedError
 

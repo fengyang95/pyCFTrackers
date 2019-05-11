@@ -27,11 +27,12 @@ from cftracker.ldes import LDES
 from cftracker.mkcfup import MKCFup
 from cftracker.strcf import STRCF
 from cftracker.mccth_staple import MCCTHStaple
+from cftracker.mccth import MCCTH
 from cftracker.opencv_cftracker import OpenCVCFTracker
 
 from lib.eco.config import vot16_deep_config,vot16_hc_config
-from cftracker.config import ldes_config,dsst_config,csrdcf_config,staple_config,mkcf_up_config,mccth_staple_config
-
+from cftracker.config import ldes_config,dsst_config,csrdcf_config,staple_config,mkcf_up_config,mccth_staple_config,\
+    mccth_config
 parser = argparse.ArgumentParser(description='Test')
 
 parser.add_argument('--dataset', dest='dataset', default='VOT2016',
@@ -90,8 +91,10 @@ def create_tracker(tracker_type):
         tracker=MKCFup(config=mkcf_up_config.MKCFupLPConfig())
     elif tracker_type=='STRCF':
         tracker=STRCF()
-    elif tracker_type=='MCCTH':
+    elif tracker_type=='MCCTH-Staple':
         tracker=MCCTHStaple(config=mccth_staple_config.MCCTHVOTConfig())
+    elif tracker_type=='MCCTH':
+        tracker=MCCTH(config=mccth_config.MCCTHConfig())
     else:
         raise NotImplementedError
     return tracker

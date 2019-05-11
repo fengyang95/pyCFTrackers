@@ -7278,3 +7278,9 @@
 [2019-05-11 16:17:13,952-rk0-get_vot2018_result.py#174] (60) Video: zebrafish1   Time: 24.7s Speed: 16.2fps Lost: 17 Tracker:MCCTH
 [2019-05-11 16:17:13,953-rk0-get_vot2018_result.py#205] Total Lost: 146
 [2019-05-11 16:17:13,953-rk0-get_vot2018_result.py#207] Mean Speed: 11.33 FPS
+[2019-05-11 21:23:44,093-rk0-get_vot2018_result.py#190] Namespace(dataset='VOT2018', gt=False, log='log_test_vot2018.txt', visualization=True)
+[2019-05-11 21:24:10,687-rk0-get_vot2018_result.py#177] (1) Video: ants1        Time: 20.5s Speed: 15.8fps Lost: 15 Tracker:MCCTH
+[2019-05-11 21:25:06,158-rk0-get_vot2018_result.py#177] (2) Video: ants3        Time: 43.9s Speed: 13.2fps Lost: 15 Tracker:MCCTH
+[2019-05-11 21:25:20,884-rk0-get_vot2018_result.py#177] (3) Video: bag          Time: 13.5s Speed: 14.5fps Lost: 0 Tracker:MCCTH
+[2019-05-11 21:41:50,367-rk0-get_vot2018_result.py#190] Namespace(dataset='VOT2018', gt=False, log='log_test_vot2018.txt', visualization=True)
+[2019-05-11 21:42:25,921-rk0-get_vot2018_result.py#177] (1) Video: ants1        Time: 23.7s Speed: 13.7fps Lost: 18 Tracker:MCCTH
