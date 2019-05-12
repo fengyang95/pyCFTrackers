@@ -30,7 +30,7 @@ from cftracker.mccth_staple import MCCTHStaple
 from cftracker.opencv_cftracker import OpenCVCFTracker
 
 from lib.eco.config import vot18_deep_config,vot18_hc_config
-from cftracker.config import ldes_config,dsst_config,csrdcf_config,staple_config,mkcf_up_config,mccth_staple_config,mccth_config
+from cftracker.config import ldes_config,dsst_config,csrdcf_config,staple_config,mkcf_up_config,mccth_staple_config
 
 parser = argparse.ArgumentParser(description='Test')
 
@@ -193,7 +193,7 @@ def main():
     total_lost = 0  # VOT
     speed_list = []
 
-    trackers = ['MCCTH-Staple']
+    trackers = ['STRCF']
 
     for tracker_type in trackers:
 

@@ -91,7 +91,7 @@ class PyTracker:
     def tracking(self,verbose=True,video_path=None):
         poses = []
         init_frame = cv2.imread(self.frame_list[0])
-        print(init_frame.shape)
+        #print(init_frame.shape)
         init_gt = np.array(self.init_gt)
         x1, y1, w, h =init_gt
         init_gt=tuple(init_gt)

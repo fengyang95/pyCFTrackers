@@ -40,8 +40,6 @@ I didn't know how to convert matlab function mtimesx to numpy
 Just finetune from 4kubo's implementation
 https://github.com/4kubo/bacf_python/blob/master/special_operation/resp_newton.py
 """
-
-
 def resp_newton(response, responsef, iterations, ky, kx, use_sz):
     n_scale = response.shape[2]
     index_max_in_row = np.argmax(response, 0)

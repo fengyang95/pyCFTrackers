@@ -7284,3 +7284,7 @@
 [2019-05-11 21:25:20,884-rk0-get_vot2018_result.py#177] (3) Video: bag          Time: 13.5s Speed: 14.5fps Lost: 0 Tracker:MCCTH
 [2019-05-11 21:41:50,367-rk0-get_vot2018_result.py#190] Namespace(dataset='VOT2018', gt=False, log='log_test_vot2018.txt', visualization=True)
 [2019-05-11 21:42:25,921-rk0-get_vot2018_result.py#177] (1) Video: ants1        Time: 23.7s Speed: 13.7fps Lost: 18 Tracker:MCCTH
+[2019-05-12 10:12:19,765-rk0-get_vot2018_result.py#187] Namespace(dataset='VOT2018', gt=False, log='log_test_vot2018.txt', visualization=True)
+[2019-05-12 11:15:11,492-rk0-get_vot2018_result.py#187] Namespace(dataset='VOT2018', gt=False, log='log_test_vot2018.txt', visualization=True)
+[2019-05-12 11:34:41,914-rk0-get_vot2018_result.py#187] Namespace(dataset='VOT2018', gt=False, log='log_test_vot2018.txt', visualization=True)
+[2019-05-12 11:35:26,422-rk0-get_vot2018_result.py#187] Namespace(dataset='VOT2018', gt=False, log='log_test_vot2018.txt', visualization=True)

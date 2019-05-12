@@ -10,19 +10,20 @@ Python re-implemented of "Learning Spatial-Temporal Regularized Correlation Filt
 """
 import numpy as np
 import cv2
+import copy
 from lib.utils import cos_window,gaussian2d_rolled_labels
 from lib.fft_tools import fft2,ifft2
 from .base import BaseCF
 from .feature import extract_hog_feature,extract_cn_feature
 from .config import strdcf_hc_config
-from .cf_utils import resp_newton,mex_resize
-
+from .cf_utils import resp_newton,mex_resize,resize_dft2
+from .scale_estimator import LPScaleEstimator
 
 class STRCF(BaseCF):
     def __init__(self,config=strdcf_hc_config.STRDCFHCConfig()):
         super(STRCF).__init__()
         self.hog_cell_size = config.hog_cell_size
-        self.hog_compressed_dim = config.hog_compressed_dim
+        #self.hog_compressed_dim = config.hog_compressed_dim
         self.hog_n_dim = config.hog_n_dim
 
         self.gray_cell_size = config.gray_cell_size
@@ -72,11 +73,12 @@ class STRCF(BaseCF):
 
         bbox = np.array(bbox).astype(np.int64)
         x0, y0, w, h = tuple(bbox)
-        self._center = (np.floor(x0 + w / 2),np.floor(y0 + h / 2))
+        self._center = (int(x0 + w / 2),int(y0 + h / 2))
         self.target_sz=(w,h)
 
         search_area=self.target_sz[0]*self.search_area_scale*self.target_sz[1]*self.search_area_scale
-        self.sc=np.clip(1,a_min=search_area/self.max_image_sample_size,a_max=search_area/self.min_image_sample_size)
+        self.sc=np.clip(1,a_min=np.sqrt(search_area/self.max_image_sample_size),a_max=np.sqrt(search_area/self.min_image_sample_size))
+
         self.base_target_sz=(self.target_sz[0]/self.sc,self.target_sz[1]/self.sc)
 
         if self.search_area_shape=='proportional':
@@ -97,14 +99,16 @@ class STRCF(BaseCF):
                           int(round(self.crop_size[1] / self.cell_size) * self.cell_size))
         self.feature_map_sz = (self.crop_size[0] // self.cell_size, self.crop_size[1] // self.cell_size)
         y=gaussian2d_rolled_labels(self.feature_map_sz,output_sigma)
-        self.cosine_window=cos_window((y.shape[1],y.shape[0]))**0.5
+
+        self.cosine_window=(cos_window((y.shape[1],y.shape[0])))**0.5
         self.yf=fft2(y)
         reg_scale=(int(np.floor(self.base_target_sz[0]/self.feature_downsample_ratio)),
                    int(np.floor(self.base_target_sz[1] / self.feature_downsample_ratio)))
         use_sz = self.feature_map_sz
 
         self.reg_window=self.create_reg_window(reg_scale,use_sz,self.p,self.reg_window_max,
-                                               self.reg_window_min,self.alpha,self.beta)
+                                              self.reg_window_min,self.alpha,self.beta)
+        #self.reg_window=self.create_reg_window_const(reg_scale,use_sz,self.reg_window_max,self.reg_window_min)
 
         self.ky = np.roll(np.arange(-int(np.floor((self.feature_map_sz[1] - 1) / 2)),
                                     int(np.ceil((self.feature_map_sz[1] - 1) / 2 + 1))),
@@ -129,21 +133,15 @@ class STRCF(BaseCF):
         #self.scale_estimator = LPScaleEstimator(self.target_sz, config=self.scale_config)
         #self.scale_estimator.init(first_frame, self._center, self.base_target_sz, self.sc)
 
-        # admm
+
         patch = self.get_sub_window(first_frame, self._center, model_sz=self.crop_size,
                                     scaled_sz=(int(np.round(self.crop_size[0] * self.sc)),
                                                int(np.round(self.crop_size[1] * self.sc))))
         xl_hc = self.extrac_hc_feature(patch, self.cell_size)
-        xlw_hc = xl_hc * self.cosine_window[:, :, None]
-        xlf_hc = fft2(xlw_hc)
-
-
+        xlf_hc = fft2(xl_hc * self.cosine_window[:, :, None])
         f_pre_f_hc=np.zeros_like(xlf_hc)
         mu_hc=0
-
-        f_f_hc=self.ADMM(xlf_hc,f_pre_f_hc,mu_hc)
-        self.cf_f_hc=f_f_hc
-        self.f_pre_f_hc=f_f_hc
+        self.f_pre_f_hc=self.ADMM(xlf_hc,f_pre_f_hc,mu_hc)
 
 
     def update(self,current_frame,vis=False):
@@ -155,8 +153,8 @@ class STRCF(BaseCF):
 
             sample_scales=self.sc*self.scale_factors
             xt_hc = None
-
             for scale in sample_scales:
+
                 sub_window = self.get_sub_window(current_frame, self._center, model_sz=self.crop_size,
                                                  scaled_sz=(int(round(self.crop_size[0] * scale)),
                                                             int(round(self.crop_size[1] * scale))))
@@ -169,39 +167,39 @@ class STRCF(BaseCF):
                     xt_hc = np.concatenate((xt_hc, hc_features), axis=3)
             xtw_hc=xt_hc*self.cosine_window[:,:,None,None]
             xtf_hc=fft2(xtw_hc)
-
-            responsef_hc=np.sum(np.conj(self.cf_f_hc)[:,:,:,None]*xtf_hc,axis=2)
+            responsef_hc=np.sum(np.conj(self.f_pre_f_hc)[:,:,:,None]*xtf_hc,axis=2)
             responsef=responsef_hc
-            response=np.real(ifft2(responsef))
+            #responsef = resize_dft2(responsef,self.feature_map_sz)
+            response = np.real(ifft2(responsef))
+            #print(response.dtype)
             disp_row,disp_col,sind=resp_newton(response,responsef,self.newton_iterations,self.ky,self.kx,self.feature_map_sz)
+
 
             if vis is True:
                 self.score = response[:, :, sind]
                 self.score = np.roll(self.score, int(np.floor(self.score.shape[0] / 2)), axis=0)
                 self.score = np.roll(self.score, int(np.floor(self.score.shape[1] / 2)), axis=1)
 
-            self.sc = self.sc * self.scale_factors[sind]
-            self.sc=np.clip(self.sc,self._min_scale_factor,self._max_scale_factor)
             #self.sc = self.scale_estimator.update(current_frame, self._center, self.base_target_sz,
             #                                      self.sc)
-            dx, dy = (disp_col * self.crop_size[0]/self.feature_map_sz[0]*self.sc), (disp_row * self.crop_size[1]/self.feature_map_sz[1]*self.sc)
+            dx, dy = (disp_col * self.cell_size*self.sc*self.scale_factors[sind]), (disp_row * self.cell_size*self.sc*self.scale_factors[sind])
+            scale_change_factor=self.scale_factors[sind]
             old_pos = (self._center[0], self._center[1])
-            self._center = (self._center[0] + dx, self._center[1] + dy)
+            self._center = (int(np.round(old_pos[0] +dx)), int(np.round(old_pos[1] + dy)))
+            self.sc=self.sc*scale_change_factor
+            self.sc = np.clip(self.sc, self._min_scale_factor, self._max_scale_factor)
             iter+=1
-
 
         patch = self.get_sub_window(current_frame, self._center, model_sz=self.crop_size,
                                          scaled_sz=(int(np.round(self.crop_size[0] * self.sc)),
                                                     int(np.round(self.crop_size[1] * self.sc))))
         xl_hc = self.extrac_hc_feature(patch, self.cell_size)
         xlw_hc = xl_hc * self.cosine_window[:, :, None]
-        xlf_hog = fft2(xlw_hc)
+        xlf_hc = fft2(xlw_hc)
         mu = self.temporal_regularization_factor
-        f_f_hc=self.ADMM(xlf_hog,self.f_pre_f_hc,mu)
-
-        self.f_pre_f_hc= f_f_hc
-        self.cf_f_hc = f_f_hc
-        target_sz=(self.base_target_sz[0]*self.sc,self.base_target_sz[1]*self.sc)
+        self.f_pre_f_hc=self.ADMM(xlf_hc,self.f_pre_f_hc,mu)
+        target_sz=(int(self.base_target_sz[0]*self.sc),int(self.base_target_sz[1]*self.sc))
+        #print(self.sc)
         return [(self._center[0] - target_sz[0] / 2), (self._center[1] -target_sz[1] / 2), target_sz[0],target_sz[1]]
 
     def extrac_hc_feature(self,patch,cell_size):
@@ -217,6 +215,15 @@ class STRCF(BaseCF):
         else:
             sz = scaled_sz
         sz = (max(int(sz[0]), 2), max(int(sz[1]), 2))
+
+        w,h=sz
+        xs = (np.floor(center[0]) + np.arange(w) - np.floor(w / 2)).astype(np.int64)
+        ys = (np.floor(center[1]) + np.arange(h) - np.floor(h / 2)).astype(np.int64)
+        xs[xs < 0] = 0
+        ys[ys < 0] = 0
+        xs[xs >= img.shape[1]] = img.shape[1] - 1
+        ys[ys >= img.shape[0]] = img.shape[0] - 1
+        im_patch = img[ys, :][:, xs]
         im_patch = cv2.getRectSubPix(img, sz, center)
         if scaled_sz is not None:
             im_patch = mex_resize(im_patch, model_sz)
@@ -227,11 +234,10 @@ class STRCF(BaseCF):
         f_f = np.zeros_like(model_xf)
         g_f = np.zeros_like(f_f)
         h_f = np.zeros_like(f_f)
-        gamma = self.init_penalty_factor
-        gamma_max = self.max_penalty_factor
+        gamma =self.init_penalty_factor
+        gamma_max =self.max_penalty_factor
         gamma_scale_step = self.penalty_scale_step
         T = self.feature_map_sz[0] * self.feature_map_sz[1]
-
         S_xx = np.sum(np.conj(model_xf) * model_xf, axis=2)
         Sf_pre_f = np.sum(np.conj(model_xf) * f_pre_f, axis=2)
         Sfx_pre_f = model_xf * Sf_pre_f[:, :, None]
@@ -255,9 +261,10 @@ class STRCF(BaseCF):
             iter += 1
         return f_f
 
-    def argmin_g(self,w0,zeta,X):
-        lhd=1/(w0**2+zeta)
-        T=lhd[:,:,None]*X
+
+    def argmin_g(self,w0, zeta, X):
+        lhd = 1 / (w0 ** 2 + zeta)
+        T = lhd[:, :, None] * X
         return T
 
     def create_reg_window(self,reg_scale,use_sz,p,reg_window_max,reg_window_min,alpha,beta):
@@ -277,9 +284,22 @@ class STRCF(BaseCF):
         wcs = np.arange(range_[0, 0], range_[0, 1] + 1)
         wrs, wcs = np.meshgrid(wrs, wcs)
         res = (np.abs(wrs) / reg_scale[1]) ** p + (np.abs(wcs) / reg_scale[0]) ** p
-        reg_window = reg_window_max / (
-                    1 + np.exp(-1. * alpha * (np.power(res, 1. / p) -beta))) +reg_window_min
-        return reg_window.T
+        reg_window = reg_window_max / (1 + np.exp(-1. * alpha * (np.power(res, 1. / p) -beta))) +reg_window_min
+        reg_window=reg_window.T
+        return reg_window
+
+    def create_reg_window_const(self, reg_scale, use_sz,reg_window_max, reg_window_min):
+        reg_window=np.ones((use_sz[1],use_sz[0]))*reg_window_max
+        range_=np.zeros((2,2))
+        for j in range(2):
+            range_[j,:]=np.array([0,reg_scale[j]-1])-np.floor(reg_scale[j]/2)
+        cx=int(np.floor((use_sz[0]+1)/2))+(use_sz[0]+1)%2-1
+        cy=int(np.floor((use_sz[1]+1)/2))+(use_sz[1]+1)%2-1
+        range_h=np.arange(cy+range_[1,0],cy+range_[1,1]+1).astype(np.int)
+        range_w=np.arange(cx+range_[0,0],cx+range_[0,1]+1).astype(np.int)
+        range_h,range_w=np.meshgrid(range_h,range_w)
+        reg_window[range_h,range_w]=reg_window_min
+        return reg_window
 
 
 
