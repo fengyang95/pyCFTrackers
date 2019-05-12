@@ -106,16 +106,15 @@ class STRCF(BaseCF):
                    int(np.floor(self.base_target_sz[1] / self.feature_downsample_ratio)))
         use_sz = self.feature_map_sz
 
-        self.reg_window=self.create_reg_window(reg_scale,use_sz,self.p,self.reg_window_max,
-                                              self.reg_window_min,self.alpha,self.beta)
-        #self.reg_window=self.create_reg_window_const(reg_scale,use_sz,self.reg_window_max,self.reg_window_min)
-
+        #self.reg_window=self.create_reg_window(reg_scale,use_sz,self.p,self.reg_window_max,
+        #                                      self.reg_window_min,self.alpha,self.beta)
+        self.reg_window=self.create_reg_window_const(reg_scale,use_sz,self.reg_window_max,self.reg_window_min)
         self.ky = np.roll(np.arange(-int(np.floor((self.feature_map_sz[1] - 1) / 2)),
                                     int(np.ceil((self.feature_map_sz[1] - 1) / 2 + 1))),
                           -int(np.floor((self.feature_map_sz[1] - 1) / 2)))
         self.kx = np.roll(np.arange(-int(np.floor((self.feature_map_sz[0] - 1) / 2)),
                                     int(np.ceil((self.feature_map_sz[0] - 1) / 2 + 1))),
-                          -int(np.floor((self.feature_map_sz[0] - 1) / 2))).T
+                          -int(np.floor((self.feature_map_sz[0] - 1) / 2)))
 
         # scale
         scale_exp=np.arange(-int(np.floor((self.number_of_scales-1)/2)),int(np.ceil((self.number_of_scales-1)/2)+1))
@@ -129,9 +128,11 @@ class STRCF(BaseCF):
             self._max_scale_factor = self.scale_step ** np.floor(np.log(np.min(
                 first_frame.shape[:2] / np.array([self.base_target_sz[1], self.base_target_sz[0]]))) / np.log(
                 self.scale_step))
+            #print(self._min_scale_factor)
+            #print(self._max_scale_factor)
 
-        #self.scale_estimator = LPScaleEstimator(self.target_sz, config=self.scale_config)
-        #self.scale_estimator.init(first_frame, self._center, self.base_target_sz, self.sc)
+        self.scale_estimator = LPScaleEstimator(self.target_sz, config=self.scale_config)
+        self.scale_estimator.init(first_frame, self._center, self.base_target_sz, self.sc)
 
 
         patch = self.get_sub_window(first_frame, self._center, model_sz=self.crop_size,
@@ -153,9 +154,9 @@ class STRCF(BaseCF):
 
             sample_scales=self.sc*self.scale_factors
             xt_hc = None
+            sample_pos=(int(np.round(self._center[0])),int(np.round(self._center[1])))
             for scale in sample_scales:
-
-                sub_window = self.get_sub_window(current_frame, self._center, model_sz=self.crop_size,
+                sub_window = self.get_sub_window(current_frame, sample_pos, model_sz=self.crop_size,
                                                  scaled_sz=(int(round(self.crop_size[0] * scale)),
                                                             int(round(self.crop_size[1] * scale))))
 
@@ -166,7 +167,9 @@ class STRCF(BaseCF):
                 else:
                     xt_hc = np.concatenate((xt_hc, hc_features), axis=3)
             xtw_hc=xt_hc*self.cosine_window[:,:,None,None]
+
             xtf_hc=fft2(xtw_hc)
+
             responsef_hc=np.sum(np.conj(self.f_pre_f_hc)[:,:,:,None]*xtf_hc,axis=2)
             responsef=responsef_hc
             #responsef = resize_dft2(responsef,self.feature_map_sz)
@@ -176,21 +179,22 @@ class STRCF(BaseCF):
 
 
             if vis is True:
-                self.score = response[:, :, sind]
+                self.score = response[:, :, sind].astype(np.float32)
                 self.score = np.roll(self.score, int(np.floor(self.score.shape[0] / 2)), axis=0)
                 self.score = np.roll(self.score, int(np.floor(self.score.shape[1] / 2)), axis=1)
 
-            #self.sc = self.scale_estimator.update(current_frame, self._center, self.base_target_sz,
-            #                                      self.sc)
+
             dx, dy = (disp_col * self.cell_size*self.sc*self.scale_factors[sind]), (disp_row * self.cell_size*self.sc*self.scale_factors[sind])
             scale_change_factor=self.scale_factors[sind]
-            old_pos = (self._center[0], self._center[1])
-            self._center = (int(np.round(old_pos[0] +dx)), int(np.round(old_pos[1] + dy)))
+            old_pos = self._center
+            self._center = (sample_pos[0] +dx, sample_pos[1] + dy)
             self.sc=self.sc*scale_change_factor
             self.sc = np.clip(self.sc, self._min_scale_factor, self._max_scale_factor)
+            self.sc = self.scale_estimator.update(current_frame, self._center, self.base_target_sz,
+                                                  self.sc)
             iter+=1
-
-        patch = self.get_sub_window(current_frame, self._center, model_sz=self.crop_size,
+        sample_pos=(int(np.round(self._center[0])),int(np.round(self._center[1])))
+        patch = self.get_sub_window(current_frame, sample_pos, model_sz=self.crop_size,
                                          scaled_sz=(int(np.round(self.crop_size[0] * self.sc)),
                                                     int(np.round(self.crop_size[1] * self.sc))))
         xl_hc = self.extrac_hc_feature(patch, self.cell_size)
@@ -199,8 +203,7 @@ class STRCF(BaseCF):
         mu = self.temporal_regularization_factor
         self.f_pre_f_hc=self.ADMM(xlf_hc,self.f_pre_f_hc,mu)
         target_sz=(int(self.base_target_sz[0]*self.sc),int(self.base_target_sz[1]*self.sc))
-        #print(self.sc)
-        return [(self._center[0] - target_sz[0] / 2), (self._center[1] -target_sz[1] / 2), target_sz[0],target_sz[1]]
+        return [(self._center[0] - (target_sz[0]-1) / 2), (self._center[1] -(target_sz[1]-1) / 2), target_sz[0],target_sz[1]]
 
     def extrac_hc_feature(self,patch,cell_size):
         hog_features=extract_hog_feature(patch,cell_size)
@@ -224,7 +227,7 @@ class STRCF(BaseCF):
         xs[xs >= img.shape[1]] = img.shape[1] - 1
         ys[ys >= img.shape[0]] = img.shape[0] - 1
         im_patch = img[ys, :][:, xs]
-        im_patch = cv2.getRectSubPix(img, sz, center)
+        #im_patch = cv2.getRectSubPix(img, sz, center)
         if scaled_sz is not None:
             im_patch = mex_resize(im_patch, model_sz)
         return im_patch.astype(np.uint8)
@@ -255,7 +258,7 @@ class STRCF(BaseCF):
             tmp3 = 1 / (gamma + mu) * (model_xf * (Shx_f[:, :, None]))
             tmp4 = gamma / (gamma + mu) * (model_xf * Sgx_f[:, :, None])
             f_f = tmp0 - (tmp1 + tmp2 - tmp3 +tmp4) / B[:, :, None]
-            g_f = fft2(self.argmin_g(self.reg_window, gamma, np.real(ifft2(gamma * (f_f + h_f)))))
+            g_f = fft2(self.argmin_g(self.reg_window, gamma, np.real(ifft2(gamma * f_f + h_f))))
             h_f = h_f + (gamma * (f_f - g_f))
             gamma = min(gamma_scale_step * gamma, gamma_max)
             iter += 1

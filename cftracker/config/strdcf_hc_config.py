@@ -38,7 +38,7 @@ class STRDCFHCConfig:
     penalty_scale_step=10
 
     # scale parameters
-    number_of_scales = 5       # number of scales to run the detector
+    number_of_scales = 1       # number of scales to run the detector
     scale_step = 1.01                # the scale factor
     use_scale_filter = True             # use the fDSST scale filter or not
 
