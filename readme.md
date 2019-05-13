@@ -16,6 +16,8 @@ I use [pysot-toolkit](https://github.com/StrangerZhang/pysot-toolkit) to eval th
 - [x] [DAT](https://www.tugraz.at/institute/icg/research/team-bischof/lrs/downloads/dat/)  This tracker is not based on CF, I re-implement it just for understanding Staple better  
 - [x] [LDES](https://arxiv.org/pdf/1712.05231.pdf)  
 - [x] [MKCFup/MKCFup-LP](http://openaccess.thecvf.com/content_cvpr_2018/papers/Tang_High-Speed_Tracking_With_CVPR_2018_paper.pdf)    
+- [x] [MCCTH](http://openaccess.thecvf.com/content_cvpr_2018/papers/Wang_Multi-Cue_Correlation_Filters_CVPR_2018_paper.pdf)  
+- [x] [STRCF](http://openaccess.thecvf.com/content_cvpr_2018/papers/Li_Learning_Spatial-Temporal_Regularized_CVPR_2018_paper.pdf)  
 **Trackers from other repos**
 - [x] [ECO/ECO-HC](https://arxiv.org/pdf/1611.09224v1.pdf) from [pyECO](https://github.com/StrangerZhang/pyECO)
 - [x] [OPENCV-CSRDCF](https://github.com/opencv/opencv_contrib)(Note that trackers implemented in opencv get lower score because they will return a success flag and if this flag is False, the bbox will be set to (0,0,0,0))
@@ -84,17 +86,20 @@ VOT2018
 | Tracker Name  | Accuracy | Robustness | Lost Number |  EAO  |
 ---------------------------------------------------------------
 |      ECO      |  0.485   |   0.403    |    86.0     | 0.224 |
-|    CSRDCF     |  0.497   |   0.478    |    102.0    | 0.212 |
+|    CSRDCF     |  0.492   |   0.501    |    107.0    | 0.210 |
 |    ECO-HC     |  0.500   |   0.473    |    101.0    | 0.207 |
-|     LDES      |  0.519   |   0.632    |    135.0    | 0.183 |
+|   CSRDCF-LP   |  0.503   |   0.553    |    118.0    | 0.199 |
 |    Staple     |  0.524   |   0.665    |    142.0    | 0.179 |
+|     LDES      |  0.528   |   0.684    |    146.0    | 0.175 |
+| MCCTH-Staple  |  0.535   |   0.684    |    146.0    | 0.172 |
 | OPENCV-CSRDCF |  0.486   |   0.651    |    139.0    | 0.170 |
+|     BACF      |  0.511   |   0.674    |    144.0    | 0.169 |
 |      DAT      |  0.477   |   0.777    |    166.0    | 0.158 |
-|     BACF      |  0.508   |   1.054    |    225.0    | 0.119 |
+|     STRCF     |  0.483   |   0.679    |    145.0    | 0.152 |
 |      CN       |  0.439   |   1.100    |    235.0    | 0.112 |
 |     SAMF      |  0.499   |   1.147    |    245.0    | 0.110 |
-|    DSST-LP    |  0.506   |   1.194    |    255.0    | 0.108 |
-|     DSST      |  0.503   |   1.288    |    275.0    | 0.101 |
+|     DSST      |  0.492   |   1.222    |    261.0    | 0.107 |
+|    DSST-LP    |  0.512   |   1.260    |    269.0    | 0.103 |
 |      DCF      |  0.463   |   1.246    |    266.0    | 0.099 |
 |      KCF      |  0.463   |   1.330    |    284.0    | 0.094 |
 |      CSK      |  0.418   |   1.386    |    296.0    | 0.090 |
@@ -106,17 +111,20 @@ VOT2016
 | Tracker Name  | Accuracy | Robustness | Lost Number |  EAO  |
 ---------------------------------------------------------------
 |      ECO      |  0.564   |   0.256    |    55.0     | 0.336 |
+| MCCTH-Staple  |  0.574   |   0.359    |    77.0     | 0.303 |
 |    Staple     |  0.560   |   0.387    |    83.0     | 0.299 |
 |    ECO-HC     |  0.532   |   0.350    |    75.0     | 0.293 |
-|    CSRDCF     |  0.537   |   0.326    |    70.0     | 0.284 |
-|     LDES      |  0.571   |   0.415    |    89.0     | 0.272 |
+|    CSRDCF     |  0.542   |   0.359    |    77.0     | 0.273 |
+|     LDES      |  0.577   |   0.419    |    90.0     | 0.272 |
+|   CSRDCF-LP   |  0.548   |   0.354    |    76.0     | 0.272 |
+|     BACF      |  0.521   |   0.405    |    87.0     | 0.252 |
 | OPENCV-CSRDCF |  0.521   |   0.438    |    94.0     | 0.239 |
+|     STRCF     |  0.520   |   0.415    |    89.0     | 0.239 |
 |      DAT      |  0.474   |   0.503    |    108.0    | 0.232 |
-|     BACF      |  0.532   |   0.592    |    127.0    | 0.196 |
 |     SAMF      |  0.544   |   0.639    |    137.0    | 0.193 |
-|    DSST-LP    |  0.535   |   0.676    |    145.0    | 0.187 |
+|    DSST-LP    |  0.543   |   0.727    |    156.0    | 0.180 |
 |      CN       |  0.468   |   0.653    |    140.0    | 0.178 |
-|     DSST      |  0.540   |   0.736    |    158.0    | 0.175 |
+|     DSST      |  0.531   |   0.732    |    157.0    | 0.177 |
 |      DCF      |  0.474   |   0.704    |    151.0    | 0.171 |
 |      KCF      |  0.469   |   0.718    |    154.0    | 0.171 |
 |      CSK      |  0.433   |   0.886    |    190.0    | 0.139 |

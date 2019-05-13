@@ -8,7 +8,6 @@ class STRDCFHCConfig:
     cn_cell_size=4
     cn_n_dim=10
 
-
     search_area_shape = 'square'        # the shape of the samples
     search_area_scale = 5.0             # the scaling of the target size to get the search area
     min_image_sample_size = 150 ** 2    # minimum area of image samples
@@ -20,6 +19,7 @@ class STRDCFHCConfig:
     alpha=1000
     beta=0.4
     p=2
+
 
 
     # detection parameters
@@ -39,14 +39,36 @@ class STRDCFHCConfig:
 
     # scale parameters
     number_of_scales = 1      # number of scales to run the detector
-    scale_step = 1.01                # the scale factor
+    scale_step = 1.01               # the scale factor
     use_scale_filter = True             # use the fDSST scale filter or not
 
+
+    scale_type='LP'
     class ScaleConfig:
         learning_rate_scale = 0.015
-        scale_sz_window = (128, 128)
+        scale_sz_window = (64, 64)
 
     scale_config=ScaleConfig()
+
+
+    """
+    scale_type = 'normal'
+
+    class ScaleConfig:
+        scale_sigma_factor = 1 / 16.  # scale label function sigma
+        scale_learning_rate = 0.025  # scale filter learning rate
+        number_of_scales_filter = 11  # number of scales
+        number_of_interp_scales = 11  # number of interpolated scales
+        scale_model_factor = 1.0  # scaling of the scale model
+        scale_step_filter = 1.02  # the scale factor of the scale sample patch
+        scale_model_max_area = 32 * 16  # maximume area for the scale sample patch
+        scale_feature = 'HOG4'  # features for the scale filter (only HOG4 supported)
+        s_num_compressed_dim = 'MAX'  # number of compressed feature dimensions in the scale filter
+        lamBda = 1e-2  # scale filter regularization
+        do_poly_interp = False
+
+    scale_config = ScaleConfig()
+    """
 
     normalize_power = 2  # Lp normalization with this p
     normalize_size = True  # also normalize with respect to the spatial size of the feature
