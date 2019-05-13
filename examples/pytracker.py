@@ -6,19 +6,18 @@ from cftracker.csk import CSK
 from cftracker.kcf import KCF
 from cftracker.cn import CN
 from cftracker.dsst import DSST
-from cftracker.dsst_lp import DSST_LP
 from cftracker.staple import Staple
 from cftracker.dat import DAT
 from cftracker.eco import ECO
 from cftracker.bacf import BACF
 from cftracker.csrdcf import CSRDCF
-from cftracker.csrdcf_lp import CSRDCF_LP
 from cftracker.samf import SAMF
 from cftracker.ldes import LDES
 from cftracker.mkcfup import MKCFup
-from cftracker.mkcfup_lp import MKCFupLP
+from cftracker.strcf import STRCF
+from cftracker.mccth_staple import MCCTHStaple
 from lib.eco.config import otb_deep_config,otb_hc_config
-from cftracker.config import staple_config,ldes_config
+from cftracker.config import staple_config,ldes_config,dsst_config,csrdcf_config,mkcf_up_config,mccth_staple_config
 class PyTracker:
     def __init__(self,img_dir,tracker_type,dataset_config):
         self.img_dir=img_dir
@@ -43,7 +42,7 @@ class PyTracker:
         elif self.tracker_type=='CN':
             self.tracker=CN()
         elif self.tracker_type=='DSST':
-            self.tracker=DSST()
+            self.tracker=DSST(dsst_config.DSSTConfig())
         elif self.tracker_type=='Staple':
             self.tracker=Staple(config=staple_config.StapleConfig())
         elif self.tracker_type=='Staple-CA':
@@ -67,26 +66,32 @@ class PyTracker:
         elif self.tracker_type=='BACF':
             self.tracker=BACF()
         elif self.tracker_type=='CSRDCF':
-            self.tracker=CSRDCF()
+            self.tracker=CSRDCF(config=csrdcf_config.CSRDCFConfig())
         elif self.tracker_type=='CSRDCF-LP':
-            self.tracker=CSRDCF_LP()
+            self.tracker=CSRDCF(config=csrdcf_config.CSRDCFLPConfig())
         elif self.tracker_type=='SAMF':
             self.tracker=SAMF()
         elif self.tracker_type=='LDES':
             self.tracker=LDES(ldes_config.LDESDemoLinearConfig())
-        elif self.tracker_type=='DSST_LP':
-            self.tracker=DSST_LP()
+        elif self.tracker_type=='DSST-LP':
+            self.tracker=DSST(dsst_config.DSSTLPConfig())
         elif self.tracker_type=='MKCFup':
-            self.tracker=MKCFup()
+            self.tracker=MKCFup(config=mkcf_up_config.MKCFupConfig())
         elif self.tracker_type=='MKCFup-LP':
-            self.tracker=MKCFupLP()
+            self.tracker=MKCFup(config=mkcf_up_config.MKCFupLPConfig())
+        elif self.tracker_type=='STRCF':
+            self.tracker=STRCF()
+        elif self.tracker_type=='MCCTH-Staple':
+            self.tracker=MCCTHStaple(config=mccth_staple_config.MCCTHOTBConfig())
+        elif self.tracker_type=='MCCTH':
+            self.tracker=MCCTH(config=mccth_config.MCCTHConfig())
         else:
             raise NotImplementedError
 
     def tracking(self,verbose=True,video_path=None):
         poses = []
         init_frame = cv2.imread(self.frame_list[0])
-        print(init_frame.shape)
+        #print(init_frame.shape)
         init_gt = np.array(self.init_gt)
         x1, y1, w, h =init_gt
         init_gt=tuple(init_gt)
@@ -108,7 +113,7 @@ class PyTracker:
                     apce = APCE(score)
                     psr = PSR(score)
                     F_max = np.max(score)
-                    size=self.tracker.win_sz
+                    size=self.tracker.crop_size
                     score = cv2.resize(score, size)
                     score -= score.min()
                     score =score/ score.max()

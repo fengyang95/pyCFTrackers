@@ -15,6 +15,7 @@ from lib.fft_tools import fft2,ifft2
 from lib.utils import gaussian2d_rolled_labels
 from .feature import extract_hog_feature,extract_cn_feature
 from .config import csrdcf_config
+from cftracker.scale_estimator import LPScaleEstimator,DSSTScaleEstimator
 
 
 def kernel_profile_epanechnikov(x):
@@ -23,7 +24,7 @@ def kernel_profile_epanechnikov(x):
     return res
 
 class CSRDCF(BaseCF):
-    def __init__(self,config=csrdcf_config.CSRDCFConfig()):
+    def __init__(self,config):
         super(CSRDCF).__init__()
 
         self.padding=config.padding
@@ -37,13 +38,9 @@ class CSRDCF(BaseCF):
         self.segcolor_space=config.seg_colorspace
         self.use_segmentation=config.use_segmentation
 
-        self.current_scale_factor=config.current_scale_factor
-        self.n_scales=config.n_scales
-        self.scale_model_factor=config.scale_model_factor
-        self.scale_sigma_factor=config.scale_sigma_factor
-        self.scale_step = config.scale_step
-        self.scale_model_max_area = config.scale_model_max_area
-        self.scale_lr = config.scale_lr
+        self.scale_type = config.scale_type
+        self.scale_config = config.scale_config
+
 
         self.hist_fg_p_bins=None
         self.hist_bg_p_bins=None
@@ -63,6 +60,7 @@ class CSRDCF(BaseCF):
         # for larger cell_size
         self.cell_size=int(min(4,max(1,w*h/300)))
         self.base_target_sz=(w,h)
+        self.target_sz=self.base_target_sz
 
         template_size=(int(w+self.padding*np.sqrt(w*h)),int(h+self.padding*np.sqrt(w*h)))
         template_size=(template_size[0]+template_size[1])//2
@@ -80,36 +78,23 @@ class CSRDCF(BaseCF):
         self._window=cos_window((self.yf.shape[1],self.yf.shape[0]))
         self.crop_size=self.rescale_template_size
 
-        # the same as DSST
-        self.scale_sigma = np.sqrt(self.n_scales) * self.scale_sigma_factor
-        ss = np.arange(1, self.n_scales + 1) - np.ceil(self.n_scales / 2)
-        ys = np.exp(-0.5 * (ss ** 2) / (self.scale_sigma ** 2))
-        self.ysf = np.fft.fft(ys)
-
-        if self.n_scales % 2 == 0:
-            scale_window = np.hanning(self.n_scales + 1)
-            self.scale_window = scale_window[1:]
-        else:
-            self.scale_window = np.hanning(self.n_scales)
-        ss = np.arange(1, self.n_scales + 1)
-        self.scale_factors = self.scale_step ** (np.ceil(self.n_scales / 2) - ss)
-
-        self.scale_model_factor = 1.
-        if (self.scale_model_factor**2*self.template_size[0]*self.template_size[1]) >\
-                self.scale_model_max_area:
-            self.scale_model_factor = np.sqrt(self.scale_model_max_area / (self.template_size[0]*self.template_size[1]))
-
-        self.scale_model_sz = (int(np.floor(self.template_size[0]* self.scale_model_factor)),
-                               int(np.floor(self.template_size[1] * self.scale_model_factor)))
-
         self.current_scale_factor = 1.
 
-        self.min_scale_factor = self.scale_step ** (
-            int(np.ceil(np.log(max(5 / self.template_size[0], 5 / self.template_size[1])) /
-                        np.log(self.scale_step))))
-        self.max_scale_factor = self.scale_step ** (
-            int(np.floor((np.log(min(first_frame.shape[1] / self.base_target_sz[0], first_frame.shape[0] / self.base_target_sz[1])) /
-                          np.log(self.scale_step)))))
+        if self.scale_type=='normal':
+            self.scale_estimator = DSSTScaleEstimator(self.target_sz, config=self.scale_config)
+            self.scale_estimator.init(first_frame, self._center, self.base_target_sz, self.current_scale_factor)
+            self._num_scales = self.scale_estimator.num_scales
+            self._scale_step = self.scale_estimator.scale_step
+
+            self._min_scale_factor = self._scale_step ** np.ceil(
+                np.log(np.max(5 / np.array(([self.crop_size[0], self.crop_size[1]])))) / np.log(self._scale_step))
+            self._max_scale_factor = self._scale_step ** np.floor(np.log(np.min(
+                first_frame.shape[:2] / np.array([self.base_target_sz[1], self.base_target_sz[0]]))) / np.log(
+                self._scale_step))
+        elif self.scale_type=='LP':
+            self.scale_estimator=LPScaleEstimator(self.target_sz,config=self.scale_config)
+            self.scale_estimator.init(first_frame,self._center,self.base_target_sz,self.current_scale_factor)
+
 
 
         # create dummy  mask (approximation for segmentation)
@@ -163,14 +148,6 @@ class CSRDCF(BaseCF):
         response=np.real(ifft2(fft2(f)*np.conj(self.H)))
         chann_w=np.max(response.reshape(response.shape[0]*response.shape[1],-1),axis=0)
         self.chann_w=chann_w/np.sum(chann_w)
-
-        # mask a scale search model as well
-        xs=self.get_scale_sample(first_frame,self._center,self.base_target_sz,
-                                 self.current_scale_factor*self.scale_factors,self.scale_window,
-                                 self.scale_model_sz)
-        xsf = np.fft.fft(xs, axis=1)
-        self.sf_num = self.ysf * np.conj(xsf)
-        self.sf_den = np.sum(xsf * np.conj(xsf), axis=0)
 
 
     def update(self,current_frame,vis=False):
@@ -226,15 +203,11 @@ class CSRDCF(BaseCF):
         dy=self.current_scale_factor*self.cell_size*(1/self.rescale_ratio)*row
         self._center=(self._center[0]+dx,self._center[1]+dy)
 
-
-        xs=self.get_scale_sample(current_frame,self._center,self.base_target_sz,self.current_scale_factor*self.scale_factors,
-                                 self.scale_window,self.scale_model_sz)
-        xsf=np.fft.fft(xs,axis=1)
-        scale_response = np.real(np.fft.ifft(np.sum(self.sf_num * xsf, axis=0) / (self.sf_den + 1e-2)))
-        recovered_scale = np.argmax(scale_response)
-        self.current_scale_factor = self.current_scale_factor * self.scale_factors[recovered_scale]
-        self.current_scale_factor = np.clip(self.current_scale_factor, a_min=self.min_scale_factor,
-                                            a_max=self.max_scale_factor)
+        self.current_scale_factor = self.scale_estimator.update(current_frame, self._center, self.base_target_sz,
+                                                                self.current_scale_factor)
+        if self.scale_type == 'normal':
+            self.current_scale_factor = np.clip(self.current_scale_factor, a_min=self._min_scale_factor,
+                                                a_max=self._max_scale_factor)
 
         self.target_sz = (self.current_scale_factor * self.base_target_sz[0],
                           self.current_scale_factor * self.base_target_sz[1])
@@ -290,14 +263,6 @@ class CSRDCF(BaseCF):
             self.chann_w=self.chann_w/np.sum(self.chann_w)
         self.H=(1-self.interp_factor)*self.H+self.interp_factor*H_new
 
-        new_xs = self.get_scale_sample(current_frame, self._center, self.base_target_sz,
-                                   self.current_scale_factor * self.scale_factors,
-                                   self.scale_window, self.scale_model_sz)
-        new_xsf = np.fft.fft(new_xs, axis=1)
-        new_sf_num = self.ysf * np.conj(new_xsf)
-        new_sf_den = np.sum(new_xsf * np.conj(new_xsf), axis=0)
-        self.sf_den = (1 - self.scale_lr) * self.sf_den + self.scale_lr * new_sf_den
-        self.sf_num = (1 - self.scale_lr) * self.sf_num + self.scale_lr * new_sf_num
         return region
 
 
@@ -408,25 +373,6 @@ class CSRDCF(BaseCF):
         fg_prior=kernel_weight/max_val
         fg_prior=np.clip(fg_prior,a_min=0.5,a_max=0.9)
         return fg_prior
-
-    def get_scale_sample(self,im,center,base_target_sz,scale_factors,scale_window,scale_model_sz):
-        n_scales=len(scale_factors)
-        out=None
-        for s in range(n_scales):
-            patch_sz=(int(base_target_sz[0]*scale_factors[s]),
-                      int(base_target_sz[1]*scale_factors[s]))
-            im_patch=cv2.getRectSubPix(im,patch_sz,center)
-            if scale_model_sz[0] > patch_sz[1]:
-                interpolation = cv2.INTER_LINEAR
-            else:
-                interpolation = cv2.INTER_AREA
-            im_patch_resized=cv2.resize(im_patch,scale_model_sz,interpolation=interpolation).astype(np.uint8)
-            tmp=extract_hog_feature(im_patch_resized, cell_size=4)
-            if out is None:
-                out=tmp.flatten()*scale_window[s]
-            else:
-                out=np.c_[out,tmp.flatten()*scale_window[s]]
-        return out
 
 
     def mask_normal(self,mask_bin,obj_area,lower_thresh=0.05):
