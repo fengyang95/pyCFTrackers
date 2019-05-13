@@ -193,7 +193,7 @@ def main():
     total_lost = 0  # VOT
     speed_list = []
 
-    trackers = ['STRCF']
+    trackers = ['BACF']
 
     for tracker_type in trackers:
 

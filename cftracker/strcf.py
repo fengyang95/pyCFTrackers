@@ -68,6 +68,12 @@ class STRCF(BaseCF):
 
         self.scale_config = config.scale_config
 
+        self.normalize_power=config.normalize_power
+        self.normalize_size=config.normalize_size
+        self.normalize_dim=config.normalize_dim
+        self.square_root_normalization=config.square_root_normalization
+        self.config=config
+
 
     def init(self,first_frame,bbox):
 
@@ -100,7 +106,7 @@ class STRCF(BaseCF):
         self.feature_map_sz = (self.crop_size[0] // self.cell_size, self.crop_size[1] // self.cell_size)
         y=gaussian2d_rolled_labels(self.feature_map_sz,output_sigma)
 
-        self.cosine_window=(cos_window((y.shape[1],y.shape[0])))**0.5
+        self.cosine_window=(cos_window((y.shape[1],y.shape[0])))
         self.yf=fft2(y)
         reg_scale=(int(np.floor(self.base_target_sz[0]/self.feature_downsample_ratio)),
                    int(np.floor(self.base_target_sz[1] / self.feature_downsample_ratio)))
@@ -172,11 +178,17 @@ class STRCF(BaseCF):
 
             responsef_hc=np.sum(np.conj(self.f_pre_f_hc)[:,:,:,None]*xtf_hc,axis=2)
             responsef=responsef_hc
-            #responsef = resize_dft2(responsef,self.feature_map_sz)
             response = np.real(ifft2(responsef))
-            #print(response.dtype)
-            disp_row,disp_col,sind=resp_newton(response,responsef,self.newton_iterations,self.ky,self.kx,self.feature_map_sz)
 
+
+            #disp_row,disp_col,sind=resp_newton(response,responsef,self.newton_iterations,self.ky,self.kx,self.feature_map_sz)
+
+            row, col, sind = np.unravel_index(np.argmax(response, axis=None), response.shape)
+
+            disp_row = (row+ int(np.floor(self.feature_map_sz[1] - 1) / 2)) % self.feature_map_sz[1] - int(
+                np.floor((self.feature_map_sz[1] - 1) / 2))
+            disp_col = (col + int(np.floor(self.feature_map_sz[0] - 1) / 2)) % self.feature_map_sz[0] - int(
+                np.floor((self.feature_map_sz[0] - 1) / 2))
 
             if vis is True:
                 self.score = response[:, :, sind].astype(np.float32)
@@ -203,12 +215,14 @@ class STRCF(BaseCF):
         mu = self.temporal_regularization_factor
         self.f_pre_f_hc=self.ADMM(xlf_hc,self.f_pre_f_hc,mu)
         target_sz=(int(self.base_target_sz[0]*self.sc),int(self.base_target_sz[1]*self.sc))
-        return [(self._center[0] - (target_sz[0]-1) / 2), (self._center[1] -(target_sz[1]-1) / 2), target_sz[0],target_sz[1]]
+        return [(self._center[0] - (target_sz[0]) / 2), (self._center[1] -(target_sz[1]) / 2), target_sz[0],target_sz[1]]
 
-    def extrac_hc_feature(self,patch,cell_size):
+    def extrac_hc_feature(self,patch,cell_size,normalization=False):
         hog_features=extract_hog_feature(patch,cell_size)
         cn_features=extract_cn_feature(patch,cell_size)
         hc_features=np.concatenate((hog_features,cn_features),axis=2)
+        if normalization is True:
+            hc_features=self._feature_normalization(hc_features)
         return hc_features
 
     def get_sub_window(self, img, center, model_sz, scaled_sz=None):
@@ -258,7 +272,7 @@ class STRCF(BaseCF):
             tmp3 = 1 / (gamma + mu) * (model_xf * (Shx_f[:, :, None]))
             tmp4 = gamma / (gamma + mu) * (model_xf * Sgx_f[:, :, None])
             f_f = tmp0 - (tmp1 + tmp2 - tmp3 +tmp4) / B[:, :, None]
-            g_f = fft2(self.argmin_g(self.reg_window, gamma, np.real(ifft2(gamma * f_f + h_f))))
+            g_f = fft2(self.argmin_g(self.reg_window, gamma, np.real(ifft2(gamma * (f_f + h_f)))))
             h_f = h_f + (gamma * (f_f - g_f))
             gamma = min(gamma_scale_step * gamma, gamma_max)
             iter += 1
@@ -303,6 +317,17 @@ class STRCF(BaseCF):
         range_h,range_w=np.meshgrid(range_h,range_w)
         reg_window[range_h,range_w]=reg_window_min
         return reg_window
+
+    def _feature_normalization(self, x):
+        if hasattr(self.config, 'normalize_power') and self.config.normalize_power > 0:
+            if self.config.normalize_power == 2:
+                x = x * np.sqrt((x.shape[0]*x.shape[1]) ** self.config.normalize_size * (x.shape[2] ** self.config.normalize_dim) / (x ** 2).sum(axis=(0, 1, 2)))
+            else:
+                x = x * ((x.shape[0]*x.shape[1]) ** self.config.normalize_size) * (x.shape[2] ** self.config.normalize_dim) / ((np.abs(x) ** (1. / self.config.normalize_power)).sum(axis=(0, 1, 2)))
+
+        if self.config.square_root_normalization:
+            x = np.sign(x) * np.sqrt(np.abs(x))
+        return x.astype(np.float32)
 
 
 

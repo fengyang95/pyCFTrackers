@@ -38,7 +38,7 @@ class STRDCFHCConfig:
     penalty_scale_step=10
 
     # scale parameters
-    number_of_scales = 1       # number of scales to run the detector
+    number_of_scales = 1      # number of scales to run the detector
     scale_step = 1.01                # the scale factor
     use_scale_filter = True             # use the fDSST scale filter or not
 
@@ -47,5 +47,10 @@ class STRDCFHCConfig:
         scale_sz_window = (128, 128)
 
     scale_config=ScaleConfig()
+
+    normalize_power = 2  # Lp normalization with this p
+    normalize_size = True  # also normalize with respect to the spatial size of the feature
+    normalize_dim = True  # also normalize with respect to the dimensionality of the feature
+    square_root_normalization = False
 
 

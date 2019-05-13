@@ -11,9 +11,10 @@ import cv2
 from .base import BaseCF
 from lib.utils import cos_window,gaussian2d_rolled_labels
 from lib.fft_tools import fft2,ifft2
-from .feature import extract_hog_feature
+from .feature import extract_hog_feature,extract_cn_feature
 from .config.bacf_config import BACFConfig
 from .cf_utils import mex_resize,resp_newton,resize_dft2
+from .scale_estimator import LPScaleEstimator
 
 
 class BACF(BaseCF):
@@ -32,7 +33,7 @@ class BACF(BaseCF):
         self.scale_step = config.scale_step
         self.admm_iterations = config.admm_iterations
         self.admm_lambda = config.admm_lambda
-
+        self.scale_config = config.scale_config
 
     def init(self,first_frame,bbox):
         bbox = np.array(bbox).astype(np.int64)
@@ -93,10 +94,13 @@ class BACF(BaseCF):
 
         self.small_filter_sz=(int(np.floor(self.base_target_sz[0]/self.feature_ratio)),int(np.floor(self.base_target_sz[1]/self.feature_ratio)))
 
+        self.scale_estimator = LPScaleEstimator(self.target_sz, config=self.scale_config)
+        self.scale_estimator.init(first_frame, self._center, self.base_target_sz, self.current_scale_factor)
+
         pixels=self.get_sub_window(first_frame,self._center,model_sz=self.crop_size,
                                    scaled_sz=(int(np.round(self.crop_size[0]*self.current_scale_factor)),
                                               int(np.round(self.crop_size[1]*self.current_scale_factor))))
-        feature=extract_hog_feature(pixels, cell_size=self.feature_ratio)
+        feature=self.extract_hc_feture(pixels, cell_size=self.feature_ratio)
         self.model_xf=fft2(self._window[:,:,None]*feature)
 
         self.g_f=self.ADMM(self.model_xf)
@@ -110,7 +114,7 @@ class BACF(BaseCF):
             sub_window=self.get_sub_window(current_frame,self._center,model_sz=self.crop_size,
                                         scaled_sz=(int(round(self.crop_size[0]*current_scale)),
                                     int(round(self.crop_size[1]*current_scale))))
-            feature= extract_hog_feature(sub_window, self.cell_size)[:, :, :, np.newaxis]
+            feature= self.extract_hc_feture(sub_window, self.cell_size)[:, :, :, np.newaxis]
             if x is None:
                 x=feature
             else:
@@ -139,8 +143,8 @@ class BACF(BaseCF):
                 self.score=response[:,:,sind]
                 self.score = np.roll(self.score, int(np.floor(self.score.shape[0] / 2)), axis=0)
                 self.score = np.roll(self.score, int(np.floor(self.score.shape[1] / 2)), axis=1)
-            disp_row=(row-1+int(np.floor(self.interp_sz[1]-1)/2))%self.interp_sz[1]-int(np.floor((self.interp_sz[1]-1)/2))
-            disp_col = (col-1 + int(np.floor(self.interp_sz[0] - 1) / 2)) % self.interp_sz[0] - int(
+            disp_row=(row+int(np.floor(self.interp_sz[1]-1)/2))%self.interp_sz[1]-int(np.floor((self.interp_sz[1]-1)/2))
+            disp_col = (col + int(np.floor(self.interp_sz[0] - 1) / 2)) % self.interp_sz[0] - int(
                 np.floor((self.interp_sz[0] - 1) / 2))
 
         if self.interpolate_response==0  or self.interpolate_response==3 or self.interpolate_response==4:
@@ -155,12 +159,16 @@ class BACF(BaseCF):
         self.current_scale_factor=self.current_scale_factor*self.scale_factors[sind]
         self.current_scale_factor=max(self.current_scale_factor,self.min_scale_factor)
         self.current_scale_factor=min(self.current_scale_factor,self.max_scale_factor)
+
+        self.current_scale_factor = self.scale_estimator.update(current_frame, self._center, self.base_target_sz,
+                                              self.current_scale_factor)
+
         self._center=(self._center[0]+dx,self._center[1]+dy)
 
         pixels=self.get_sub_window(current_frame,self._center,model_sz=self.crop_size,
                                    scaled_sz=(int(round(self.crop_size[0]*self.current_scale_factor)),
                                               int(round(self.crop_size[1]*self.current_scale_factor))))
-        feature=extract_hog_feature(pixels, cell_size=self.cell_size)
+        feature=self.extract_hc_feture(pixels, cell_size=self.cell_size)
         #feature=cv2.resize(pixels,self.feature_map_sz)/255-0.5
         xf=fft2(feature*self._window[:,:,None])
         self.model_xf=(1-self.interp_factor)*self.model_xf+self.interp_factor*xf
@@ -226,6 +234,12 @@ class BACF(BaseCF):
         if scaled_sz is not None:
             im_patch = mex_resize(im_patch, model_sz)
         return im_patch.astype(np.uint8)
+
+    def extract_hc_feture(self,patch,cell_size):
+        hog_feature=extract_hog_feature(patch,cell_size)
+        cn_feature=extract_cn_feature(patch,cell_size)
+        hc_feature=np.concatenate((hog_feature,cn_feature),axis=2)
+        return hc_feature
 
 
 
