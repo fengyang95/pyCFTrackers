@@ -101,8 +101,9 @@ class ASRCFHC(BaseCF):
 
         self.small_filter_sz=(int(np.floor(self.base_target_sz[0]/self.feature_ratio)),int(np.floor(self.base_target_sz[1]/self.feature_ratio)))
 
-        self.scale_estimator = LPScaleEstimator(self.target_sz, config=self.scale_config)
-        self.scale_estimator.init(first_frame, self._center, self.base_target_sz, self.current_scale_factor)
+        #self.scale_estimator = LPScaleEstimator(self.target_sz, config=self.scale_config)
+
+        #self.scale_estimator.init(first_frame, self._center, self.base_target_sz, self.current_scale_factor)
 
         pixels=self.get_sub_window(first_frame,self._center,model_sz=self.crop_size,
                                    scaled_sz=(int(np.round(self.crop_size[0]*self.current_scale_factor)),
@@ -110,7 +111,7 @@ class ASRCFHC(BaseCF):
         feature=self.extract_hc_feture(pixels, cell_size=self.feature_ratio)
         self.model_xf=fft2(self._window[:,:,None]*feature)
 
-        self.g_f,self.reg_window=self.ADMM(self.model_xf,self.reg_window,self.admm_lambda1,self.admm_lambda2)
+        self.h_f, self.reg_window=self.ADMM(self.model_xf, self.reg_window, self.admm_lambda1, self.admm_lambda2)
 
 
     def update(self,current_frame,vis=False):
@@ -126,7 +127,7 @@ class ASRCFHC(BaseCF):
             else:
                 x=np.concatenate((x,feature),axis=3)
         xtf=fft2(x*self._window[:,:,None,None])
-        responsef=np.sum(np.conj(self.g_f)[:,:,:,None]*xtf,axis=2)
+        responsef=np.sum(np.conj(self.h_f)[:, :, :, None] * xtf, axis=2)
 
         if self.interpolate_response==2:
             self.interp_sz=(int(self.yf.shape[1]*self.feature_ratio*self.current_scale_factor),
@@ -166,8 +167,8 @@ class ASRCFHC(BaseCF):
         self.current_scale_factor=max(self.current_scale_factor,self.min_scale_factor)
         self.current_scale_factor=min(self.current_scale_factor,self.max_scale_factor)
 
-        self.current_scale_factor = self.scale_estimator.update(current_frame, self._center, self.base_target_sz,
-                                              self.current_scale_factor)
+        #self.current_scale_factor = self.scale_estimator.update(current_frame, self._center, self.base_target_sz,
+        #                                      self.current_scale_factor)
 
         self._center=(self._center[0]+dx,self._center[1]+dy)
 
@@ -178,7 +179,7 @@ class ASRCFHC(BaseCF):
         #feature=cv2.resize(pixels,self.feature_map_sz)/255-0.5
         xf=fft2(feature*self._window[:,:,None])
         self.model_xf=(1-self.interp_factor)*self.model_xf+self.interp_factor*xf
-        self.g_f,self.reg_window = self.ADMM(self.model_xf,self.reg_window,self.admm_lambda1,self.admm_lambda2)
+        self.h_f, self.reg_window = self.ADMM(self.model_xf, self.reg_window, self.admm_lambda1, self.admm_lambda2)
 
         target_sz=(self.target_sz[0]*self.current_scale_factor,self.target_sz[1]*self.current_scale_factor)
         return [self._center[0]-target_sz[0]/2,self._center[1]-target_sz[1]/2,target_sz[0],target_sz[1]]
@@ -205,29 +206,28 @@ class ASRCFHC(BaseCF):
         i = 1
         T = self.feature_map_sz[0] * self.feature_map_sz[1]
         S_xx = np.sum(np.conj(xf) * xf,axis=2)
-        xs, ys, _ = self.get_subwindow_no_window(h_f,
-                                                 (int(self.feature_map_sz[0] / 2), int(self.feature_map_sz[1] / 2)),
+        xs, ys, _ = self.get_subwindow_no_window(h_f,(int(self.feature_map_sz[0] / 2), int(self.feature_map_sz[1] / 2)),
                                                  self.small_filter_sz)
         p = np.zeros((self.feature_map_sz[1], self.feature_map_sz[0], h_f.shape[2]))
         p[ys, xs, :] = 1.
 
         while i <= self.admm_iterations:
+            # solve h
+            h = mu * T * p * ((ifft2(l_f + g_f))) / (lambda1 * (reg_window ** 2)[:, :, None] + mu * T * p)
+            h_f = fft2(h)
+
             # solve g
             S_lx = np.sum(np.conj(xf) * l_f, axis=2)
+            S_hx = np.sum(np.conj(xf) * h_f, axis=2)
             coef = 1 / (T * mu)
-            temp0 = 1-(np.conj(xf) * xf / (mu * T + np.conj(xf)*xf))
-            # solve h
-            S_hx = np.sum(np.conj(xf) * h_f*p,axis=2)
-            temp1 = self.yf * S_xx + mu * S_hx - mu * S_lx
-            g_f = coef * temp0 * temp1[:, :, None]
+            temp0 = 1 - (np.conj(xf) * xf / (mu * T + xf * np.conj(xf)))
+            temp1 = self.yf[:,:,None] * xf + mu * S_hx[:,:,None] - mu * S_lx[:,:,None]
+            g_f = coef * temp0 * temp1
 
-            h = mu * T *p* (np.real(ifft2(l_f+g_f))) / (lambda1 * (reg_window ** 2)[:, :, None] + mu * T*p )
-            h_f=fft2(h)
-            h=np.real(ifft2(h_f))
             # solve w
-            reg_window=lambda2*reg_window/(lambda1*np.sum(h*h,axis=2)+lambda2)
+            reg_window=lambda2*reg_window/(lambda1*np.sum(np.conj(h)*h,axis=2)+lambda2)
             # update l_f
-            l_f = l_f + (g_f -h_f)
+            l_f = l_f + (g_f-h_f)
             mu = min(beta * mu, mumax)
             i += 1
         return -h_f,reg_window

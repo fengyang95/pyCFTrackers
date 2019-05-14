@@ -296,7 +296,7 @@ class STRCF(BaseCF):
             h_f = h_f + (gamma * (f_f - g_f))
             gamma = min(gamma_scale_step * gamma, gamma_max)
             iter += 1
-        return f_f
+        return g_f
 
 
     def argmin_g(self,w0, zeta, X):

@@ -7864,3 +7864,6 @@
 [2019-05-13 19:22:47,634-rk0-get_vot2018_result.py#174] (60) Video: zebrafish1   Time: 18.7s Speed: 21.3fps Lost: 31 Tracker:STRCF
 [2019-05-13 19:22:47,635-rk0-get_vot2018_result.py#205] Total Lost: 174
 [2019-05-13 19:22:47,635-rk0-get_vot2018_result.py#207] Mean Speed: 12.50 FPS
+[2019-05-14 22:04:19,593-rk0-get_vot2018_result.py#190] Namespace(dataset='VOT2018', gt=False, log='log_test_vot2018.txt', visualization=True)
+[2019-05-14 22:04:58,053-rk0-get_vot2018_result.py#177] (1) Video: ants1        Time: 28.8s Speed: 11.2fps Lost: 15 Tracker:ASRCF-HC
+[2019-05-14 22:22:46,147-rk0-get_vot2018_result.py#190] Namespace(dataset='VOT2018', gt=False, log='log_test_vot2018.txt', visualization=True)

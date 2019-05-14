@@ -8319,3 +8319,9 @@
 [2019-05-13 19:22:49,910-rk0-get_vot2016_result.py#180] (60) Video: wiper        Time: 48.6s Speed: 7.0fps Lost: 0 Tracker:STRCF
 [2019-05-13 19:22:49,910-rk0-get_vot2016_result.py#211] Total Lost: 96
 [2019-05-13 19:22:49,910-rk0-get_vot2016_result.py#213] Mean Speed: 12.01 FPS
+[2019-05-14 22:03:16,799-rk0-get_vot2016_result.py#196] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)
+[2019-05-14 22:03:42,292-rk0-get_vot2016_result.py#183] (1) Video: bag          Time: 24.0s Speed: 8.1fps Lost: 0 Tracker:ASRCF-HC
+[2019-05-14 22:03:56,002-rk0-get_vot2016_result.py#183] (2) Video: ball1        Time: 11.6s Speed: 9.0fps Lost: 0 Tracker:ASRCF-HC
+[2019-05-14 22:03:59,933-rk0-get_vot2016_result.py#183] (3) Video: ball2        Time: 3.3s Speed: 12.2fps Lost: 1 Tracker:ASRCF-HC
+[2019-05-14 22:05:30,064-rk0-get_vot2016_result.py#183] (4) Video: basketball   Time: 84.6s Speed: 8.6fps Lost: 0 Tracker:ASRCF-HC
+[2019-05-14 22:22:30,276-rk0-get_vot2016_result.py#196] Namespace(dataset='VOT2016', gt=False, log='log_test_vot2016.txt', visualization=True)

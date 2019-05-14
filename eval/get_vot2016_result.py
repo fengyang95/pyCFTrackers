@@ -26,6 +26,7 @@ from cftracker.csrdcf import CSRDCF
 from cftracker.ldes import LDES
 from cftracker.mkcfup import MKCFup
 from cftracker.strcf import STRCF
+from cftracker.asrcf_hc import ASRCFHC
 from cftracker.mccth_staple import MCCTHStaple
 from cftracker.opencv_cftracker import OpenCVCFTracker
 
@@ -91,6 +92,8 @@ def create_tracker(tracker_type):
         tracker=STRCF()
     elif tracker_type=='MCCTH-Staple':
         tracker=MCCTHStaple(config=mccth_staple_config.MCCTHVOTConfig())
+    elif tracker_type=='ASRCF-HC':
+        tracker=ASRCFHC()
     else:
         raise NotImplementedError
     return tracker
@@ -199,7 +202,7 @@ def main():
     total_lost = 0  # VOT
     speed_list = []
 
-    trackers = ['STRCF']
+    trackers = ['ASRCF-HC','STRCF']
 
     for tracker_type in trackers:
 

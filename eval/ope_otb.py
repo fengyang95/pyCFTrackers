@@ -22,6 +22,7 @@ from cftracker.ldes import LDES
 from cftracker.mkcfup import MKCFup
 from cftracker.strcf import STRCF
 from cftracker.mccth_staple import MCCTHStaple
+from cftracker.asrcf_hc import ASRCFHC
 from cftracker.opencv_cftracker import OpenCVCFTracker
 from cftracker.config import staple_config,ldes_config,dsst_config,csrdcf_config,mkcf_up_config,mccth_staple_config
 from lib.eco.config import otb_deep_config,otb_hc_config
@@ -91,6 +92,8 @@ def track_otb(tracker_type,dataset):
             tracker=STRCF()
         elif tracker_type=='MCCTH-Staple':
             tracker=MCCTHStaple(mccth_staple_config.MCCTHOTBConfig())
+        elif tracker_type=='ASRCF-HC':
+            tracker=ASRCFHC()
         else:
             raise NotImplementedError
         for idx, (img, gt_bbox) in enumerate(video):
@@ -138,7 +141,7 @@ def main():
 
     logger = logging.getLogger('global')
     logger.info(args)
-    trackers = ['STRCF']
+    trackers = ['ASRCF-HC','STRCF']
     dataset = DatasetFactory.create_dataset(name='OTB100',
                                             dataset_root='../dataset/OTB100',
                                             load_img=True
