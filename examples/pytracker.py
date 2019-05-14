@@ -16,6 +16,7 @@ from cftracker.ldes import LDES
 from cftracker.mkcfup import MKCFup
 from cftracker.strcf import STRCF
 from cftracker.mccth_staple import MCCTHStaple
+from cftracker.asrcf_hc import ASRCFHC
 from lib.eco.config import otb_deep_config,otb_hc_config
 from cftracker.config import staple_config,ldes_config,dsst_config,csrdcf_config,mkcf_up_config,mccth_staple_config
 class PyTracker:
@@ -83,8 +84,8 @@ class PyTracker:
             self.tracker=STRCF()
         elif self.tracker_type=='MCCTH-Staple':
             self.tracker=MCCTHStaple(config=mccth_staple_config.MCCTHOTBConfig())
-        elif self.tracker_type=='MCCTH':
-            self.tracker=MCCTH(config=mccth_config.MCCTHConfig())
+        elif self.tracker_type=='ASRCF-HC':
+            self.tracker=ASRCFHC()
         else:
             raise NotImplementedError
 

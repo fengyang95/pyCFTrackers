@@ -9,7 +9,7 @@ class STRDCFHCConfig:
     cn_n_dim=10
 
     search_area_shape = 'square'        # the shape of the samples
-    search_area_scale = 5.0             # the scaling of the target size to get the search area
+    search_area_scale = 4             # the scaling of the target size to get the search area
     min_image_sample_size = 150 ** 2    # minimum area of image samples
     max_image_sample_size = 200 ** 2    # maximum area of image samples
 
@@ -28,7 +28,7 @@ class STRDCFHCConfig:
     clamp_position = False              # clamp the target position to be inside the image
 
     # learning parameters
-    output_sigma_factor = 1 / 16.       # label function sigma
+    output_sigma_factor = 1/14      # label function sigma
     temporal_regularization_factor=15
 
     # ADMM params
@@ -46,7 +46,7 @@ class STRDCFHCConfig:
     scale_type='LP'
     class ScaleConfig:
         learning_rate_scale = 0.015
-        scale_sz_window = (64, 64)
+        scale_sz_window = (128, 128)
 
     scale_config=ScaleConfig()
 

@@ -81,6 +81,10 @@ class STRCF(BaseCF):
         x0, y0, w, h = tuple(bbox)
         self._center = (int(x0 + w / 2),int(y0 + h / 2))
         self.target_sz=(w,h)
+        if np.all(first_frame[:,:,0]==first_frame[:,:,1]):
+            self.is_color=False
+        else:
+            self.is_color=True
 
         search_area=self.target_sz[0]*self.search_area_scale*self.target_sz[1]*self.search_area_scale
         self.sc=np.clip(1,a_min=np.sqrt(search_area/self.max_image_sample_size),a_max=np.sqrt(search_area/self.min_image_sample_size))
@@ -109,7 +113,7 @@ class STRCF(BaseCF):
         self.cosine_window=(cos_window((y.shape[1],y.shape[0])))
         self.yf=fft2(y)
         reg_scale=(int(np.floor(self.base_target_sz[0]/self.feature_downsample_ratio)),
-                   int(np.floor(self.base_target_sz[1] / self.feature_downsample_ratio)))
+                   int(np.floor(self.base_target_sz[1]/self.feature_downsample_ratio)))
         use_sz = self.feature_map_sz
 
         #self.reg_window=self.create_reg_window(reg_scale,use_sz,self.p,self.reg_window_max,
@@ -217,7 +221,7 @@ class STRCF(BaseCF):
                 self.sc = np.clip(self.sc, a_min=self._min_scale_factor,
                                                     a_max=self._max_scale_factor)
             iter+=1
-        sample_pos=(int(np.round(self._center[0])),int(np.round(self._center[1])))
+        sample_pos=(((self._center[0])),(self._center[1]))
         patch = self.get_sub_window(current_frame, sample_pos, model_sz=self.crop_size,
                                          scaled_sz=(int(np.round(self.crop_size[0] * self.sc)),
                                                     int(np.round(self.crop_size[1] * self.sc))))
@@ -235,6 +239,8 @@ class STRCF(BaseCF):
         hc_features=np.concatenate((hog_features,cn_features),axis=2)
         if normalization is True:
             hc_features=self._feature_normalization(hc_features)
+        if self.is_color is False:
+            hc_features=hc_features[:,:,:-10]
         return hc_features
 
     def get_sub_window(self, img, center, model_sz, scaled_sz=None):
@@ -282,11 +288,11 @@ class STRCF(BaseCF):
                     gamma / (gamma + mu)) * g_f + \
                    (mu / (gamma + mu)) * f_pre_f
             tmp1 = 1 / (T * (gamma + mu)) * (model_xf * ((S_xx * self.yf)[:, :, None]))
-            tmp2 = mu / (gamma + mu) * Sfx_pre_f
+            tmp2 = mu /(gamma + mu) * Sfx_pre_f
             tmp3 = 1 / (gamma + mu) * (model_xf * (Shx_f[:, :, None]))
             tmp4 = gamma / (gamma + mu) * (model_xf * Sgx_f[:, :, None])
             f_f = tmp0 - (tmp1 + tmp2 - tmp3 +tmp4) / B[:, :, None]
-            g_f = fft2(self.argmin_g(self.reg_window, gamma, (ifft2(gamma * (f_f + h_f)))))
+            g_f = fft2(self.argmin_g(self.reg_window, gamma, (np.real(ifft2(gamma * (f_f + h_f))))))
             h_f = h_f + (gamma * (f_f - g_f))
             gamma = min(gamma_scale_step * gamma, gamma_max)
             iter += 1
@@ -325,7 +331,7 @@ class STRCF(BaseCF):
         for j in range(2):
             range_[j,:]=np.array([0,reg_scale[j]-1])-np.floor(reg_scale[j]/2)
         cx=int(np.floor((use_sz[0]+1)/2))+(use_sz[0]+1)%2-1
-        cy=int(np.floor((use_sz[1]+1)/2))+(use_sz[1]+1)%2-1
+        cy = int(np.floor((use_sz[1] + 1) / 2)) + (use_sz[1] + 1) % 2 - 1
         range_h=np.arange(cy+range_[1,0],cy+range_[1,1]+1).astype(np.int)
         range_w=np.arange(cx+range_[0,0],cx+range_[0,1]+1).astype(np.int)
         range_h,range_w=np.meshgrid(range_h,range_w)
