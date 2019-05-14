@@ -4,17 +4,17 @@ class ASRCFHCConfig:
     search_area_shape='square'
     search_area_scale=5
     filter_max_area=50**2
-    interp_factor=0.15
+    interp_factor=0.0186
     output_sigma_factor=1./16
     interpolate_response=4
     newton_iterations=5
     number_of_scales=1
     scale_step=1.01
-    admm_iterations=3
+    admm_iterations=2
     admm_lambda1=0.2
     admm_lambda2=1e-1
 
-    reg_window_max = 1e1
+    reg_window_max = 1e5
     reg_window_min = 1e-3
     alpha = 1000
     beta = 0.4

@@ -215,7 +215,7 @@ class ASRCFHC(BaseCF):
             # solve g
             S_lx = np.sum(np.conj(xf) * l_f, axis=2)
             coef = 1 / (T * mu)
-            temp0 = 1-(np.conj(xf) * xf / (mu * T + xf * np.conj(xf)))
+            temp0 = 1-(np.conj(xf) * xf / (mu * T + np.conj(xf)*xf))
             # solve h
             S_hx = np.sum(np.conj(xf) * h_f*p,axis=2)
             temp1 = self.yf * S_xx + mu * S_hx - mu * S_lx
@@ -227,10 +227,10 @@ class ASRCFHC(BaseCF):
             # solve w
             reg_window=lambda2*reg_window/(lambda1*np.sum(h*h,axis=2)+lambda2)
             # update l_f
-            l_f = l_f + (g_f - h_f)
+            l_f = l_f + (g_f -h_f)
             mu = min(beta * mu, mumax)
             i += 1
-        return h_f,reg_window
+        return -h_f,reg_window
 
 
     def get_sub_window(self, img, center, model_sz, scaled_sz=None):
