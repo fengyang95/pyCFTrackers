@@ -8,17 +8,16 @@ class ASRCFHCConfig:
     output_sigma_factor=1./16
     interpolate_response=4
     newton_iterations=5
-    number_of_scales=5
+    number_of_scales=1
     scale_step=1.01
-    admm_iterations=3
+    admm_iterations=2
     admm_lambda1=0.2
     admm_lambda2=1e-3
 
-    reg_window_max = 1e5
-    reg_window_min = 1e-3
-    alpha = 1000
-    beta = 0.4
-    p = 2
+    reg_window_min = 1e-4  # the minimum value of the regularization window
+    reg_window_edge = 1e5 # the impace of the spatial regularization
+    reg_window_power = 2  # the degree of the polynomial to use (e.g. 2 is q quadratic window)
+    reg_sparsity_threshold = 0.05  # a relative threshold of which DFT coefficients of the kernel
 
     class ScaleConfig:
         learning_rate_scale = 0.015
