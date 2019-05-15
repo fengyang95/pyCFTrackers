@@ -4,7 +4,7 @@ class ASRCFHCConfig:
     search_area_shape='square'
     search_area_scale=5
     filter_max_area=50**2
-    interp_factor=0.015
+    interp_factor=0.01
     output_sigma_factor=1./16
     interpolate_response=4
     newton_iterations=5
@@ -14,10 +14,9 @@ class ASRCFHCConfig:
     admm_lambda1=0.2
     admm_lambda2=1e-3
 
-    reg_window_min = 1e-4  # the minimum value of the regularization window
-    reg_window_edge = 1e5 # the impace of the spatial regularization
+    reg_window_min = 1e-3 # the minimum value of the regularization window
+    reg_window_edge = 1e3 # the impace of the spatial regularization
     reg_window_power = 2  # the degree of the polynomial to use (e.g. 2 is q quadratic window)
-    reg_sparsity_threshold = 0.05  # a relative threshold of which DFT coefficients of the kernel
 
     class ScaleConfig:
         learning_rate_scale = 0.015

@@ -30,7 +30,7 @@ class ASRCFHC(BaseCF):
         self.reg_window_min=config.reg_window_min
         self.reg_window_edge=config.reg_window_edge
         self.reg_window_power=config.reg_window_power
-        self.rereg_sparsity_threshold=config.reg_sparsity_threshold
+
         self.scale_config = config.scale_config
 
 
@@ -83,8 +83,8 @@ class ASRCFHC(BaseCF):
 
         self.reg_window=self.reg_filter(use_sz,(self.base_target_sz[0]//self.cell_size,self.base_target_sz[1]//self.cell_size),
                                         self.reg_window_power,self.reg_window_min,
-                                        self.reg_window_edge,self.rereg_sparsity_threshold)
-
+                                        self.reg_window_edge)
+        #self.reg_window=self.create_reg_window(use_sz,eta=3,mu=0.1)
 
         if self.interpolate_response==1:
             self.interp_sz=(self.feature_map_sz[0]*self.feature_ratio,self.feature_map_sz[1]*self.feature_ratio)
@@ -227,23 +227,25 @@ class ASRCFHC(BaseCF):
 
         while i <= self.admm_iterations:
             # solve g
+            """
+            S_lx=np.conj(xf)*l_f
+            S_hx=np.conj(xf)*h_f
+            coef = 1 / (T * mu)
+            temp0 = 1 - (np.conj(xf) * xf / (mu * T + xf * np.conj(xf)))
+            temp1 = self.yf[:, :, None] * xf + mu * S_hx - mu * S_lx
+            """
             S_lx = np.sum(np.conj(xf) * l_f, axis=2)
             S_hx = np.sum(np.conj(xf) * h_f, axis=2)
-            # S_lx=np.conj(xf)*l_f
-            # S_hx=np.conj(xf)*h*p
             coef = 1 / (T * mu)
             temp0 = 1 - (np.conj(xf) * xf / (mu * T + xf * np.conj(xf)))
             temp1 = self.yf[:, :, None] * xf + mu * S_hx[:, :, None] - mu * S_lx[:, :, None]
             g_f = coef * temp0 * temp1
-
             # solve h
             h = (mu * T * p * (np.real(ifft2(l_f + g_f)) + 1e-10)) / (
                         lambda1 * (reg_window ** 2)[:, :, None] + mu * T * p)
             h_f = fft2(h)
-
             # solve w
             reg_window=lambda2*reg_window/(lambda1*np.sum(h*h,axis=2)+lambda2)
-
             #self.vis_regwin(reg_window)
             #cv2.waitKey(0)
             # update l_f
@@ -273,10 +275,10 @@ class ASRCFHC(BaseCF):
         return hc_feature
 
 
-    def reg_filter(self,sz,target_sz,reg_window_power,reg_window_min,reg_window_edge,reg_sparsity_threshold):
+    def reg_filter(self,sz,target_sz,reg_window_power,reg_window_min,reg_window_edge):
         # normalization factor
-        reg_scale = (0.5*target_sz[0],0.5*target_sz[1])
-
+        #reg_scale = (0.5*target_sz[0],0.5*target_sz[1])
+        reg_scale=(target_sz[0],target_sz[1])
         # construct grid
         wrg = np.arange(-(sz[0] - 1) / 2, (sz[1] - 1) / 2 + 1, dtype=np.float32)
         wcg = np.arange(-(sz[0] - 1) / 2, (sz[1] - 1) / 2 + 1, dtype=np.float32)
@@ -284,10 +286,19 @@ class ASRCFHC(BaseCF):
 
         # construct the regularization window
         reg_window = (reg_window_edge - reg_window_min) * (
-                np.abs(wrs / reg_scale[0]) ** reg_window_power + \
+                np.abs(wrs / reg_scale[0]) ** reg_window_power +
                 np.abs(wcs / reg_scale[1]) ** reg_window_power) + reg_window_min
 
         return reg_window
+
+    def create_reg_window(self,sz,eta,mu):
+        reg_window=np.zeros((sz[1],sz[0]))
+        w,h=reg_window.shape[:2]
+        xs, ys = np.meshgrid(np.arange(w) - w // 2, np.arange(h) - h // 2)
+        reg_window[ys,xs]=mu+eta*(xs/w)**2+eta*(ys/h)**2
+        return reg_window
+
+
 
 
 
