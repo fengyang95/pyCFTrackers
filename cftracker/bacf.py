@@ -217,6 +217,8 @@ class BACF(BaseCF):
             t = np.zeros((self.feature_map_sz[1], self.feature_map_sz[0], h.shape[2]),dtype=np.complex64)
             t[ys,xs,:] = h
             h_f = fft2(t)
+            #print('g_F',np.sum(g_f))
+            #print('h_f',np.sum(h_f))
             l_f = l_f + (mu * (g_f - h_f))
             mu = min(beta * mu, mumax)
             i += 1

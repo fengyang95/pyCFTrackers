@@ -111,7 +111,7 @@ class ResNet50Feature(CNNFeature):
         self._ctx = mx.gpu(gpu_config.gpu_id) if gpu_config.use_gpu else mx.cpu(0)
         self._resnet50 = vision.resnet50_v2(pretrained=True, ctx = self._ctx)
         self._compressed_dim = compressed_dim
-        self._cell_size = [4, 16]
+        self._cell_size = [4,16]
         self.penalty = [0., 0.]
         self.min_cell_size = np.min(self._cell_size)
 

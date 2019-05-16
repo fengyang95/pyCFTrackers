@@ -81,7 +81,6 @@ class ECOTracker:
             # construct the regularization window
             reg_window = (reg_window_edge - self.config.reg_window_min) * (np.abs(wrs / reg_scale[0]) ** self.config.reg_window_power + \
                                                                           np.abs(wcs/reg_scale[1]) ** self.config.reg_window_power) + self.config.reg_window_min
-
             # compute the DFT and enforce sparsity
             reg_window_dft = fft2(reg_window) / np.prod(sz)
             reg_window_dft[np.abs(reg_window_dft) < self.config.reg_sparsity_threshold * np.max(np.abs(reg_window_dft.flatten()))] = 0

@@ -29,7 +29,6 @@ class ASRCFHC(BaseCF):
 
         self.reg_window_min=config.reg_window_min
         self.reg_window_edge=config.reg_window_edge
-        self.reg_window_power=config.reg_window_power
 
         self.scale_config = config.scale_config
 
@@ -80,11 +79,11 @@ class ASRCFHC(BaseCF):
         self.yf=fft2(y)
 
         use_sz = self.feature_map_sz
-
-        self.reg_window=self.reg_filter(use_sz,(self.base_target_sz[0]//self.cell_size,self.base_target_sz[1]//self.cell_size),
-                                        self.reg_window_power,self.reg_window_min,
-                                        self.reg_window_edge)
-        #self.reg_window=self.create_reg_window(use_sz,eta=3,mu=0.1)
+        self.reg_window=self.create_reg_window(use_sz,
+                                               (int(self.base_target_sz[0]) // self.cell_size,
+                                                int(self.base_target_sz[1]) // self.cell_size),
+                                               reg_window_min=self.reg_window_min,
+                                               reg_window_edge=self.reg_window_edge)
 
         if self.interpolate_response==1:
             self.interp_sz=(self.feature_map_sz[0]*self.feature_ratio,self.feature_map_sz[1]*self.feature_ratio)
@@ -104,6 +103,12 @@ class ASRCFHC(BaseCF):
                             -int(np.floor((self.feature_map_sz[0]-1)/2))).T
 
         self.small_filter_sz=(int(np.floor(self.base_target_sz[0]/self.feature_ratio)),int(np.floor(self.base_target_sz[1]/self.feature_ratio)))
+        xs, ys, _ = self.get_subwindow_no_window(self.reg_window[:, :, np.newaxis],
+                                                 (int(self.feature_map_sz[0] / 2), int(self.feature_map_sz[1] / 2)),
+                                                 self.small_filter_sz)
+        p = np.zeros((self.feature_map_sz[1], self.feature_map_sz[0]))
+        p[ys, xs] = 1.
+        self.p=p
 
         self.scale_estimator = LPScaleEstimator(self.target_sz, config=self.scale_config)
 
@@ -114,16 +119,16 @@ class ASRCFHC(BaseCF):
                                               int(np.round(self.crop_size[1]*self.current_scale_factor))))
         feature=self.extract_hc_feture(pixels, cell_size=self.feature_ratio)
         self.model_xf=fft2(self._window[:,:,None]*feature)
-
-        self.h_f, self.reg_window=self.ADMM(self.model_xf, self.reg_window, self.admm_lambda1, self.admm_lambda2)
+        self.h_f=self.ADMM(self.model_xf, self.reg_window, self.admm_lambda1, self.admm_lambda2,self.p)
 
 
     def update(self,current_frame,vis=False):
         x=None
         for scale_ind in range(self.number_of_scales):
             current_scale=self.current_scale_factor*self.scale_factors[scale_ind]
-            sub_window=self.get_sub_window(current_frame,self._center,model_sz=self.crop_size,
-                                        scaled_sz=(int(round(self.crop_size[0]*current_scale)),
+            sub_window=self.get_sub_window(current_frame,self._center,
+                                           model_sz=self.crop_size,
+                                    scaled_sz=(int(round(self.crop_size[0]*current_scale)),
                                     int(round(self.crop_size[1]*current_scale))))
             feature= self.extract_hc_feture(sub_window, self.cell_size)[:, :, :, np.newaxis]
             if x is None:
@@ -183,7 +188,7 @@ class ASRCFHC(BaseCF):
         #feature=cv2.resize(pixels,self.feature_map_sz)/255-0.5
         xf=fft2(feature*self._window[:,:,None])
         self.model_xf=(1-self.interp_factor)*self.model_xf+self.interp_factor*xf
-        self.h_f, self.reg_window = self.ADMM(self.model_xf, self.reg_window, self.admm_lambda1, self.admm_lambda2)
+        self.h_f = self.ADMM(self.model_xf, self.reg_window, self.admm_lambda1, self.admm_lambda2,self.p)
 
         target_sz=(self.target_sz[0]*self.current_scale_factor,self.target_sz[1]*self.current_scale_factor)
         return [self._center[0]-target_sz[0]/2,self._center[1]-target_sz[1]/2,target_sz[0],target_sz[1]]
@@ -201,31 +206,32 @@ class ASRCFHC(BaseCF):
         return xs,ys,out
 
     def vis_regwin(self,reg_win):
-        h,w=reg_win.shape[:2]
-        ys,xs=np.meshgrid(np.arange(h),np.arange(w))
+        target_sz=(self.base_target_sz[0]//4,self.base_target_sz[1]//4)
+        sz=(reg_win.shape[1],reg_win.shape[0])
+        xs,ys=np.meshgrid(np.arange(sz[0]).astype(np.int),
+                          np.arange(sz[1]).astype(np.int))
         import matplotlib.pyplot as plt
+        from mpl_toolkits.mplot3d import Axes3D
         fig=plt.figure()
-        ax=fig.add_subplot(111)
-        ax.contourf(xs,ys,reg_win[ys,xs],50,cmap='binary')
+        ax=Axes3D(fig)
+        ax.plot_surface(xs,ys,reg_win[ys,xs],cmap='rainbow')
         plt.show()
 
 
-    def ADMM(self,xf,reg_window,lambda1,lambda2):
+    def ADMM(self,xf,reg_window,lambda1,lambda2,p):
         g_f = np.zeros_like(xf)
         h_f=np.zeros_like(xf)
         l_f = np.zeros_like(g_f)
+        import copy
+        reg_window=copy.deepcopy(reg_window)
         mu = 1
         beta = 10
         mumax = 10000
         i = 1
         T = self.feature_map_sz[0] * self.feature_map_sz[1]
         #S_xx = np.sum(np.conj(xf) * xf,axis=2)
-        xs, ys, _ = self.get_subwindow_no_window(h_f,(int(self.feature_map_sz[0] / 2), int(self.feature_map_sz[1] / 2)),
-                                                 self.small_filter_sz)
-        p = np.zeros((self.feature_map_sz[1], self.feature_map_sz[0], h_f.shape[2]))
-        p[ys, xs, :] = 1.
-
         while i <= self.admm_iterations:
+
             # solve g
             """
             S_lx=np.conj(xf)*l_f
@@ -236,24 +242,26 @@ class ASRCFHC(BaseCF):
             """
             S_lx = np.sum(np.conj(xf) * l_f, axis=2)
             S_hx = np.sum(np.conj(xf) * h_f, axis=2)
+            s_xx=np.conj(xf) * xf
             coef = 1 / (T * mu)
-            temp0 = 1 - (np.conj(xf) * xf / (mu * T + xf * np.conj(xf)))
+            temp0 = 1 - (s_xx/ (mu*T + s_xx))
             temp1 = self.yf[:, :, None] * xf + mu * S_hx[:, :, None] - mu * S_lx[:, :, None]
             g_f = coef * temp0 * temp1
             # solve h
-            h = (mu * T * p * (np.real(ifft2(l_f + g_f)) + 1e-10)) / (
-                        lambda1 * (reg_window ** 2)[:, :, None] + mu * T * p)
+            h = (mu * T * p[:, :, None] * (np.real(ifft2(l_f + g_f)))) / (lambda1 * (reg_window ** 2)[:, :, None] + mu * T * p[:, :, None])
             h_f = fft2(h)
             # solve w
             reg_window=lambda2*reg_window/(lambda1*np.sum(h*h,axis=2)+lambda2)
+
             #self.vis_regwin(reg_window)
+            #print(np.sum(reg_window))
             #cv2.waitKey(0)
             # update l_f
             l_f = l_f + (g_f-h_f)
             mu = min(beta * mu, mumax)
             i += 1
 
-        return h_f,reg_window
+        return h_f
 
 
     def get_sub_window(self, img, center, model_sz, scaled_sz=None):
@@ -269,33 +277,47 @@ class ASRCFHC(BaseCF):
         return im_patch.astype(np.uint8)
 
     def extract_hc_feture(self,patch,cell_size):
+        def _feature_normalization(x,normalize_power=2,square_root_normalization=True):
+
+            if normalize_power == 2:
+                x = x * np.sqrt((x.shape[0] * x.shape[1])  * (
+                                x.shape[2]) / (x ** 2).sum(axis=(0, 1, 2)))
+            else:
+                x = x * ((x.shape[0] * x.shape[1])) * (
+                                x.shape[2]) / (
+                            (np.abs(x) ** (1. / normalize_power)).sum(axis=(0, 1, 2)))
+            if square_root_normalization:
+                x = np.sign(x) * np.sqrt(np.abs(x))
+            return x.astype(np.float32)
+
         hog_feature=extract_hog_feature(patch,cell_size)
         cn_feature=extract_cn_feature(patch,cell_size)
         hc_feature=np.concatenate((hog_feature,cn_feature),axis=2)
+        hc_feature= _feature_normalization(hc_feature)
         return hc_feature
 
 
-    def reg_filter(self,sz,target_sz,reg_window_power,reg_window_min,reg_window_edge):
-        # normalization factor
-        #reg_scale = (0.5*target_sz[0],0.5*target_sz[1])
-        reg_scale=(target_sz[0],target_sz[1])
-        # construct grid
-        wrg = np.arange(-(sz[0] - 1) / 2, (sz[1] - 1) / 2 + 1, dtype=np.float32)
-        wcg = np.arange(-(sz[0] - 1) / 2, (sz[1] - 1) / 2 + 1, dtype=np.float32)
-        wrs, wcs = np.meshgrid(wrg, wcg)
+    def create_reg_window(self, sz, target_sz, reg_window_min, reg_window_edge):
+        def create_reg(sz, reg_window_min, reg_window_edge):
+            reg_scale = (0.5*sz[0],0.5*sz[1])
+            # construct grid
+            wrg = np.arange(-(sz[1] - 1) / 2, (sz[1] - 1) / 2 + 1, dtype=np.float32)
+            wcg = np.arange(-(sz[0] - 1) / 2, (sz[0] - 1) / 2 + 1, dtype=np.float32)
+            wrs, wcs = np.meshgrid(wrg, wcg)
+            # construct the regularization window
+            reg_window = (reg_window_edge - reg_window_min) * (
+                        np.abs(wrs / reg_scale[1]) ** 2 + \
+                        np.abs(wcs / reg_scale[0]) ** 2) + reg_window_min
+            return reg_window.T
 
-        # construct the regularization window
-        reg_window = (reg_window_edge - reg_window_min) * (
-                np.abs(wrs / reg_scale[0]) ** reg_window_power +
-                np.abs(wcs / reg_scale[1]) ** reg_window_power) + reg_window_min
-
-        return reg_window
-
-    def create_reg_window(self,sz,eta,mu):
-        reg_window=np.zeros((sz[1],sz[0]))
-        w,h=reg_window.shape[:2]
-        xs, ys = np.meshgrid(np.arange(w) - w // 2, np.arange(h) - h // 2)
-        reg_window[ys,xs]=mu+eta*(xs/w)**2+eta*(ys/h)**2
+        target_window=create_reg(target_sz, reg_window_min, reg_window_edge)
+        center=(sz[0]//2,sz[1]//2)
+        reg_window = np.ones((sz[1], sz[0])) * np.max(target_window)
+        x_min=center[0]-target_sz[0]//2
+        x_max=center[0]+target_sz[0]//2+target_sz[0]%2
+        y_min=center[1]-target_sz[1]//2
+        y_max=center[1]+target_sz[1]//2+target_sz[1]%2
+        reg_window[y_min:y_max,x_min:x_max]=target_window
         return reg_window
 
 
