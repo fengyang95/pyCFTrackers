@@ -10,12 +10,12 @@ class ASRCFHCConfig:
     newton_iterations=5
     number_of_scales=1
     scale_step=1.01
-    admm_iterations=2
+    admm_iterations=1
     admm_lambda1=0.2
-    admm_lambda2=1e-7
+    admm_lambda2=1e-3
 
     reg_window_min = 1e-4# the minimum value of the regularization window
-    reg_window_edge=1e-2
+    reg_window_edge=1e-4
 
     class ScaleConfig:
         learning_rate_scale = 0.015

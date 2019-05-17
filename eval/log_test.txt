@@ -128,3 +128,5 @@
 [2019-05-16 17:13:02,754-rk0-ope_otb.py#143] Namespace(dataset='OTB100', gt=False, log='log_test.txt', visualization=True)
 [2019-05-16 17:16:22,147-rk0-ope_otb.py#143] Namespace(dataset='OTB100', gt=False, log='log_test.txt', visualization=True)
 [2019-05-16 23:53:19,142-rk0-ope_otb.py#143] Namespace(dataset='OTB100', gt=False, log='log_test.txt', visualization=True)
+[2019-05-17 08:24:30,569-rk0-ope_otb.py#143] Namespace(dataset='OTB100', gt=False, log='log_test.txt', visualization=True)
+[2019-05-17 08:32:40,819-rk0-ope_otb.py#143] Namespace(dataset='OTB100', gt=False, log='log_test.txt', visualization=True)

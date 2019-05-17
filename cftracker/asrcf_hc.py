@@ -260,6 +260,7 @@ class ASRCFHC(BaseCF):
             l_f = l_f + (g_f-h_f)
             mu = min(beta * mu, mumax)
             i += 1
+        self.reg_window=reg_window
 
         return h_f
 
@@ -309,7 +310,7 @@ class ASRCFHC(BaseCF):
                         np.abs(wrs / reg_scale[1]) ** 2 + \
                         np.abs(wcs / reg_scale[0]) ** 2) + reg_window_min
             return reg_window.T
-
+        target_sz=sz
         target_window=create_reg(target_sz, reg_window_min, reg_window_edge)
         center=(sz[0]//2,sz[1]//2)
         reg_window = np.ones((sz[1], sz[0])) * np.max(target_window)
