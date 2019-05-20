@@ -14,12 +14,12 @@ from lib.utils import cos_window,gaussian2d_rolled_labels
 from lib.fft_tools import fft2,ifft2
 from .base import BaseCF
 from .feature import extract_hog_feature,extract_cn_feature
-from .config import strdcf_hc_config
+from .config import strcf_hc_config
 from .cf_utils import resp_newton,mex_resize,resize_dft2
 from .scale_estimator import LPScaleEstimator,DSSTScaleEstimator
 
 class STRCF(BaseCF):
-    def __init__(self,config=strdcf_hc_config.STRDCFHCConfig()):
+    def __init__(self, config):
         super(STRCF).__init__()
         self.hog_cell_size = config.hog_cell_size
         #self.hog_compressed_dim = config.hog_compressed_dim
@@ -116,9 +116,9 @@ class STRCF(BaseCF):
                    int(np.floor(self.base_target_sz[1]/self.feature_downsample_ratio)))
         use_sz = self.feature_map_sz
 
-        #self.reg_window=self.create_reg_window(reg_scale,use_sz,self.p,self.reg_window_max,
-        #                                      self.reg_window_min,self.alpha,self.beta)
-        self.reg_window=self.create_reg_window_const(reg_scale,use_sz,self.reg_window_max,self.reg_window_min)
+        self.reg_window=self.create_reg_window(reg_scale,use_sz,self.p,self.reg_window_max,
+                                              self.reg_window_min,self.alpha,self.beta)
+        #self.reg_window=self.create_reg_window_const(reg_scale,use_sz,self.reg_window_max,self.reg_window_min)
 
         self.ky = np.roll(np.arange(-int(np.floor((self.feature_map_sz[1] - 1) / 2)),
                                     int(np.ceil((self.feature_map_sz[1] - 1) / 2 + 1))),
@@ -208,7 +208,6 @@ class STRCF(BaseCF):
                 self.score = np.roll(self.score, int(np.floor(self.score.shape[0] / 2)), axis=0)
                 self.score = np.roll(self.score, int(np.floor(self.score.shape[1] / 2)), axis=1)
 
-
             dx, dy = (disp_col * self.cell_size*self.sc*self.scale_factors[sind]), (disp_row * self.cell_size*self.sc*self.scale_factors[sind])
             scale_change_factor=self.scale_factors[sind]
             old_pos = self._center
@@ -292,11 +291,11 @@ class STRCF(BaseCF):
             tmp3 = 1 / (gamma + mu) * (model_xf * (Shx_f[:, :, None]))
             tmp4 = gamma / (gamma + mu) * (model_xf * Sgx_f[:, :, None])
             f_f = tmp0 - (tmp1 + tmp2 - tmp3 +tmp4) / B[:, :, None]
-            g_f = fft2(self.argmin_g(self.reg_window, gamma, (np.real(ifft2(gamma * (f_f + h_f))))))
-            h_f = h_f + (gamma * (f_f - g_f))
+            g_f = fft2(self.argmin_g(self.reg_window, gamma, (np.real(ifft2(gamma * f_f + h_f)))))
+            h_f = h_f + gamma*(f_f - g_f)
             gamma = min(gamma_scale_step * gamma, gamma_max)
             iter += 1
-        return g_f
+        return f_f
 
 
     def argmin_g(self,w0, zeta, X):

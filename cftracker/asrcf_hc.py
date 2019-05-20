@@ -4,13 +4,11 @@ from .base import BaseCF
 from lib.utils import cos_window,gaussian2d_rolled_labels
 from lib.fft_tools import fft2,ifft2
 from .feature import extract_hog_feature,extract_cn_feature
-from .config.asrcfhc_config import ASRCFHCConfig
 from .cf_utils import mex_resize,resp_newton,resize_dft2
 from .scale_estimator import LPScaleEstimator
 
-
 class ASRCFHC(BaseCF):
-    def __init__(self, config=ASRCFHCConfig()):
+    def __init__(self, config):
         super(ASRCFHC).__init__()
         self.cell_size=config.cell_size
         self.cell_selection_thresh=config.cell_selection_thresh
@@ -177,7 +175,7 @@ class ASRCFHC(BaseCF):
         self.current_scale_factor=min(self.current_scale_factor,self.max_scale_factor)
 
         self.current_scale_factor = self.scale_estimator.update(current_frame, self._center, self.base_target_sz,
-                                              self.current_scale_factor)
+                                             self.current_scale_factor)
 
         self._center=(self._center[0]+dx,self._center[1]+dy)
 
@@ -219,11 +217,13 @@ class ASRCFHC(BaseCF):
 
 
     def ADMM(self,xf,reg_window,lambda1,lambda2,p):
+
         g_f = np.zeros_like(xf)
         h_f=np.zeros_like(xf)
         l_f = np.zeros_like(g_f)
         import copy
         reg_window=copy.deepcopy(reg_window)
+        #self.vis_regwin(reg_window)
         mu = 1
         beta = 10
         mumax = 10000
@@ -249,19 +249,20 @@ class ASRCFHC(BaseCF):
             g_f = coef * temp0 * temp1
             # solve h
             h = (mu * T * p[:, :, None] * (np.real(ifft2(l_f + g_f)))) / (lambda1 * (reg_window ** 2)[:, :, None] + mu * T * p[:, :, None])
-            h_f = fft2(h)
+            #print('t3:',np.mean(lambda1 * (reg_window ** 2)[:, :, None]))
+            #print('t4:',np.mean(mu * T * p[:, :, None]))
+            h_f = fft2(h*p[:,:,None])
+
             # solve w
             reg_window=lambda2*reg_window/(lambda1*np.sum(h*h,axis=2)+lambda2)
-
+            #print('t1:',np.mean(lambda1*np.sum(h*h,axis=2)))
+            #print('t2:',lambda2)
             #self.vis_regwin(reg_window)
-            #print(np.sum(reg_window))
-            #cv2.waitKey(0)
             # update l_f
-            l_f = l_f + (g_f-h_f)
+            l_f = l_f + mu*(g_f-h_f)
             mu = min(beta * mu, mumax)
-            i += 1
-        self.reg_window=reg_window
-
+            i +=1
+        #self.reg_window=reg_window
         return h_f
 
 
@@ -297,28 +298,28 @@ class ASRCFHC(BaseCF):
         hc_feature= _feature_normalization(hc_feature)
         return hc_feature
 
-
     def create_reg_window(self, sz, target_sz, reg_window_min, reg_window_edge):
         def create_reg(sz, reg_window_min, reg_window_edge):
-            reg_scale = (0.5*sz[0],0.5*sz[1])
+            reg_scale = (0.5 * sz[0], 0.5 * sz[1])
             # construct grid
             wrg = np.arange(-(sz[1] - 1) / 2, (sz[1] - 1) / 2 + 1, dtype=np.float32)
             wcg = np.arange(-(sz[0] - 1) / 2, (sz[0] - 1) / 2 + 1, dtype=np.float32)
             wrs, wcs = np.meshgrid(wrg, wcg)
             # construct the regularization window
             reg_window = (reg_window_edge - reg_window_min) * (
-                        np.abs(wrs / reg_scale[1]) ** 2 + \
-                        np.abs(wcs / reg_scale[0]) ** 2) + reg_window_min
+                    np.abs(wrs / reg_scale[1]) ** 2 +
+                    np.abs(wcs / reg_scale[0]) ** 2) + reg_window_min
             return reg_window.T
-        target_sz=sz
-        target_window=create_reg(target_sz, reg_window_min, reg_window_edge)
-        center=(sz[0]//2,sz[1]//2)
+
+        #target_sz = sz
+        target_window = create_reg(target_sz, reg_window_min, reg_window_edge)
+        center = (sz[0] // 2, sz[1] // 2)
         reg_window = np.ones((sz[1], sz[0])) * np.max(target_window)
-        x_min=center[0]-target_sz[0]//2
-        x_max=center[0]+target_sz[0]//2+target_sz[0]%2
-        y_min=center[1]-target_sz[1]//2
-        y_max=center[1]+target_sz[1]//2+target_sz[1]%2
-        reg_window[y_min:y_max,x_min:x_max]=target_window
+        x_min = center[0] - target_sz[0] // 2
+        x_max = center[0] + target_sz[0] // 2 + target_sz[0] % 2
+        y_min = center[1] - target_sz[1] // 2
+        y_max = center[1] + target_sz[1] // 2 + target_sz[1] % 2
+        reg_window[y_min:y_max, x_min:x_max] = target_window
         return reg_window
 
 

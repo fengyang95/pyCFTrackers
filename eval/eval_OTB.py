@@ -10,7 +10,7 @@ from lib.pysot.visualization import draw_success_precision
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='VOT Evaluation')
-    parser.add_argument('--dataset', type=str, default='OTB50',help='dataset name')
+    parser.add_argument('--dataset', type=str, default='OTB100',help='dataset name')
     parser.add_argument('--result_dir', type=str, default='test/OTB100',help='tracker result root')
     parser.add_argument('--tracker_prefix', type=str,default='test', help='tracker prefix')
     parser.add_argument('--show_video_level', action='store_true')
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     tracker_dir = args.result_dir
     trackers = glob.glob(join(tracker_dir, args.tracker_prefix+'*'))
     trackers = [t.split('/')[-1] for t in trackers]
-    trackers=['ASRCF-HC','MCCTH-Staple','MKCFup','CSRDCF-LP','DSST-LP','LDES','SAMF','Staple-CA','DCF','MOSSE','KCF','CSK','Staple','DSST','CN','DAT','ECO-HC','ECO','BACF','CSRDCF']
+    trackers=['BACF-RCG','STRCF','ASRCF-HC','MCCTH-Staple','MKCFup','CSRDCF-LP','DSST-LP','LDES','SAMF','Staple-CA','DCF','MOSSE','KCF','CSK','Staple','DSST','CN','DAT','ECO-HC','ECO','BACF','CSRDCF']
     print(trackers)
     assert len(trackers) > 0
     args.num = min(args.num, len(trackers))
